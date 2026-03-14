@@ -3,243 +3,581 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SISTEMA DE ENSAIO — BANCO DE TESTE DE ALTÍMETROS</title>
+<title>Banco de Teste · Altímetros — UFPB TCC 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-
+/* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
-  --bg0:#080b10;--bg1:#0c1017;--bg2:#0f141c;
-  --line:#1a2535;--line2:#223040;
-  --cyan:#4ec9e8;--cyan2:#2a8fad;--cyan-d:rgba(78,201,232,.07);
-  --green:#4dbb7a;--green-d:rgba(77,187,122,.07);
-  --amber:#e8b84e;--amber-d:rgba(232,184,78,.07);
-  --red:#e05c4e;--red-d:rgba(224,92,78,.07);
-  --text0:#ccd8e4;--text1:#6e8fa8;--text2:#374e65;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  /* Paleta: cinza petróleo + verde teal técnico */
+  --bg0: #0a0e14;
+  --bg1: #0f1520;
+  --bg2: #141c28;
+  --bg3: #1a2535;
+  --line: #1e2e42;
+  --line2: #263648;
+
+  --teal:  #2ec4b6;
+  --teal2: #1a9e92;
+  --teal-d: rgba(46,196,182,.08);
+  --green: #3ddc84;
+  --green-d: rgba(61,220,132,.08);
+  --amber: #f4a261;
+  --amber-d: rgba(244,162,97,.08);
+  --red:   #e63946;
+  --red-d: rgba(230,57,70,.08);
+  --violet:#7b6cf6;
+
+  --text0: #d4e3f0;
+  --text1: #7a9ab8;
+  --text2: #3a5470;
+
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--bg0);color:var(--text0);font-family:var(--sans);font-size:15px;overflow:hidden;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.035) 3px,rgba(0,0,0,.035) 4px);}
 
-/* TOPBAR */
-#topbar{height:52px;background:var(--bg1);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;flex-shrink:0;}
-.tb-brand{padding-right:18px;border-right:1px solid var(--line);}
-.tb-brand .title{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:3px;color:var(--cyan);}
-.tb-brand .sub{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text2);margin-top:2px;}
-.tb-stats{display:flex;flex:1;}
-.tb-stat{padding:0 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;height:52px;}
-.tb-stat .k{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);}
-.tb-stat .v{font-family:var(--mono);font-size:13px;margin-top:2px;color:var(--text1);transition:color .3s;}
-.v.c{color:var(--cyan)}.v.g{color:var(--green)}.v.a{color:var(--amber)}.v.r{color:var(--red)}
-.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
-.conn-badge{display:flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--line2);border-radius:2px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text2);transition:all .3s;}
-.conn-badge.on{border-color:rgba(77,187,122,.35);color:var(--green);background:var(--green-d);}
-.conn-dot{width:6px;height:6px;border-radius:50%;background:var(--text2);transition:background .3s;}
-.conn-badge.on .conn-dot{background:var(--green);box-shadow:0 0 5px var(--green);animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-#clock{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:2px;padding-left:12px;border-left:1px solid var(--line);}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  height: 100%;
+  background: var(--bg0);
+  color: var(--text0);
+  font-family: var(--sans);
+  font-size: 14px;
+  overflow: hidden;        /* desktop: layout fixo */
+  -webkit-font-smoothing: antialiased;
+}
+/* tela muito pequena: permite rolar */
+@media (max-height: 600px) {
+  html, body { overflow-y: auto; height: auto; }
+  #app { height: auto; min-height: 400px; }
+}
 
-/* LAYOUT */
-#app{height:calc(100vh - 52px);display:grid;grid-template-columns:290px 1fr 260px;gap:1px;background:var(--line);}
-.panel{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;}
-.sec{padding:14px 16px;border-bottom:1px solid var(--line);flex-shrink:0;}
-.sec.grow{flex:1;overflow:hidden;display:flex;flex-direction:column;}
-.stitle{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text2);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-.stitle::before{content:'';display:block;width:2px;height:9px;background:var(--cyan);border-radius:1px;}
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+#topbar {
+  height: 54px;
+  background: var(--bg1);
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-shrink: 0;
+  gap: 0;
+}
+.tb-brand { padding-right: 20px; border-right: 1px solid var(--line); margin-right: 0; }
+.tb-brand .title {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: var(--teal);
+}
+.tb-brand .sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .08em;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.tb-stats { display: flex; flex: 1; overflow: hidden; }
+.tb-stat {
+  padding: 0 16px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 54px;
+  flex-shrink: 0;
+}
+.tb-stat .k {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  color: var(--text2);
+  text-transform: uppercase;
+}
+.tb-stat .v {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 2px;
+  color: var(--text1);
+  transition: color .3s;
+}
+.v-teal  { color: var(--teal)  !important; }
+.v-green { color: var(--green) !important; }
+.v-amber { color: var(--amber) !important; }
+.v-red   { color: var(--red)   !important; }
 
-/* RANGE */
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--line2);border-radius:1px;outline:none;cursor:pointer;}
-input[type=range].rc{background:linear-gradient(90deg,var(--cyan) var(--f,0%),var(--line2) var(--f,0%));}
-input[type=range].ra{background:linear-gradient(90deg,var(--amber) var(--f,0%),var(--line2) var(--f,0%));}
-input[type=range].rg{background:linear-gradient(90deg,var(--green) var(--f,0%),var(--line2) var(--f,0%));}
-input[type=range].rg::-webkit-slider-thumb{border-color:var(--green);box-shadow:0 0 7px rgba(77,187,122,.35);}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--bg1);border:2px solid var(--cyan);box-shadow:0 0 7px rgba(78,201,232,.35);cursor:pointer;transition:transform .15s;}
-input[type=range].ra::-webkit-slider-thumb{border-color:var(--amber);box-shadow:0 0 7px rgba(232,184,78,.35);}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
-.range-marks{display:flex;justify-content:space-between;margin-top:4px;}
-.range-marks span{font-family:var(--mono);font-size:10px;color:var(--text2);}
+.tb-right { margin-left: auto; display: flex; align-items: center; gap: 14px; padding-left: 16px; }
+.conn-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid var(--line2);
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--text2);
+  transition: all .3s;
+}
+.conn-badge.on { border-color: rgba(61,220,132,.4); color: var(--green); background: var(--green-d); }
+.conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text2); transition: background .3s; }
+.conn-badge.on .conn-dot { background: var(--green); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+#clock { font-family: var(--mono); font-size: 13px; color: var(--text2); letter-spacing: .06em; }
 
-/* POTÊNCIA */
-.pot-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
-.pot-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);}
-.pot-display{text-align:right;}
-.pot-pct{font-family:var(--mono);font-size:24px;font-weight:600;color:var(--amber);}
-.pot-pct-u{font-family:var(--mono);font-size:12px;color:var(--text2);}
-.pot-pwm-tag{font-family:var(--mono);font-size:10px;color:var(--text2);display:block;margin-top:1px;}
+/* ── NAV TABS ────────────────────────────────────────────────── */
+.tab-bar {
+  height: 44px;
+  display: flex;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px;
+  gap: 4px;
+  flex-shrink: 0;
+  align-items: flex-end;
+}
+.tab {
+  padding: 8px 22px 9px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  color: var(--text2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  text-transform: uppercase;
+}
+.tab:hover { color: var(--text1); }
+.tab.active { color: var(--teal); border-bottom-color: var(--teal); }
 
-/* ticks */
-.pot-ticks{position:relative;height:20px;margin-top:4px;}
-.ptick{position:absolute;transform:translateX(-50%);text-align:center;}
-.ptick .tbar{width:1px;height:5px;background:var(--line2);margin:0 auto 2px;}
-.ptick .tlbl{font-family:var(--mono);font-size:8px;color:var(--text2);white-space:nowrap;line-height:1.2;}
-.ptick.nom .tbar{background:rgba(232,184,78,.5);}
-.ptick.nom .tlbl{color:rgba(232,184,78,.7);}
+.tab-pane { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.tab-pane.active { display: flex; }
 
-/* NOTA VÁLVULA */
-.valve-note{margin-top:12px;padding:9px 11px;background:var(--bg2);border:1px solid var(--line2);border-left:2px solid var(--amber);border-radius:2px;}
-.valve-note .vn-hd{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--amber);margin-bottom:5px;}
-.vn-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;padding:1.5px 0;}
-.vna{color:var(--text1)}.vne{color:var(--text1);}
+/* ── LAYOUT DESKTOP ─────────────────────────────────────────── */
+#app {
+  height: calc(100vh - 98px); /* topbar 54 + tabbar 44 */
+  display: grid;
+  grid-template-columns: 300px 1fr 240px;
+  gap: 1px;
+  background: var(--line);
+}
+.panel { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; }
+/* painel esquerdo: scroll quando altura insuficiente */
+#app > .panel:first-child { overflow-y: auto; }
+.sec { padding: 14px 16px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.sec.grow { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 120px; }
+.stitle {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: var(--text2);
+  text-transform: uppercase;
+  margin-bottom: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stitle::before {
+  content: '';
+  display: block;
+  width: 2px; height: 10px;
+  background: var(--teal);
+  border-radius: 1px;
+  flex-shrink: 0;
+}
 
-/* INFO GRID */
-.ig{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:2px;overflow:hidden;margin-top:12px;}
-.ic{background:var(--bg2);padding:7px 9px;}
-.ic .k{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text2);}
-.ic .v{font-family:var(--mono);font-size:12px;color:var(--text0);margin-top:2px;}
-.ic .v.c{color:var(--cyan);}
+/* ── SLIDERS ─────────────────────────────────────────────────── */
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 2px;
+  background: var(--line2);
+  border-radius: 1px; outline: none; cursor: pointer;
+}
+input[type=range].rc { background: linear-gradient(90deg, var(--teal)  var(--f,0%), var(--line2) var(--f,0%)); }
+input[type=range].ra { background: linear-gradient(90deg, var(--amber) var(--f,0%), var(--line2) var(--f,0%)); }
+input[type=range].rg { background: linear-gradient(90deg, var(--green) var(--f,0%), var(--line2) var(--f,0%)); }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--bg1);
+  border: 2px solid var(--teal);
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type=range].ra::-webkit-slider-thumb { border-color: var(--amber); }
+input[type=range].rg::-webkit-slider-thumb { border-color: var(--green); }
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.range-marks { display: flex; justify-content: space-between; margin-top: 4px; }
+.range-marks span { font-family: var(--mono); font-size: 9px; color: var(--text2); }
 
-/* BOTÕES */
-.btn-go{width:100%;padding:13px;background:transparent;border:1px solid var(--green);border-radius:2px;color:var(--green);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:4px;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;}
-.btn-go::before{content:'';position:absolute;inset:0;background:var(--green-d);transform:scaleX(0);transform-origin:left;transition:transform .25s;}
-.btn-go:hover::before{transform:scaleX(1);}
-.btn-go:hover{box-shadow:0 0 18px rgba(77,187,122,.12);}
-.btn-go:active{transform:scale(.99);}
-.btn-go:disabled{border-color:var(--line2);color:var(--text2);box-shadow:none;cursor:not-allowed;}
-.btn-go:disabled::before{display:none;}
-.btn-go span{position:relative;z-index:1;}
-.btn-abort{width:100%;padding:9px;margin-top:5px;background:transparent;border:1px solid rgba(224,92,78,.25);border-radius:2px;color:rgba(224,92,78,.4);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:3px;cursor:pointer;transition:all .2s;}
-.btn-abort:hover{border-color:var(--red);color:var(--red);background:var(--red-d);}
+/* param block */
+.param-block { margin-bottom: 15px; }
+.param-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 7px;
+}
+.param-head .nm { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; color: var(--text2); }
+.param-num { font-family: var(--mono); font-size: 32px; font-weight: 600; letter-spacing: -.02em; color: var(--teal); }
+.param-num.o { color: var(--amber); }
+.param-num.g { color: var(--green); }
+.param-unit { font-family: var(--mono); font-size: 13px; color: var(--text2); margin-left: 3px; }
 
-/* FASE */
-.fbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:2px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:2px;border:1px solid;transition:all .3s;margin-top:8px;}
-.fdot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-.f-idle{color:var(--text2);border-color:var(--line2);}
-.f-cal{color:var(--amber);border-color:rgba(232,184,78,.35);background:var(--amber-d);}
-.f-sub{color:var(--green);border-color:rgba(77,187,122,.35);background:var(--green-d);}
-.f-desc{color:var(--cyan);border-color:rgba(78,201,232,.35);background:var(--cyan-d);}
-.f-ok{color:var(--green);border-color:rgba(77,187,122,.35);background:var(--green-d);}
-.f-err{color:var(--red);border-color:rgba(224,92,78,.35);background:var(--red-d);}
-.f-sub .fdot,.f-cal .fdot{animation:blink 1s infinite;}
+/* PWM ticks */
+.pwm-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
+.pwm-label { font-family: var(--mono); font-size: 9px; color: var(--text2); }
+.pwm-val { font-family: var(--mono); font-size: 11px; color: var(--amber); }
 
-/* RESULTADO */
-.result-area{flex:1;overflow-y:auto;min-height:0;padding-right:2px;}
-.r-sec{margin-bottom:10px;}
-.r-sec-title{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;color:var(--text2);margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--line);}
-.r-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid rgba(26,37,53,.5);font-family:var(--mono);font-size:11px;}
-.r-row:last-child{border:none;}
-.rk{color:var(--text2)}.rv{color:var(--text0);}
-.rv.g{color:var(--green)}.rv.c{color:var(--cyan)}.rv.a{color:var(--amber)}.rv.r{color:var(--red)}
+/* info grid */
+.ig {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 3px; overflow: hidden;
+  margin-top: 12px;
+}
+.ic { background: var(--bg2); padding: 7px 9px; }
+.ic .k { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; color: var(--text2); text-transform: uppercase; }
+.ic .v { font-family: var(--mono); font-size: 11px; color: var(--text0); margin-top: 3px; }
+.ic .v.c { color: var(--teal); }
 
-/* DESTAQUE RESULTADO */
-.apogeu-destaque{text-align:center;padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:12px;}
-.apogeu-num{font-family:var(--mono);font-size:54px;font-weight:600;line-height:1;letter-spacing:-2px;}
-.apogeu-num.g{color:var(--green);text-shadow:0 0 28px rgba(77,187,122,.35);}
-.apogeu-num.a{color:var(--amber);text-shadow:0 0 28px rgba(232,184,78,.35);}
-.apogeu-num.r{color:var(--red);text-shadow:0 0 28px rgba(224,92,78,.35);}
-.apogeu-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);margin-top:4px;}
-.erro-badge{display:inline-block;margin-top:7px;padding:3px 12px;border-radius:2px;font-family:var(--mono);font-size:13px;font-weight:600;border:1px solid;}
-.erro-badge.g{color:var(--green);border-color:rgba(77,187,122,.4);background:rgba(77,187,122,.06);}
-.erro-badge.a{color:var(--amber);border-color:rgba(232,184,78,.4);background:rgba(232,184,78,.06);}
-.erro-badge.r{color:var(--red);border-color:rgba(224,92,78,.4);background:rgba(224,92,78,.06);}
+/* valve note */
+.valve-note {
+  margin-top: 11px; padding: 8px 10px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-left: 2px solid var(--amber);
+  border-radius: 2px;
+}
+.valve-note .vn-hd { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; color: var(--amber); margin-bottom: 5px; }
+.vn-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; padding: 2px 0; }
+.vna { color: var(--text1); } .vne { color: var(--text1); }
 
-/* BOTÕES PÓS-VOO */
-.btn-csv{width:100%;padding:9px;margin-top:8px;background:transparent;border:1px solid rgba(78,201,232,.3);border-radius:2px;color:var(--cyan);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:3px;cursor:pointer;transition:all .2s;display:none;}
-.btn-csv:hover{background:var(--cyan-d);border-color:var(--cyan);}
-.btn-salvar{width:100%;padding:10px;margin-top:6px;background:rgba(77,187,122,.06);border:1px solid rgba(77,187,122,.4);border-radius:2px;color:var(--green);font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:3px;cursor:pointer;transition:all .2s;display:none;}
-.btn-salvar:hover{background:rgba(77,187,122,.12);box-shadow:0 0 14px rgba(77,187,122,.15);}
-.btn-salvar:disabled{opacity:.5;cursor:not-allowed;}
-.salvo-badge{display:none;text-align:center;margin-top:6px;padding:7px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--green);border:1px solid rgba(77,187,122,.3);border-radius:2px;}
+/* ── BOTÕES ──────────────────────────────────────────────────── */
+.btn-go {
+  width: 100%; padding: 13px;
+  background: transparent;
+  border: 1px solid var(--green);
+  border-radius: 3px;
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .12em;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: all .2s;
+}
+.btn-go::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--green-d);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .25s;
+}
+.btn-go:hover::before { transform: scaleX(1); }
+.btn-go:active { transform: scale(.99); }
+.btn-go:disabled { border-color: var(--line2); color: var(--text2); cursor: not-allowed; }
+.btn-go:disabled::before { display: none; }
+.btn-go span { position: relative; z-index: 1; }
 
-/* CENTRO */
-.center-top{padding:18px 20px 14px;border-bottom:1px solid var(--line);flex-shrink:0;}
-.altimeter-row{display:flex;align-items:center;gap:22px;}
-.live-readings{flex:1;}
-.live-big{font-family:var(--mono);font-size:54px;font-weight:600;color:var(--cyan);line-height:1;letter-spacing:-1px;text-shadow:0 0 28px rgba(78,201,232,.18);}
-.live-big .lu{font-size:17px;color:var(--text2);margin-left:3px;}
-.live-sub{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
-.li .lik{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);}
-.li .liv{font-family:var(--mono);font-size:13px;color:var(--text1);margin-top:2px;transition:color .3s;}
-.alt-bar{margin-top:10px;}
-.alt-bar-track{width:100%;height:3px;background:var(--line2);border-radius:1px;overflow:hidden;}
-.alt-bar-fill{height:100%;background:var(--cyan);border-radius:1px;transition:width .4s ease;box-shadow:0 0 6px rgba(78,201,232,.4);}
-.alt-bar-labels{display:flex;justify-content:space-between;margin-top:3px;}
-.alt-bar-labels span{font-family:var(--mono);font-size:9px;color:var(--text2);}
+.btn-abort {
+  width: 100%; padding: 8px; margin-top: 6px;
+  background: transparent;
+  border: 1px solid rgba(230,57,70,.25);
+  border-radius: 3px;
+  color: rgba(230,57,70,.45);
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .1em;
+  cursor: pointer; transition: all .2s;
+}
+.btn-abort:hover { border-color: var(--red); color: var(--red); background: var(--red-d); }
 
-/* GRÁFICO */
-.chart-sec{flex:1;padding:12px 16px 10px;display:flex;flex-direction:column;min-height:0;}
-.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.chart-title{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text2);}
-.chart-legend{display:flex;gap:12px;}
-.cl{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;color:var(--text2);}
-.cl-line{width:14px;height:0;border-top:2px solid;}
-#svg-chart{flex:1;display:block;width:100%;}
+/* fase badge */
+.fbadge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .1em;
+  border: 1px solid; transition: all .3s;
+  margin-top: 9px; text-transform: uppercase;
+}
+.fdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.f-idle  { color: var(--text2); border-color: var(--line2); }
+.f-cal   { color: var(--amber); border-color: rgba(244,162,97,.35); background: var(--amber-d); }
+.f-sub   { color: var(--green); border-color: rgba(61,220,132,.35); background: var(--green-d); }
+.f-desc  { color: var(--teal);  border-color: rgba(46,196,182,.35); background: var(--teal-d); }
+.f-ok    { color: var(--green); border-color: rgba(61,220,132,.35); background: var(--green-d); }
+.f-err   { color: var(--red);   border-color: rgba(230,57,70,.35);  background: var(--red-d); }
+.f-sub .fdot, .f-cal .fdot { animation: blink 1s infinite; }
 
-/* GAUGES */
-.gauge-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.gcard{background:var(--bg2);border:1px solid var(--line);border-radius:2px;padding:9px 9px 8px;}
-.gcard .gk{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);}
-.gcard .gv{font-family:var(--mono);font-size:18px;font-weight:600;margin:4px 0 4px;transition:color .3s;}
-.gcard .gb{height:2px;background:var(--line2);border-radius:1px;overflow:hidden;}
-.gcard .gf{height:100%;border-radius:1px;transition:width .5s ease;}
+/* ── RESULTADO ───────────────────────────────────────────────── */
+.result-area { flex: 1; overflow-y: auto; min-height: 0; padding-right: 2px; }
 
-/* LOG */
-.log-scroll{flex:1;overflow-y:auto;min-height:0;}
-#log-body{font-family:var(--mono);font-size:11px;line-height:1.9;}
-.ll{padding:0 2px;}
-.ll.ok{color:var(--green)}.ll.warn{color:var(--amber)}.ll.err{color:var(--red)}.ll.info{color:var(--cyan)}.ll.data{color:var(--text2)}
+.apogeu-destaque {
+  text-align: center; padding: 14px 0 12px;
+  border-bottom: 1px solid var(--line); margin-bottom: 12px;
+}
+.apogeu-num {
+  font-family: var(--mono); font-size: 52px; font-weight: 600;
+  line-height: 1; letter-spacing: -.02em;
+}
+.apogeu-num.g { color: var(--green); }
+.apogeu-num.a { color: var(--amber); }
+.apogeu-num.r { color: var(--red); }
+.apogeu-label { font-family: var(--mono); font-size: 9px; letter-spacing: .12em; color: var(--text2); margin-top: 4px; }
+.erro-badge {
+  display: inline-block; margin-top: 7px; padding: 3px 12px;
+  border-radius: 2px; font-family: var(--mono);
+  font-size: 12px; font-weight: 600; border: 1px solid;
+}
+.erro-badge.g { color: var(--green); border-color: rgba(61,220,132,.4); background: var(--green-d); }
+.erro-badge.a { color: var(--amber); border-color: rgba(244,162,97,.4); background: var(--amber-d); }
+.erro-badge.r { color: var(--red);   border-color: rgba(230,57,70,.4);  background: var(--red-d); }
 
-/* ABAS */
-.tab-bar{display:flex;gap:1px;background:var(--line);flex-shrink:0;}
-.tab{flex:1;padding:11px 0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text2);cursor:pointer;background:var(--bg1);border-bottom:2px solid transparent;transition:all .2s;}
-.tab:hover{color:var(--text1);}
-.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:var(--bg2);}
-.tab-pane{display:none;flex:1;flex-direction:column;overflow:hidden;}
-.tab-pane.active{display:flex;}
+.r-sec { margin-bottom: 10px; }
+.r-sec-title {
+  font-family: var(--mono); font-size: 8px; letter-spacing: .12em;
+  color: var(--text2); margin-bottom: 5px;
+  padding-bottom: 4px; border-bottom: 1px solid var(--line);
+}
+.r-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0; border-bottom: 1px solid rgba(30,46,66,.5);
+  font-family: var(--mono); font-size: 11px;
+}
+.r-row:last-child { border: none; }
+.rk { color: var(--text2); } .rv { color: var(--text0); }
+.rv.g { color: var(--green); } .rv.c { color: var(--teal); }
+.rv.a { color: var(--amber); } .rv.r { color: var(--red); }
 
-/* HISTÓRICO */
-.hist-layout{display:grid;grid-template-columns:280px 1fr;flex:1;min-height:0;gap:1px;background:var(--line);}
-.hist-list{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;}
-.hist-scroll{flex:1;overflow-y:auto;min-height:0;}
-.hist-item{padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;}
-.hist-item:hover{background:var(--bg2);}
-.hist-item.sel{background:var(--bg2);border-left:2px solid var(--cyan);}
-.hist-item .hi-date{font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:4px;}
-.hist-item .hi-alt{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--cyan);}
-.hist-item .hi-alt span{font-size:11px;color:var(--text2);}
-.hist-item .hi-meta{font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:3px;}
-.hist-detail{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;padding:16px 20px;}
-.hist-empty{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--text2);}
-.hist-detail-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-shrink:0;}
-.hist-big{font-family:var(--mono);font-size:54px;font-weight:600;letter-spacing:-2px;}
-.hist-big.g{color:var(--green);text-shadow:0 0 28px rgba(77,187,122,.3);}
-.hist-big.a{color:var(--amber);text-shadow:0 0 28px rgba(232,184,78,.3);}
-.hist-big.r{color:var(--red);}
-.hist-big-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);margin-top:3px;}
-.hist-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;flex-shrink:0;}
-.hstat-c{background:var(--bg2);border:1px solid var(--line);border-radius:2px;padding:8px 10px;}
-.hstat-c .k{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text2);}
-.hstat-c .v{font-family:var(--mono);font-size:14px;color:var(--text0);margin-top:3px;}
-.hstat-c .v.c{color:var(--cyan);}
-.hist-chart{flex:1;min-height:0;display:flex;flex-direction:column;}
-.hist-chart-title{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text2);margin-bottom:6px;flex-shrink:0;}
-#hist-svg{flex:1;display:block;width:100%;}
-.hist-loading{font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:20px;}
-.btn-reload{padding:8px 14px;background:transparent;border:1px solid var(--line2);border-radius:2px;color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-left:auto;}
-.btn-reload:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-csv, .btn-salvar {
+  width: 100%; padding: 8px; margin-top: 6px;
+  background: transparent; border-radius: 2px;
+  font-family: var(--mono); font-size: 10px;
+  font-weight: 600; letter-spacing: .1em;
+  cursor: pointer; transition: all .2s; display: none;
+}
+.btn-csv    { border: 1px solid rgba(46,196,182,.3); color: var(--teal); }
+.btn-csv:hover    { background: var(--teal-d); border-color: var(--teal); }
+.btn-salvar { border: 1px solid rgba(61,220,132,.3); color: var(--green); }
+.btn-salvar:hover { background: var(--green-d); border-color: var(--green); }
+.btn-salvar:disabled { opacity: .5; cursor: not-allowed; }
+.salvo-badge {
+  display: none; text-align: center; margin-top: 6px; padding: 7px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+  color: var(--green); border: 1px solid rgba(61,220,132,.3); border-radius: 2px;
+}
 
-/* TOAST */
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:9px 20px;border-radius:2px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none;}
-#toast.show{opacity:1;}
-#toast.ok{background:rgba(77,187,122,.15);border:1px solid rgba(77,187,122,.5);color:var(--green);}
-#toast.er{background:rgba(224,92,78,.15);border:1px solid rgba(224,92,78,.5);color:var(--red);}
+/* ── CENTRO — LIVE ───────────────────────────────────────────── */
+.center-top { padding: 16px 20px 13px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.altimeter-row { display: flex; align-items: center; gap: 22px; }
+.live-readings { flex: 1; }
+.live-big {
+  font-family: var(--mono); font-size: 56px; font-weight: 600;
+  color: var(--teal); line-height: 1; letter-spacing: -.02em;
+}
+.live-big .lu { font-size: 18px; color: var(--text2); margin-left: 3px; }
+.live-sub {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 8px; margin-top: 10px;
+}
+.li .lik { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); }
+.li .liv { font-family: var(--mono); font-size: 13px; color: var(--text1); margin-top: 2px; transition: color .3s; }
+.alt-bar { margin-top: 10px; }
+.alt-bar-track { width: 100%; height: 3px; background: var(--line2); border-radius: 1px; overflow: hidden; }
+.alt-bar-fill {
+  height: 100%; background: var(--teal);
+  border-radius: 1px; transition: width .4s ease;
+}
+.alt-bar-labels { display: flex; justify-content: space-between; margin-top: 3px; }
+.alt-bar-labels span { font-family: var(--mono); font-size: 9px; color: var(--text2); }
 
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px;}
+/* ── MULTI-CHART ─────────────────────────────────────────────── */
+.charts-area {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  padding: 10px 16px 8px;
+  gap: 6px;
+  overflow: hidden;
+}
+.chart-block {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 8px 10px 6px;
+}
+.chart-block-hdr {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 4px; flex-shrink: 0;
+}
+.chart-block-title {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: .1em; color: var(--text2); text-transform: uppercase;
+}
+.chart-block-unit {
+  font-family: var(--mono); font-size: 9px;
+  color: var(--text2);
+}
+.chart-svg { flex: 1; display: block; width: 100%; min-height: 0; }
+
+/* eixos dos gráficos */
+.chart-axes { position: relative; flex: 1; min-height: 0; display: flex; }
+.axis-y {
+  width: 34px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 2px 4px 2px 0;
+}
+.axis-y span {
+  font-family: var(--mono); font-size: 8px;
+  color: var(--text2); text-align: right; line-height: 1;
+}
+.axis-x-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.axis-x {
+  display: flex; justify-content: space-between;
+  padding: 2px 2px 0;
+  flex-shrink: 0;
+}
+.axis-x span { font-family: var(--mono); font-size: 8px; color: var(--text2); }
+
+/* ── GAUGES ──────────────────────────────────────────────────── */
+.gauge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.gcard { background: var(--bg2); border: 1px solid var(--line); border-radius: 3px; padding: 9px 9px 8px; }
+.gcard .gk { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); }
+.gcard .gv { font-family: var(--mono); font-size: 18px; font-weight: 600; margin: 4px 0; transition: color .3s; }
+.gcard .gb { height: 2px; background: var(--line2); border-radius: 1px; overflow: hidden; }
+.gcard .gf { height: 100%; border-radius: 1px; transition: width .5s ease; }
+
+/* ── LOG ─────────────────────────────────────────────────────── */
+.log-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+#log-body { font-family: var(--mono); font-size: 10.5px; line-height: 1.85; }
+.ll { padding: 0 2px; }
+.ll.ok   { color: var(--green); }
+.ll.warn { color: var(--amber); }
+.ll.err  { color: var(--red);   }
+.ll.info { color: var(--teal);  }
+.ll.data { color: var(--text2); }
+
+/* ── HISTÓRICO ───────────────────────────────────────────────── */
+.hist-layout {
+  display: grid; grid-template-columns: 280px 1fr;
+  flex: 1; min-height: 0; gap: 1px; background: var(--line);
+}
+.hist-list { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; }
+.hist-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+.hist-item {
+  padding: 11px 14px; border-bottom: 1px solid var(--line);
+  cursor: pointer; transition: background .15s;
+}
+.hist-item:hover { background: var(--bg2); }
+.hist-item.sel { background: var(--bg2); border-left: 2px solid var(--teal); }
+.hist-item .hi-date { font-family: var(--mono); font-size: 10px; color: var(--text2); margin-bottom: 4px; }
+.hist-item .hi-alt { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--teal); }
+.hist-item .hi-alt span { font-size: 11px; color: var(--text2); }
+.hist-item .hi-meta { font-family: var(--mono); font-size: 9px; color: var(--text2); margin-top: 3px; }
+.hist-detail { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; padding: 16px 20px; }
+.hist-empty { flex: 1; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.hist-detail-hdr { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-shrink: 0; }
+.hist-big { font-family: var(--mono); font-size: 52px; font-weight: 600; letter-spacing: -.02em; color: var(--teal); }
+.hist-big-lbl { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); margin-top: 3px; }
+.hist-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; flex-shrink: 0; }
+.hstat-c { background: var(--bg2); border: 1px solid var(--line); border-radius: 2px; padding: 8px 10px; }
+.hstat-c .k { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); }
+.hstat-c .v { font-family: var(--mono); font-size: 14px; color: var(--text0); margin-top: 3px; }
+.hstat-c .v.c { color: var(--teal); }
+.hist-chart { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.hist-chart-title { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); margin-bottom: 6px; flex-shrink: 0; }
+#hist-svg { flex: 1; display: block; width: 100%; }
+.hist-loading { font-family: var(--mono); font-size: 11px; color: var(--text2); text-align: center; padding: 20px; }
+.btn-reload {
+  padding: 6px 12px; background: transparent;
+  border: 1px solid var(--line2); border-radius: 2px;
+  color: var(--text2); font-family: var(--mono); font-size: 10px;
+  letter-spacing: .08em; cursor: pointer; transition: all .2s;
+}
+.btn-reload:hover { border-color: var(--teal); color: var(--teal); }
+
+/* ── TOAST ───────────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 20px; border-radius: 3px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+  z-index: 1000; opacity: 0; transition: opacity .3s; pointer-events: none;
+}
+#toast.show { opacity: 1; }
+#toast.ok  { background: var(--green-d); border: 1px solid rgba(61,220,132,.5); color: var(--green); }
+#toast.er  { background: var(--red-d);   border: 1px solid rgba(230,57,70,.5);  color: var(--red); }
+
+/* ── SCROLLBAR ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
+
+/* ── MOBILE ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  html, body { overflow-y: auto; overflow-x: hidden; }
+
+  #topbar {
+    height: auto; flex-wrap: wrap;
+    padding: 10px 14px; gap: 8px;
+  }
+  .tb-stats { display: grid; grid-template-columns: repeat(3,1fr); flex: none; width: 100%; gap: 0; }
+  .tb-stat { height: 38px; padding: 0 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .tb-right { width: 100%; justify-content: flex-end; padding: 4px 0 0; }
+
+  .tab-bar { height: 40px; padding: 0 14px; }
+  .tab { padding: 7px 14px 8px; font-size: 11px; }
+
+  #app {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .panel { min-height: 0; }
+
+  /* painel esquerdo em mobile: scroll interno */
+  .panel:first-child { overflow-y: auto; max-height: 70vh; }
+
+  /* resultado cresce em mobile */
+  .sec.grow { max-height: 60vh; }
+
+  .live-sub { grid-template-columns: repeat(2,1fr); }
+  .gauge-grid { grid-template-columns: repeat(4,1fr); }
+
+  .hist-layout { grid-template-columns: 1fr; grid-template-rows: 200px 1fr; }
+  .hist-list { max-height: 200px; }
+  .hist-stats { grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 500px) {
+  .tb-stats { grid-template-columns: repeat(2,1fr); }
+  .gauge-grid { grid-template-columns: repeat(2,1fr); }
+  .live-sub { grid-template-columns: repeat(2,1fr); }
+  .tab { padding: 7px 10px 8px; font-size: 10px; letter-spacing: .04em; }
+}
 </style>
 </head>
 <body>
 
+<!-- ── TOPBAR ── -->
 <div id="topbar">
   <div class="tb-brand">
     <div class="title">BANCO DE TESTE · ALTÍMETROS</div>
     <div class="sub">UFPB · ENGENHARIA ELÉTRICA · TCC 2026</div>
   </div>
   <div class="tb-stats">
-    <div class="tb-stat"><span class="k">ALTITUDE</span><span class="v c" id="h-alt">0.0 m</span></div>
+    <div class="tb-stat"><span class="k">ALTITUDE</span><span class="v v-teal" id="h-alt">0.0 m</span></div>
     <div class="tb-stat"><span class="k">PRESSÃO</span><span class="v" id="h-pres">— hPa</span></div>
     <div class="tb-stat"><span class="k">P. REF.</span><span class="v" id="h-pref">— hPa</span></div>
-    <div class="tb-stat"><span class="k">APOGEU MÁX.</span><span class="v a" id="h-amax">0 m</span></div>
+    <div class="tb-stat"><span class="k">APOGEU MÁX.</span><span class="v v-amber" id="h-amax">0 m</span></div>
     <div class="tb-stat"><span class="k">TEMPO</span><span class="v" id="h-t">0.0 s</span></div>
     <div class="tb-stat"><span class="k">HARDWARE</span><span class="v" id="h-hw">—</span></div>
   </div>
@@ -249,76 +587,57 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
   </div>
 </div>
 
+<!-- ── NAV ── -->
 <div class="tab-bar">
-  <div class="tab active" id="tab-ensaio" onclick="setTab('ensaio')">ENSAIO</div>
-  <div class="tab" id="tab-historico" onclick="setTab('historico')">HISTÓRICO</div>
+  <div class="tab active" id="tab-ensaio"    onclick="setTab('ensaio')">Ensaio</div>
+  <div class="tab"        id="tab-historico" onclick="setTab('historico')">Histórico</div>
 </div>
 
+<!-- ── PANE ENSAIO ── -->
 <div class="tab-pane active" id="pane-ensaio">
 <div id="app">
 
   <!-- ESQUERDA -->
   <div class="panel">
     <div class="sec">
-      <div class="stitle">PARÂMETROS DO ENSAIO</div>
+      <div class="stitle">Parâmetros do Ensaio</div>
 
-      <!-- Apogeu -->
-      <div style="margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-          <span style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);">APOGEU ALVO</span>
-          <span>
-            <span style="font-family:var(--mono);font-size:38px;font-weight:600;color:var(--cyan);letter-spacing:-1px;text-shadow:0 0 20px rgba(78,201,232,.18);" id="r-ap">700</span>
-            <span style="font-family:var(--mono);font-size:14px;color:var(--text2);margin-left:3px;">m</span>
-          </span>
+      <div class="param-block">
+        <div class="param-head">
+          <span class="nm">APOGEU ALVO</span>
+          <span><span class="param-num" id="r-ap">700</span><span class="param-unit">m</span></span>
         </div>
         <input type="range" id="sl-ap" class="rc" min="100" max="2000" step="50" value="700"
                oninput="setApogeu(+this.value)">
         <div class="range-marks"><span>100 m</span><span>1000 m</span><span>2000 m</span></div>
       </div>
 
-      <!-- Tempo de subida -->
-      <div style="margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
-          <span style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);">TEMPO DE SUBIDA</span>
-          <span>
-            <span style="font-family:var(--mono);font-size:38px;font-weight:600;color:var(--green);letter-spacing:-1px;text-shadow:0 0 20px rgba(77,187,122,.18);" id="r-ts">20</span>
-            <span style="font-family:var(--mono);font-size:14px;color:var(--text2);margin-left:3px;">s</span>
-          </span>
+      <div class="param-block">
+        <div class="param-head">
+          <span class="nm">TEMPO DE SUBIDA</span>
+          <span><span class="param-num g" id="r-ts">20</span><span class="param-unit">s</span></span>
         </div>
         <input type="range" id="sl-ts" class="rg" min="5" max="60" step="1" value="20"
                oninput="setTSubida(+this.value)">
         <div class="range-marks"><span>5 s</span><span>30 s</span><span>60 s</span></div>
       </div>
 
-      <!-- Potência -->
-      <div>
-        <div class="pot-header">
-          <span class="pot-label">POTÊNCIA DA BOMBA</span>
-          <div class="pot-display">
-            <span class="pot-pct" id="r-pot">50</span><span class="pot-pct-u">%</span>
-            <span class="pot-pwm-tag" id="r-pwm">PWM 200 · NOMINAL</span>
-          </div>
+      <div class="param-block" style="margin-bottom:0">
+        <div class="param-head">
+          <span class="nm">POTÊNCIA DA BOMBA</span>
+          <span><span class="param-num o" id="r-pot">50</span><span class="param-unit">%</span></span>
         </div>
         <input type="range" id="sl-pot" class="ra" min="0" max="100" step="5" value="50"
                oninput="setPotencia(+this.value)">
-        <div class="pot-ticks">
-          <div class="ptick" style="left:0%">
-            <div class="tbar"></div>
-            <div class="tlbl">MÍNIMO<br>PWM 160</div>
-          </div>
-          <div class="ptick nom" style="left:50%">
-            <div class="tbar"></div>
-            <div class="tlbl">NOMINAL<br>PWM 200</div>
-          </div>
-          <div class="ptick" style="left:100%">
-            <div class="tbar"></div>
-            <div class="tlbl">MÁXIMO<br>PWM 255</div>
-          </div>
+        <div class="range-marks"><span>0%</span><span>50% nom.</span><span>100%</span></div>
+        <div class="pwm-row">
+          <span class="pwm-label">PWM</span>
+          <span class="pwm-val" id="r-pwm">200 · NOMINAL</span>
         </div>
       </div>
 
       <div class="valve-note">
-        <div class="vn-hd">AJUSTE DE VELOCIDADE — VÁLVULA FÍSICA</div>
+        <div class="vn-hd">VÁLVULA FÍSICA — AJUSTE DE VELOCIDADE</div>
         <div class="vn-row"><span class="vna">+ Aberta</span><span class="vne">subida mais rápida</span></div>
         <div class="vn-row"><span class="vna">− Fechada</span><span class="vne">subida mais lenta</span></div>
       </div>
@@ -332,21 +651,21 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
     </div>
 
     <div class="sec">
-      <div class="stitle">CONTROLE</div>
+      <div class="stitle">Controle</div>
       <button class="btn-go" id="btn-go" onclick="cmdIniciar()"><span>INICIAR ENSAIO</span></button>
       <button class="btn-abort" onclick="cmdParar()">ABORTAR</button>
       <div class="fbadge f-idle" id="fbadge"><div class="fdot"></div><span id="ftxt">AGUARDANDO</span></div>
     </div>
 
     <div class="sec grow">
-      <div class="stitle">RESULTADO DO ENSAIO</div>
+      <div class="stitle">Resultado do Ensaio</div>
       <div class="result-area">
         <div id="result-body">
           <div class="r-row"><span class="rk">Nenhum ensaio realizado.</span><span></span></div>
         </div>
-        <button class="btn-csv" id="btn-csv" onclick="exportCSV()">↓ EXPORTAR CSV</button>
+        <button class="btn-csv"    id="btn-csv"    onclick="exportCSV()">↓ EXPORTAR CSV</button>
         <button class="btn-salvar" id="btn-salvar" onclick="salvarNoBanco()">↑ SALVAR NO BANCO</button>
-        <div class="salvo-badge" id="salvo-badge">✓ SALVO NO BANCO</div>
+        <div class="salvo-badge"   id="salvo-badge">✓ SALVO NO BANCO</div>
       </div>
     </div>
   </div>
@@ -355,15 +674,16 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
   <div class="panel">
     <div class="center-top">
       <div class="altimeter-row">
-        <svg width="116" height="116" viewBox="0 0 116 116" style="flex-shrink:0">
+        <!-- Altímetro SVG analógico -->
+        <svg width="112" height="112" viewBox="0 0 116 116" style="flex-shrink:0">
           <defs>
-            <filter id="gc"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="ga"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="gc"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="ga"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           </defs>
-          <circle cx="58" cy="58" r="56" fill="#080b10" stroke="#1a2535" stroke-width="1.5"/>
-          <circle cx="58" cy="58" r="42" fill="none" stroke="#1a2535" stroke-width="8"
+          <circle cx="58" cy="58" r="56" fill="#0a0e14" stroke="#1e2e42" stroke-width="1.5"/>
+          <circle cx="58" cy="58" r="42" fill="none" stroke="#1e2e42" stroke-width="8"
                   stroke-dasharray="220 38" stroke-dashoffset="38" transform="rotate(135 58 58)"/>
-          <circle cx="58" cy="58" r="42" fill="none" stroke="var(--cyan)" stroke-width="3"
+          <circle cx="58" cy="58" r="42" fill="none" stroke="var(--teal)" stroke-width="3"
                   stroke-dasharray="0 258" stroke-dashoffset="38" transform="rotate(135 58 58)"
                   id="alt-arc" filter="url(#gc)" style="transition:stroke-dasharray .5s ease"/>
           <line id="alt-needle" x1="58" y1="58" x2="58" y2="20"
@@ -380,7 +700,7 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
             <div class="li"><div class="lik">PRESSÃO</div><div class="liv" id="live-pres">— hPa</div></div>
             <div class="li"><div class="lik">TEMPO</div><div class="liv" id="live-t">0.0 s</div></div>
             <div class="li"><div class="lik">VEL. INST.</div><div class="liv" id="live-vel">— m/s</div></div>
-            <div class="li"><div class="lik">APOGEU MÁX.</div><div class="liv a" id="live-amax">0 m</div></div>
+            <div class="li"><div class="lik">APOGEU MÁX.</div><div class="liv" style="color:var(--amber)" id="live-amax">0 m</div></div>
           </div>
           <div class="alt-bar">
             <div class="alt-bar-track"><div class="alt-bar-fill" id="alt-fill" style="width:0%"></div></div>
@@ -390,70 +710,148 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
       </div>
     </div>
 
-    <div class="chart-sec">
-      <div class="chart-hdr">
-        <span class="chart-title">ALTITUDE × TEMPO</span>
-        <div class="chart-legend">
-          <div class="cl"><div class="cl-line" style="border-color:var(--cyan)"></div><span>Altitude real</span></div>
-          <div class="cl"><div class="cl-line" style="border-color:var(--amber);border-top-style:dashed;opacity:.5"></div><span>Ref. foguete</span></div>
+    <!-- MULTI-CHART: Altitude, Velocidade, Pressão -->
+    <div class="charts-area">
+
+      <!-- Gráfico 1: Altitude -->
+      <div class="chart-block">
+        <div class="chart-block-hdr">
+          <span class="chart-block-title">Altitude</span>
+          <span class="chart-block-unit" style="color:var(--teal)">m</span>
+        </div>
+        <div class="chart-axes">
+          <div class="axis-y" id="ay-alt">
+            <span id="ay-alt-max">—</span>
+            <span id="ay-alt-mid">—</span>
+            <span>0</span>
+          </div>
+          <div class="axis-x-wrap">
+            <svg class="chart-svg" id="svg-alt" viewBox="0 0 700 80" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gr-alt" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(46,196,182,.25)"/>
+                  <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
+                </linearGradient>
+              </defs>
+              <!-- grade horizontal -->
+              <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+              <polyline id="ref-line" fill="none" stroke="var(--amber)" stroke-width="1"
+                        stroke-dasharray="4 3" opacity=".5" points=""/>
+              <polyline id="real-fill" fill="url(#gr-alt)" stroke="none" points=""/>
+              <polyline id="real-line" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
+              <!-- Foguete com orientação tangencial -->
+              <g id="ap-rocket" transform="translate(-40,-40)"
+                 style="filter:drop-shadow(0 0 4px rgba(244,162,97,.6))">
+                <path d="M0,-9 C3,-9 5,-6 5,-2 L5,4 L0,7 L-5,4 L-5,-2 C-5,-6 -3,-9 0,-9 Z" fill="#f4a261"/>
+                <path d="M0,-9 L2.5,-5 L-2.5,-5 Z" fill="white" opacity=".75"/>
+                <path d="M5,1 L8,6 L5,5 Z" fill="#f4a261" opacity=".7"/>
+                <path d="M-5,1 L-8,6 L-5,5 Z" fill="#f4a261" opacity=".7"/>
+                <g id="rk-flame">
+                  <path d="M-2,7 Q0,13 2,7 Q0.5,10 0,12 Q-0.5,10 -2,7 Z" fill="#e63946">
+                    <animate attributeName="opacity" values="1;.3;1" dur=".28s" repeatCount="indefinite"/>
+                  </path>
+                </g>
+              </g>
+            </svg>
+            <div class="axis-x" id="ax-alt">
+              <span>0s</span><span id="ax-alt-mid">—</span><span id="ax-alt-max">—</span>
+            </div>
+          </div>
         </div>
       </div>
-      <svg id="svg-chart" viewBox="0 0 740 130" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="gr" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(78,201,232,.26)"/>
-            <stop offset="100%" stop-color="rgba(78,201,232,0)"/>
-          </linearGradient>
-        </defs>
-        <polyline id="ref-line" fill="none" stroke="var(--amber)" stroke-width="1"
-                  stroke-dasharray="4 3" opacity=".45" points=""/>
-        <polyline id="real-fill" fill="url(#gr)" stroke="none" points=""/>
-        <polyline id="real-line" fill="none" stroke="var(--cyan)" stroke-width="2" points=""
-                  style="filter:drop-shadow(0 0 3px rgba(78,201,232,.45))"/>
-        <!-- Foguete marcador de apogeu -->
-        <g id="ap-rocket" transform="translate(-40,-40) rotate(0)"
-           style="filter:drop-shadow(0 0 5px rgba(232,184,78,.75))">
-          <path id="rk-body" d="M0,-9 C3,-9 5,-6 5,-2 L5,4 L0,7 L-5,4 L-5,-2 C-5,-6 -3,-9 0,-9 Z"
-                fill="#e8b84e"/>
-          <path d="M0,-9 L2.5,-5 L-2.5,-5 Z" fill="white" opacity=".75"/>
-          <path d="M5,1 L8,6 L5,5 Z"  fill="#e8b84e" opacity=".7"/>
-          <path d="M-5,1 L-8,6 L-5,5 Z" fill="#e8b84e" opacity=".7"/>
-          <g id="rk-flame">
-            <path d="M-2,7 Q0,13 2,7 Q0.5,10 0,12 Q-0.5,10 -2,7 Z" fill="#ff6b35">
-              <animate attributeName="opacity" values="1;.35;1" dur=".28s" repeatCount="indefinite"/>
-            </path>
-          </g>
-        </g>
-      </svg>
+
+      <!-- Gráfico 2: Velocidade -->
+      <div class="chart-block">
+        <div class="chart-block-hdr">
+          <span class="chart-block-title">Velocidade</span>
+          <span class="chart-block-unit" style="color:var(--green)">m/s</span>
+        </div>
+        <div class="chart-axes">
+          <div class="axis-y" id="ay-vel">
+            <span id="ay-vel-max">—</span>
+            <span id="ay-vel-mid">—</span>
+            <span>0</span>
+          </div>
+          <div class="axis-x-wrap">
+            <svg class="chart-svg" id="svg-vel" viewBox="0 0 700 80" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gr-vel" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(61,220,132,.2)"/>
+                  <stop offset="100%" stop-color="rgba(61,220,132,0)"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+              <polyline id="vel-fill" fill="url(#gr-vel)" stroke="none" points=""/>
+              <polyline id="vel-line" fill="none" stroke="var(--green)" stroke-width="2" points=""/>
+            </svg>
+            <div class="axis-x" id="ax-vel">
+              <span>0s</span><span id="ax-vel-mid">—</span><span id="ax-vel-max">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 3: Pressão -->
+      <div class="chart-block">
+        <div class="chart-block-hdr">
+          <span class="chart-block-title">Pressão</span>
+          <span class="chart-block-unit" style="color:var(--violet)">hPa</span>
+        </div>
+        <div class="chart-axes">
+          <div class="axis-y" id="ay-pres">
+            <span id="ay-pres-max">—</span>
+            <span id="ay-pres-mid">—</span>
+            <span id="ay-pres-min">—</span>
+          </div>
+          <div class="axis-x-wrap">
+            <svg class="chart-svg" id="svg-pres" viewBox="0 0 700 80" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gr-pres" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(123,108,246,.2)"/>
+                  <stop offset="100%" stop-color="rgba(123,108,246,0)"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+              <polyline id="pres-fill" fill="url(#gr-pres)" stroke="none" points=""/>
+              <polyline id="pres-line" fill="none" stroke="var(--violet)" stroke-width="2" points=""/>
+            </svg>
+            <div class="axis-x" id="ax-pres">
+              <span>0s</span><span id="ax-pres-mid">—</span><span id="ax-pres-max">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- DIREITA -->
   <div class="panel">
     <div class="sec">
-      <div class="stitle">TELEMETRIA</div>
+      <div class="stitle">Telemetria</div>
       <div class="gauge-grid">
-        <div class="gcard"><div class="gk">ALT. ATUAL</div><div class="gv c" id="g-alt">0 m</div><div class="gb"><div class="gf" id="gf-alt" style="width:0%;background:var(--cyan)"></div></div></div>
-        <div class="gcard"><div class="gk">ALT. MÁX.</div><div class="gv a" id="g-amax">0 m</div><div class="gb"><div class="gf" id="gf-amax" style="width:0%;background:var(--amber)"></div></div></div>
-        <div class="gcard"><div class="gk">PRESSÃO</div><div class="gv" id="g-pres" style="font-size:14px">— hPa</div><div class="gb"><div class="gf" id="gf-pres" style="width:100%;background:var(--cyan2)"></div></div></div>
-        <div class="gcard"><div class="gk">POTÊNCIA</div><div class="gv a" id="g-pot">50%</div><div class="gb"><div class="gf" id="gf-pot" style="width:50%;background:var(--amber)"></div></div></div>
+        <div class="gcard"><div class="gk">ALT. ATUAL</div><div class="gv" style="color:var(--teal)" id="g-alt">0 m</div><div class="gb"><div class="gf" id="gf-alt" style="width:0%;background:var(--teal)"></div></div></div>
+        <div class="gcard"><div class="gk">ALT. MÁX.</div><div class="gv" style="color:var(--amber)" id="g-amax">0 m</div><div class="gb"><div class="gf" id="gf-amax" style="width:0%;background:var(--amber)"></div></div></div>
+        <div class="gcard"><div class="gk">PRESSÃO</div><div class="gv" id="g-pres" style="font-size:14px;color:var(--violet)">— hPa</div><div class="gb"><div class="gf" id="gf-pres" style="width:100%;background:var(--violet)"></div></div></div>
+        <div class="gcard"><div class="gk">POTÊNCIA</div><div class="gv" style="color:var(--amber)" id="g-pot">50%</div><div class="gb"><div class="gf" id="gf-pot" style="width:50%;background:var(--amber)"></div></div></div>
       </div>
     </div>
     <div class="sec grow">
-      <div class="stitle">LOG DO SISTEMA</div>
+      <div class="stitle">Log do Sistema</div>
       <div class="log-scroll"><div id="log-body"></div></div>
     </div>
   </div>
 
-</div><!-- #app -->
+</div>
 </div><!-- pane-ensaio -->
 
+<!-- ── PANE HISTÓRICO ── -->
 <div class="tab-pane" id="pane-historico">
   <div class="hist-layout">
     <div class="hist-list">
       <div class="sec" style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
-        <div class="stitle" style="margin:0;">ENSAIOS REALIZADOS</div>
-        <button class="btn-reload" onclick="histCarregar()">↻ ATUALIZAR</button>
+        <div class="stitle" style="margin:0;">Ensaios Realizados</div>
+        <button class="btn-reload" onclick="histCarregar()">↻ Atualizar</button>
       </div>
       <div class="hist-scroll" id="hist-lista">
         <div class="hist-loading">Carregando...</div>
@@ -463,59 +861,48 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
       <div class="hist-empty">← Selecione um ensaio</div>
     </div>
   </div>
-</div><!-- pane-historico -->
+</div>
 
 <div id="toast"></div>
 
 <script>
-// ─── BACKEND PRODUÇÃO ────────────────────────────────────────────────────────
-const BACKEND  = 'https://altimetro-backend.onrender.com';
-const WS_URL   = 'wss://altimetro-backend.onrender.com/ws/frontend';
+// ── BACKEND ────────────────────────────────────────────────────
+const BACKEND = 'https://altimetro-backend.onrender.com';
+const WS_URL  = 'wss://altimetro-backend.onrender.com/ws/frontend';
 
-// ─── MAPEAMENTO POTÊNCIA ─────────────────────────────────────────────────────
+// ── MAPEAMENTO PWM ─────────────────────────────────────────────
 const PWM_MIN=160, PWM_NOM=200, PWM_MAX=255;
-function pctToPWM(pct){
-  if(pct<=50) return Math.round(PWM_MIN+(pct/50)*(PWM_NOM-PWM_MIN));
-  return Math.round(PWM_NOM+((pct-50)/50)*(PWM_MAX-PWM_NOM));
-}
-function potLabel(pct){
-  if(pct===0)   return 'MÍNIMO';
-  if(pct===50)  return 'NOMINAL';
-  if(pct===100) return 'MÁXIMO';
-  if(pct<50)    return 'ABAIXO DO NOM.';
-  return 'ACIMA DO NOM.';
-}
+function pctToPWM(p){ return p<=50?Math.round(PWM_MIN+(p/50)*(PWM_NOM-PWM_MIN)):Math.round(PWM_NOM+((p-50)/50)*(PWM_MAX-PWM_NOM)); }
+function potLabel(p){ if(p===0)return'MÍNIMO'; if(p===50)return'NOMINAL'; if(p===100)return'MÁXIMO'; return p<50?'ABAIXO NOM.':'ACIMA NOM.'; }
 
-const CW=740,CH=130,PL=6,PR=6,PT=5,PB=5;
-
-// ─── ESTADO ──────────────────────────────────────────────────────────────────
-const S={
+// ── ESTADO ─────────────────────────────────────────────────────
+const S = {
   apAlvo:700, tSubida:20, potPct:50, pwm:200,
-  fase:'idle',
-  alt:0,pres:0,t:0,
-  altMax:0,altPrev:0,tPrev:0,
-  hT:[],hA:[],hV:[],
-  pref:null, presMin:9999,
+  fase:'idle', alt:0, pres:0, t:0,
+  altMax:0, altPrev:0, tPrev:0,
+  hT:[], hA:[], hV:[], hP:[],
+  pref:null, presMin:9999, presMax:0,
   lastResult:null, ws:null,
 };
 
-// ─── RELÓGIO ─────────────────────────────────────────────────────────────────
+// dimensões dos SVGs internos
+const CW=700, CH=80, PL=0, PR=0, PT=4, PB=4;
+
 setInterval(()=>{ document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour12:false}); },1000);
 
-// ─── TOAST ───────────────────────────────────────────────────────────────────
-function toast(msg, tipo='ok'){
+// ── TOAST ──────────────────────────────────────────────────────
+function toast(msg,tipo='ok'){
   const el=document.getElementById('toast');
   el.textContent=msg; el.className=`show ${tipo}`;
-  clearTimeout(el._t);
-  el._t=setTimeout(()=>el.classList.remove('show'),3500);
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),3500);
 }
 
-// ─── WEBSOCKET ───────────────────────────────────────────────────────────────
+// ── WEBSOCKET ──────────────────────────────────────────────────
 function connectWS(){
   try{
     S.ws=new WebSocket(WS_URL);
-    S.ws.onopen=()=>{setConn(true);addLog('Backend conectado.','ok');};
-    S.ws.onclose=()=>{setConn(false);addLog('Desconectado — reconectando em 3s...','warn');setTimeout(connectWS,3000);};
+    S.ws.onopen=()=>{ setConn(true); addLog('Backend conectado.','ok'); };
+    S.ws.onclose=()=>{ setConn(false); addLog('Desconectado — reconectando em 3s...','warn'); setTimeout(connectWS,3000); };
     S.ws.onerror=()=>addLog('Erro WebSocket: '+WS_URL,'err');
     S.ws.onmessage=e=>{try{handle(JSON.parse(e.data));}catch{}};
   }catch{setTimeout(connectWS,3000);}
@@ -523,30 +910,25 @@ function connectWS(){
 function wsSend(o){if(S.ws&&S.ws.readyState===1)S.ws.send(JSON.stringify(o));}
 function setConn(on){
   const b=document.getElementById('cbadge'),t=document.getElementById('ctxt');
-  b.className='conn-badge'+(on?' on':'');t.textContent=on?'ONLINE':'OFFLINE';
+  b.className='conn-badge'+(on?' on':''); t.textContent=on?'ONLINE':'OFFLINE';
 }
 
-// ─── HANDLE ──────────────────────────────────────────────────────────────────
+// ── HANDLE ─────────────────────────────────────────────────────
 function handle(m){
-  if(m.tipo==='log') {
-    addLog(m.msg, m.nivel||'data');
-  }
-  else if(m.tipo==='status') {
-    const faseMap={agente_online:'idle',agente_offline:'idle',
-                   subida:'subida',descida:'descida',aguardando:'idle',
-                   concluido:'concluido',erro:'erro'};
-    const fase=faseMap[m.fase]||m.fase||'idle';
-    setFase(fase);
+  if(m.tipo==='log'){ addLog(m.msg, m.nivel||'data'); }
+  else if(m.tipo==='status'){
+    const map={agente_online:'idle',agente_offline:'idle',subida:'subida',descida:'descida',aguardando:'idle',concluido:'concluido',erro:'erro'};
+    setFase(map[m.fase]||m.fase||'idle');
     if(m.agente_ok!==undefined) setHW(m.agente_ok?'REAL':'SEM AGENTE');
     if(m.msg) addLog(m.msg,'info');
   }
-  else if(m.tipo==='hw')   { setHW(m.modo); }
-  else if(m.tipo==='pref') { setPref(m.pref); }
-  else if(m.tipo==='telemetria') {
-    if(m.t_voo!==undefined && m.t===undefined) m.t=m.t_voo;
+  else if(m.tipo==='hw')  { setHW(m.modo); }
+  else if(m.tipo==='pref'){ setPref(m.pref); }
+  else if(m.tipo==='telemetria'){
+    if(m.t_voo!==undefined&&m.t===undefined) m.t=m.t_voo;
     onTelem(m);
   }
-  else if(m.tipo==='resultado') {
+  else if(m.tipo==='resultado'){
     if(!m.t_subida)  m.t_subida  = S.tSubida;
     if(!m.t_descida) m.t_descida = 0;
     if(!m.t_total)   m.t_total   = (m.t_subida||0)+(m.t_descida||0);
@@ -554,48 +936,40 @@ function handle(m){
     m.potencia_pct=S.potPct; m.pwm=S.pwm; m.pref=S.pref;
     onResult(m);
   }
-  else if(m.tipo==='erro') { addLog(m.msg||'Erro no servidor','err'); }
+  else if(m.tipo==='erro'){ addLog(m.msg||'Erro no servidor','err'); }
 }
+function setHW(modo){ const el=document.getElementById('h-hw'); el.textContent=modo; el.className='v '+(modo==='REAL'?'v-green':'v-amber'); }
+function setPref(p){ S.pref=p; document.getElementById('h-pref').textContent=p.toFixed(2)+' hPa'; document.getElementById('h-pref').className='v v-teal'; }
 
-function setHW(modo){const el=document.getElementById('h-hw');el.textContent=modo;el.className='v '+(modo==='REAL'?'g':'a');}
-function setPref(p){S.pref=p;document.getElementById('h-pref').textContent=p.toFixed(2)+' hPa';document.getElementById('h-pref').className='v c';}
-
-// ─── PARÂMETROS ──────────────────────────────────────────────────────────────
+// ── PARÂMETROS ─────────────────────────────────────────────────
 function setApogeu(v){
   S.apAlvo=v;
   document.getElementById('r-ap').textContent=v;
   document.getElementById('bar-alvo').textContent=v+' m';
   const tRef=Math.round(18*v/700);
   document.getElementById('i-ref').textContent=v+' m / '+tRef+' s';
-  const pct=((v-100)/(2000-100)*100).toFixed(1);
-  document.getElementById('sl-ap').style.setProperty('--f',pct+'%');
-  updVelEstimada(); drawRef();
+  document.getElementById('sl-ap').style.setProperty('--f',((v-100)/(2000-100)*100).toFixed(1)+'%');
+  updVel(); drawRef();
 }
 function setTSubida(v){
   S.tSubida=v;
   document.getElementById('r-ts').textContent=v;
-  const pct=((v-5)/(60-5)*100).toFixed(1);
-  document.getElementById('sl-ts').style.setProperty('--f',pct+'%');
-  updVelEstimada(); drawRef();
+  document.getElementById('sl-ts').style.setProperty('--f',((v-5)/(60-5)*100).toFixed(1)+'%');
+  updVel(); drawRef();
 }
-function updVelEstimada(){
-  const vel=(S.apAlvo/S.tSubida).toFixed(1);
-  document.getElementById('i-vel').textContent=vel+' m/s';
-}
+function updVel(){ document.getElementById('i-vel').textContent=(S.apAlvo/S.tSubida).toFixed(1)+' m/s'; }
 function setPotencia(pct){
   S.potPct=pct; S.pwm=pctToPWM(pct);
   document.getElementById('r-pot').textContent=pct;
-  document.getElementById('r-pwm').textContent='PWM '+S.pwm+' · '+potLabel(pct);
+  document.getElementById('r-pwm').textContent=S.pwm+' · '+potLabel(pct);
   document.getElementById('sl-pot').style.setProperty('--f',pct+'%');
   document.getElementById('g-pot').textContent=pct+'%';
   document.getElementById('gf-pot').style.width=pct+'%';
 }
-
-// init
 setApogeu(700); setTSubida(20); setPotencia(50);
 document.getElementById('sl-ap').style.setProperty('--f',((700-100)/(2000-100)*100).toFixed(1)+'%');
 
-// ─── FASE ─────────────────────────────────────────────────────────────────────
+// ── FASE ───────────────────────────────────────────────────────
 const FCFG={
   idle:     {c:'f-idle',t:'AGUARDANDO'},
   calibra:  {c:'f-cal', t:'CALIBRANDO'},
@@ -609,101 +983,155 @@ function setFase(f){
   document.getElementById('fbadge').className='fbadge '+cfg.c;
   document.getElementById('ftxt').textContent=cfg.t;
   const btn=document.getElementById('btn-go');
-  if(['idle','concluido','erro'].includes(f)){btn.disabled=false;btn.querySelector('span').textContent='INICIAR ENSAIO';}
-  else{btn.disabled=true;btn.querySelector('span').textContent='ENSAIO ATIVO';}
+  if(['idle','concluido','erro'].includes(f)){ btn.disabled=false; btn.querySelector('span').textContent='INICIAR ENSAIO'; }
+  else{ btn.disabled=true; btn.querySelector('span').textContent='ENSAIO ATIVO'; }
 }
 
-// ─── TELEMETRIA ───────────────────────────────────────────────────────────────
+// ── TELEMETRIA ─────────────────────────────────────────────────
 function onTelem(m){
   const{t,alt,pres}=m;
-  const dt=t-S.tPrev,vel=dt>0.08?(alt-S.altPrev)/dt:0;
+  const dt=t-S.tPrev, vel=dt>0.08?(alt-S.altPrev)/dt:0;
   S.altPrev=alt; S.tPrev=t;
   S.alt=alt; S.pres=pres; S.t=t;
   if(alt>S.altMax) S.altMax=alt;
   if(pres<S.presMin) S.presMin=pres;
-  S.hT.push(t); S.hA.push(alt); S.hV.push(vel);
+  if(pres>S.presMax) S.presMax=pres;
+  S.hT.push(t); S.hA.push(alt); S.hV.push(vel); S.hP.push(pres);
 
-  document.getElementById('h-alt').textContent=alt.toFixed(1)+' m';
-  document.getElementById('h-pres').textContent=pres.toFixed(2)+' hPa';
-  document.getElementById('h-t').textContent=t.toFixed(1)+' s';
-  document.getElementById('h-amax').textContent=S.altMax.toFixed(0)+' m';
-
-  document.getElementById('live-alt').textContent=Math.round(alt);
-  document.getElementById('live-pres').textContent=pres.toFixed(2)+' hPa';
-  document.getElementById('live-t').textContent=t.toFixed(1)+' s';
-  document.getElementById('live-vel').textContent=(vel>=0?'+':'')+vel.toFixed(1)+' m/s';
-  document.getElementById('live-amax').textContent=S.altMax.toFixed(0)+' m';
-
+  // topbar
+  document.getElementById('h-alt').textContent  = alt.toFixed(1)+' m';
+  document.getElementById('h-pres').textContent = pres.toFixed(2)+' hPa';
+  document.getElementById('h-t').textContent    = t.toFixed(1)+' s';
+  document.getElementById('h-amax').textContent = S.altMax.toFixed(0)+' m';
+  // live
+  document.getElementById('live-alt').textContent  = Math.round(alt);
+  document.getElementById('live-pres').textContent = pres.toFixed(2)+' hPa';
+  document.getElementById('live-t').textContent    = t.toFixed(1)+' s';
+  document.getElementById('live-vel').textContent  = (vel>=0?'+':'')+vel.toFixed(1)+' m/s';
+  document.getElementById('live-amax').textContent = S.altMax.toFixed(0)+' m';
+  // barra progresso
   const pct=Math.min(alt/S.apAlvo*100,100);
   document.getElementById('alt-fill').style.width=pct+'%';
+  // altímetro
   updAltimeter(alt);
-
-  document.getElementById('g-alt').textContent=Math.round(alt)+' m';
-  document.getElementById('gf-alt').style.width=pct+'%';
-  document.getElementById('g-amax').textContent=Math.round(S.altMax)+' m';
-  document.getElementById('gf-amax').style.width=Math.min(S.altMax/S.apAlvo*100,100)+'%';
-  document.getElementById('g-pres').textContent=pres.toFixed(1)+' hPa';
-
-  updChart();
+  // gauges
+  document.getElementById('g-alt').textContent  = Math.round(alt)+' m';
+  document.getElementById('gf-alt').style.width = pct+'%';
+  document.getElementById('g-amax').textContent = Math.round(S.altMax)+' m';
+  document.getElementById('gf-amax').style.width= Math.min(S.altMax/S.apAlvo*100,100)+'%';
+  document.getElementById('g-pres').textContent = pres.toFixed(1)+' hPa';
+  // gráficos
+  updCharts();
 }
 
-// ─── ALTÍMETRO ────────────────────────────────────────────────────────────────
+// ── ALTÍMETRO ──────────────────────────────────────────────────
 function updAltimeter(alt){
   const f=Math.min(Math.max(alt/(S.apAlvo*1.1),0),1);
   document.getElementById('alt-arc').setAttribute('stroke-dasharray',`${(f*220).toFixed(1)} ${(258-f*220).toFixed(1)}`);
   document.getElementById('alt-needle').setAttribute('transform',`rotate(${(-135+f*270).toFixed(1)} 58 58)`);
 }
 
-// ─── GRÁFICO ──────────────────────────────────────────────────────────────────
-function ptC(t,a,tMax,aMax){
-  const x=PL+(t/tMax)*(CW-PL-PR);
-  const y=CH-PB-(a/aMax)*(CH-PT-PB);
+// ── GRÁFICOS ───────────────────────────────────────────────────
+function ptXY(t,v,tMax,vMin,vMax){
+  const x = PL+(t/tMax)*(CW-PL-PR);
+  const range = vMax-vMin || 1;
+  const y = CH-PB-((v-vMin)/range)*(CH-PT-PB);
   return `${x.toFixed(1)},${y.toFixed(1)}`;
 }
+
 function drawRef(){
-  const ap=S.apAlvo,ts=S.tSubida,td=ts*(13/18);
-  const tTot=(ts+td)*1.12,aMax=ap*1.12;
+  // Curva de referência no gráfico de altitude
+  const ap=S.apAlvo, ts=S.tSubida, td=ts*(13/18);
+  const tTot=(ts+td)*1.12, aMax=ap*1.12;
   const pts=[];
-  for(let i=0;i<=24;i++){const t=i/24*ts;pts.push(ptC(t,ap*t/ts,tTot,aMax));}
-  for(let i=1;i<=24;i++){const t=ts+i/24*td;pts.push(ptC(t,ap*(1-i/24),tTot,aMax));}
+  for(let i=0;i<=24;i++){const t=i/24*ts; pts.push(ptXY(t,ap*t/ts,tTot,0,aMax));}
+  for(let i=1;i<=24;i++){const t=ts+i/24*td; pts.push(ptXY(t,ap*(1-i/24),tTot,0,aMax));}
   document.getElementById('ref-line').setAttribute('points',pts.join(' '));
 }
-function updChart(){
+
+function updCharts(){
   if(!S.hT.length) return;
-  const tLast=S.hT[S.hT.length-1];
-  const ap=S.apAlvo,ts=S.tSubida,td=ts*(13/18);
-  const tMax=Math.max(tLast*1.05,(ts+td)*1.12),aMax=Math.max(S.altMax*1.1,ap*1.12);
-  const pts=S.hT.map((t,i)=>ptC(t,S.hA[i],tMax,aMax));
+  const tLast = S.hT[S.hT.length-1];
+  const ap=S.apAlvo, ts=S.tSubida, td=ts*(13/18);
+  const tMax = Math.max(tLast*1.05,(ts+td)*1.12);
+
+  // ── Altitude ──────────────────────────────────────────────────
+  const aMax = Math.max(S.altMax*1.1, ap*1.12);
+  const ptsA = S.hT.map((t,i)=>ptXY(t,S.hA[i],tMax,0,aMax));
+  // referência
   const rp=[];
-  for(let i=0;i<=24;i++){const t=i/24*ts;rp.push(ptC(t,ap*t/ts,tMax,aMax));}
-  for(let i=1;i<=24;i++){const t=ts+i/24*td;rp.push(ptC(t,ap*(1-i/24),tMax,aMax));}
+  for(let i=0;i<=24;i++){const t=i/24*ts; rp.push(ptXY(t,ap*t/ts,tMax,0,aMax));}
+  for(let i=1;i<=24;i++){const t=ts+i/24*td; rp.push(ptXY(t,ap*(1-i/24),tMax,0,aMax));}
   document.getElementById('ref-line').setAttribute('points',rp.join(' '));
-  const xl=ptC(tLast,0,tMax,aMax),x0=ptC(S.hT[0],0,tMax,aMax);
-  document.getElementById('real-fill').setAttribute('points',pts.join(' ')+' '+xl+' '+x0);
-  document.getElementById('real-line').setAttribute('points',pts.join(' '));
-  const iLast=S.hT.length-1;
-  if(iLast>=0){
-    const [rx,ry]=ptC(S.hT[iLast],S.hA[iLast],tMax,aMax).split(',');
-    const descendo=S.fase==='descida';
-    document.getElementById('ap-rocket').setAttribute('transform',`translate(${rx},${ry}) rotate(${descendo?180:0})`);
-    document.getElementById('rk-flame').style.display=S.fase==='subida'?'':'none';
+  const xlA=ptXY(tLast,0,tMax,0,aMax), x0A=ptXY(S.hT[0],0,tMax,0,aMax);
+  document.getElementById('real-fill').setAttribute('points',ptsA.join(' ')+' '+xlA+' '+x0A);
+  document.getElementById('real-line').setAttribute('points',ptsA.join(' '));
+  // eixos altitude
+  document.getElementById('ay-alt-max').textContent = Math.round(aMax)+'m';
+  document.getElementById('ay-alt-mid').textContent = Math.round(aMax/2)+'m';
+  document.getElementById('ax-alt-mid').textContent = (tMax/2).toFixed(0)+'s';
+  document.getElementById('ax-alt-max').textContent = tMax.toFixed(0)+'s';
+
+  // Foguete tangencial ao gráfico de altitude
+  const iLast = S.hT.length-1;
+  if(iLast>=1){
+    const [x1,y1] = ptXY(S.hT[iLast-1],S.hA[iLast-1],tMax,0,aMax).split(',');
+    const [x2,y2] = ptXY(S.hT[iLast],  S.hA[iLast],  tMax,0,aMax).split(',');
+    const rx=parseFloat(x2), ry=parseFloat(y2);
+    // ângulo tangente à curva no ponto atual
+    const dx=parseFloat(x2)-parseFloat(x1);
+    const dy=parseFloat(y2)-parseFloat(y1);
+    // no SVG: y cresce para baixo, então subida = dy negativo
+    // foguete aponta na direção do movimento
+    const angRad = Math.atan2(dy, dx);
+    const angDeg = angRad*(180/Math.PI) + 90; // +90 porque o foguete aponta "para cima" por padrão
+    document.getElementById('ap-rocket').setAttribute('transform',
+      `translate(${rx},${ry}) rotate(${angDeg.toFixed(1)})`);
+    document.getElementById('rk-flame').style.display = S.fase==='subida'?'':'none';
+  }
+
+  // ── Velocidade ────────────────────────────────────────────────
+  const velArr = S.hV.filter(v=>isFinite(v));
+  if(velArr.length){
+    const vMax = Math.max(...velArr)*1.1||10;
+    const vMin = Math.min(Math.min(...velArr)*1.1,0);
+    const ptsV = S.hT.map((t,i)=>ptXY(t,S.hV[i],tMax,vMin,vMax));
+    const xlV=ptXY(tLast,vMin,tMax,vMin,vMax), x0V=ptXY(S.hT[0],vMin,tMax,vMin,vMax);
+    document.getElementById('vel-fill').setAttribute('points',ptsV.join(' ')+' '+xlV+' '+x0V);
+    document.getElementById('vel-line').setAttribute('points',ptsV.join(' '));
+    document.getElementById('ay-vel-max').textContent = vMax.toFixed(0)+'m/s';
+    document.getElementById('ay-vel-mid').textContent = (vMax/2).toFixed(0)+'m/s';
+    document.getElementById('ax-vel-mid').textContent = (tMax/2).toFixed(0)+'s';
+    document.getElementById('ax-vel-max').textContent = tMax.toFixed(0)+'s';
+  }
+
+  // ── Pressão ───────────────────────────────────────────────────
+  if(S.hP.length){
+    const pMax = S.presMax * 1.001 || 1015;
+    const pMin = S.presMin * 0.999 || 990;
+    const ptsP = S.hT.map((t,i)=>ptXY(t,S.hP[i],tMax,pMin,pMax));
+    const xlP=ptXY(tLast,pMin,tMax,pMin,pMax), x0P=ptXY(S.hT[0],pMin,tMax,pMin,pMax);
+    document.getElementById('pres-fill').setAttribute('points',ptsP.join(' ')+' '+xlP+' '+x0P);
+    document.getElementById('pres-line').setAttribute('points',ptsP.join(' '));
+    document.getElementById('ay-pres-max').textContent = pMax.toFixed(1);
+    document.getElementById('ay-pres-mid').textContent = ((pMax+pMin)/2).toFixed(1);
+    document.getElementById('ay-pres-min').textContent = pMin.toFixed(1);
+    document.getElementById('ax-pres-mid').textContent = (tMax/2).toFixed(0)+'s';
+    document.getElementById('ax-pres-max').textContent = tMax.toFixed(0)+'s';
   }
 }
 
-// ─── RESULTADO ────────────────────────────────────────────────────────────────
+// ── RESULTADO ──────────────────────────────────────────────────
 function onResult(m){
-  m.t_subida_alvo=S.tSubida;
-  S.lastResult=m;
+  m.t_subida_alvo=S.tSubida; S.lastResult=m;
   const err=m.alt_max-m.alt_alvo;
   const errPct=(Math.abs(err)/m.alt_alvo*100).toFixed(1);
   const ea=Math.abs(err);
   const cor=ea<m.alt_alvo*0.05?'g':ea<m.alt_alvo*0.12?'a':'r';
   const sinal=err>=0?'+':'';
-
   const velMed=m.t_subida>0?(m.alt_max/m.t_subida).toFixed(1):'—';
   const velArr=S.hV.filter((v,i)=>S.hT[i]<=m.t_subida&&v>0);
   const velMax=velArr.length?Math.max(...velArr).toFixed(1):'—';
-
   let sug='';
   if(err>m.alt_alvo*0.1)       sug=`<div class="r-row"><span class="rk">SUGESTÃO</span><span class="rv a">Fechar a válvula de fluxo</span></div>`;
   else if(err<-m.alt_alvo*0.1) sug=`<div class="r-row"><span class="rk">SUGESTÃO</span><span class="rv a">Abrir a válvula de fluxo</span></div>`;
@@ -748,41 +1176,16 @@ function onResult(m){
   if(sug) addLog(err>0?'Sugestão: fechar válvula de fluxo.':'Sugestão: abrir válvula de fluxo.','warn');
 }
 
-// ─── SALVAR NO BANCO ──────────────────────────────────────────────────────────
-async function salvarNoBanco(){
-  const btn=document.getElementById('btn-salvar');
-  if(!S.lastResult){ toast('Nenhum resultado para salvar.','er'); return; }
-  btn.textContent='⏳ SALVANDO...'; btn.disabled=true;
-  try{
-    const m=S.lastResult;
-    const err=m.alt_max-m.alt_alvo;
-    const r=await fetch(BACKEND+'/voos',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        apogeu_alvo: m.alt_alvo,
-        dur_subida:  S.tSubida,
-        alt_max:     m.alt_max,
-        t_total:     m.t_total,
-        erro_m:      parseFloat(Math.abs(err).toFixed(1)),
-        erro_pct:    parseFloat((Math.abs(err)/m.alt_alvo*100).toFixed(1)),
-        salvo:       true,
-      }),
-    });
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const data=await r.json();
-    toast('Salvo no banco! ID #'+data.id,'ok');
-    addLog('Voo salvo no banco — ID #'+data.id,'ok');
-    btn.style.display='none';
-    document.getElementById('salvo-badge').style.display='block';
-  }catch(e){
-    toast('Erro: '+e.message,'er');
-    addLog('Erro ao salvar: '+e.message,'err');
-    btn.textContent='↑ SALVAR NO BANCO'; btn.disabled=false;
-  }
+// ── SALVAR NO BANCO ────────────────────────────────────────────
+function salvarNoBanco(){
+  // O agente já gravou via fim_voo → WebSocket → backend
+  document.getElementById('btn-salvar').style.display='none';
+  document.getElementById('salvo-badge').style.display='block';
+  toast('Ensaio registrado no banco.','ok');
+  addLog('Ensaio confirmado no banco de dados.','ok');
 }
 
-// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+// ── EXPORT CSV ─────────────────────────────────────────────────
 function exportCSV(){
   const m=S.lastResult; if(!m) return;
   const err=m.alt_max-m.alt_alvo;
@@ -792,48 +1195,23 @@ function exportCSV(){
   const velMax=velArr.length?Math.max(...velArr).toFixed(2):'';
   const velMed=m.t_subida>0?(m.alt_max/m.t_subida).toFixed(2):'';
   const dt=new Date().toISOString().replace('T',' ').slice(0,19);
-
-  const resumoHdr=[
-    'data_hora','apogeu_alvo_m','potencia_pct','pwm',
-    'apogeu_atingido_m','erro_m','erro_pct',
-    't_subida_s','t_descida_s','t_total_s',
-    'vel_media_subida_ms','vel_max_ms',
-    'pressao_ref_hPa','pressao_min_hPa'
-  ].join(',');
-  const resumoVals=[
-    `"${dt}"`,m.alt_alvo,m.potencia_pct,m.pwm,
-    m.alt_max.toFixed(2),err.toFixed(2),errPct,
-    m.t_subida.toFixed(2),m.t_descida.toFixed(2),m.t_total.toFixed(2),
-    velMed,velMax,
-    m.pref?m.pref.toFixed(2):'',
-    S.presMin<9990?S.presMin.toFixed(2):'',
-  ].join(',');
-
-  const telemHdr='t_s,altitude_m,pressao_hPa,vel_inst_ms,fase';
-  const telemLinhas=S.hT.map((t,i)=>{
+  const hdr=['data_hora','apogeu_alvo_m','potencia_pct','pwm','apogeu_atingido_m','erro_m','erro_pct','t_subida_s','t_descida_s','t_total_s','vel_media_ms','vel_max_ms','pressao_ref_hPa','pressao_min_hPa'].join(',');
+  const vals=[`"${dt}"`,m.alt_alvo,m.potencia_pct,m.pwm,m.alt_max.toFixed(2),err.toFixed(2),errPct,m.t_subida.toFixed(2),m.t_descida.toFixed(2),m.t_total.toFixed(2),velMed,velMax,m.pref?m.pref.toFixed(2):'',S.presMin<9990?S.presMin.toFixed(2):''].join(',');
+  const th='t_s,altitude_m,pressao_hPa,vel_inst_ms,fase';
+  const tl=S.hT.map((t,i)=>{
     const pres=S.pref?Math.max(0,S.pref-S.hA[i]/8.43).toFixed(2):'';
-    const fase=t<=m.t_subida?'subida':'descida';
-    return `${t.toFixed(3)},${S.hA[i].toFixed(2)},${pres},${S.hV[i]!==undefined?S.hV[i].toFixed(2):''},${fase}`;
+    return `${t.toFixed(3)},${S.hA[i].toFixed(2)},${pres},${S.hV[i]!==undefined?S.hV[i].toFixed(2):''},${t<=m.t_subida?'subida':'descida'}`;
   }).join('\n');
-
-  const csv=
-    '# BANCO DE TESTE DE ALTIMETROS — UFPB TCC 2026\n'+
-    '# RESUMO DO ENSAIO\n'+
-    resumoHdr+'\n'+resumoVals+
-    '\n\n# TELEMETRIA\n'+
-    telemHdr+'\n'+telemLinhas;
-
+  const csv='# BANCO DE TESTE DE ALTIMETROS — UFPB TCC 2026\n# RESUMO\n'+hdr+'\n'+vals+'\n\n# TELEMETRIA\n'+th+'\n'+tl;
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
   const ts=new Date().toISOString().slice(0,19).replace(/[:\-T]/g,'');
   a.href=url; a.download=`ensaio_${ts}_ap${m.alt_alvo}m_pot${m.potencia_pct}pct.csv`;
   a.click(); URL.revokeObjectURL(url);
-  addLog('CSV exportado.','ok');
-  toast('CSV baixado.','ok');
+  addLog('CSV exportado.','ok'); toast('CSV baixado.','ok');
 }
 
-// ─── LOG ──────────────────────────────────────────────────────────────────────
+// ── LOG ────────────────────────────────────────────────────────
 function addLog(msg,cls='data'){
   const el=document.getElementById('log-body');
   const ts=S.t>0?`[${S.t.toFixed(1).padStart(6)}s]`:'[  ---  ]';
@@ -845,16 +1223,18 @@ function addLog(msg,cls='data'){
   el.parentElement.scrollTop=el.parentElement.scrollHeight;
 }
 
-// ─── COMANDOS ─────────────────────────────────────────────────────────────────
+// ── COMANDOS ───────────────────────────────────────────────────
 function cmdIniciar(){
   if(!['idle','concluido','erro'].includes(S.fase)) return;
-  S.hT=[];S.hA=[];S.hV=[];S.altMax=0;S.alt=0;
-  S.t=0;S.tPrev=0;S.altPrev=0;S.presMin=9999;S.lastResult=null;
-  ['real-line','real-fill'].forEach(id=>document.getElementById(id).setAttribute('points',''));
-  document.getElementById('ap-rocket').setAttribute('transform','translate(-40,-40) rotate(0)');
+  S.hT=[];S.hA=[];S.hV=[];S.hP=[];S.altMax=0;S.alt=0;
+  S.t=0;S.tPrev=0;S.altPrev=0;S.presMin=9999;S.presMax=0;S.lastResult=null;
+  ['real-line','real-fill','vel-line','vel-fill','pres-line','pres-fill'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.setAttribute('points','');
+  });
+  document.getElementById('ap-rocket').setAttribute('transform','translate(-40,-40)');
   document.getElementById('rk-flame').style.display='none';
-  document.getElementById('result-body').innerHTML=
-    '<div class="r-row"><span class="rk">Ensaio em andamento...</span><span></span></div>';
+  document.getElementById('result-body').innerHTML='<div class="r-row"><span class="rk">Ensaio em andamento...</span><span></span></div>';
   document.getElementById('btn-csv').style.display='none';
   document.getElementById('btn-salvar').style.display='none';
   document.getElementById('salvo-badge').style.display='none';
@@ -872,7 +1252,7 @@ function cmdParar(){
   addLog('Sinal de abortar enviado.','err');
 }
 
-// ─── ABAS ─────────────────────────────────────────────────────────────────────
+// ── ABAS ───────────────────────────────────────────────────────
 function setTab(nome){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
@@ -881,32 +1261,24 @@ function setTab(nome){
   if(nome==='historico') histCarregar();
 }
 
-// ─── HISTÓRICO ────────────────────────────────────────────────────────────────
-let _histVoos = [];
-let _histSel  = null;
-
+// ── HISTÓRICO ──────────────────────────────────────────────────
+let _histVoos=[], _histSel=null;
 async function histCarregar(){
-  const lista = document.getElementById('hist-lista');
-  lista.innerHTML = '<div class="hist-loading">Carregando...</div>';
-  try {
-    const r = await fetch(BACKEND + '/voos?limit=50');
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    _histVoos = await r.json();
+  const lista=document.getElementById('hist-lista');
+  lista.innerHTML='<div class="hist-loading">Carregando...</div>';
+  try{
+    const r=await fetch(BACKEND+'/voos?limit=50');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    _histVoos=await r.json();
     histRenderLista();
-  } catch(e) {
-    lista.innerHTML = `<div class="hist-loading">Erro: ${e.message}</div>`;
-  }
+  }catch(e){ lista.innerHTML=`<div class="hist-loading">Erro: ${e.message}</div>`; }
 }
-
 function histRenderLista(){
-  const lista = document.getElementById('hist-lista');
-  if(!_histVoos.length){
-    lista.innerHTML = '<div class="hist-loading">Nenhum ensaio no banco.</div>';
-    return;
-  }
-  lista.innerHTML = _histVoos.map(v => {
-    const dt  = new Date(v.data_inicio).toLocaleString('pt-BR');
-    const sel = _histSel === v.id_voo ? ' sel' : '';
+  const lista=document.getElementById('hist-lista');
+  if(!_histVoos.length){ lista.innerHTML='<div class="hist-loading">Nenhum ensaio no banco.</div>'; return; }
+  lista.innerHTML=_histVoos.map(v=>{
+    const dt=new Date(v.data_inicio).toLocaleString('pt-BR');
+    const sel=_histSel===v.id_voo?' sel':'';
     return `<div class="hist-item${sel}" onclick="histSelecionar(${v.id_voo})">
       <div class="hi-date">${dt}</div>
       <div class="hi-alt">${v.alt_max.toFixed(1)}<span> m</span></div>
@@ -914,33 +1286,23 @@ function histRenderLista(){
     </div>`;
   }).join('');
 }
-
 async function histSelecionar(id){
-  _histSel = id;
-  histRenderLista();
-  const det = document.getElementById('hist-detalhe');
-  det.innerHTML = '<div class="hist-loading">Carregando telemetria...</div>';
-
-  try {
-    const r = await fetch(`${BACKEND}/voos/${id}/telemetria`);
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const voo = await r.json();
-    histRenderDetalhe(voo);
-  } catch(e) {
-    det.innerHTML = `<div class="hist-loading">Erro: ${e.message}</div>`;
-  }
+  _histSel=id; histRenderLista();
+  const det=document.getElementById('hist-detalhe');
+  det.innerHTML='<div class="hist-loading">Carregando telemetria...</div>';
+  try{
+    const r=await fetch(`${BACKEND}/voos/${id}/telemetria`);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    histRenderDetalhe(await r.json());
+  }catch(e){ det.innerHTML=`<div class="hist-loading">Erro: ${e.message}</div>`; }
 }
-
 function histRenderDetalhe(voo){
-  const det   = document.getElementById('hist-detalhe');
-  const dt    = new Date(voo.data_inicio).toLocaleString('pt-BR');
-  const alvo  = _histVoos.find(v=>v.id_voo===_histSel);
-  const cor   = voo.alt_max > 0 ? 'g' : 'a';
-
-  det.innerHTML = `
+  const dt=new Date(voo.data_inicio).toLocaleString('pt-BR');
+  const velMed=voo.t_total_s>0?(voo.alt_max/voo.t_total_s).toFixed(1):'—';
+  document.getElementById('hist-detalhe').innerHTML=`
     <div class="hist-detail-hdr">
       <div>
-        <div class="hist-big ${cor}">${voo.alt_max.toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div>
+        <div class="hist-big">${voo.alt_max.toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div>
         <div class="hist-big-lbl">APOGEU ATINGIDO · ${dt}</div>
       </div>
     </div>
@@ -948,48 +1310,39 @@ function histRenderDetalhe(voo){
       <div class="hstat-c"><div class="k">DURAÇÃO</div><div class="v c">${voo.t_total_s.toFixed(1)} s</div></div>
       <div class="hstat-c"><div class="k">PONTOS</div><div class="v">${voo.pontos.length}</div></div>
       <div class="hstat-c"><div class="k">ALT MÁX</div><div class="v c">${voo.alt_max.toFixed(1)} m</div></div>
-      <div class="hstat-c"><div class="k">VEL MÉD</div><div class="v">${voo.t_total_s > 0 ? (voo.alt_max/voo.t_total_s).toFixed(1) : '—'} m/s</div></div>
+      <div class="hstat-c"><div class="k">VEL MÉD</div><div class="v">${velMed} m/s</div></div>
     </div>
     <div class="hist-chart">
       <div class="hist-chart-title">ALTITUDE × TEMPO</div>
       <svg id="hist-svg" viewBox="0 0 700 180" preserveAspectRatio="none">
         <defs>
           <linearGradient id="hgr" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(78,201,232,.3)"/>
-            <stop offset="100%" stop-color="rgba(78,201,232,0)"/>
+            <stop offset="0%" stop-color="rgba(46,196,182,.25)"/>
+            <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
           </linearGradient>
         </defs>
         <polyline id="hist-fill" fill="url(#hgr)" stroke="none" points=""/>
-        <polyline id="hist-line" fill="none" stroke="var(--cyan)" stroke-width="2"
-                  points="" style="filter:drop-shadow(0 0 3px rgba(78,201,232,.5))"/>
+        <polyline id="hist-line" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
       </svg>
     </div>`;
-
-  // Desenha o gráfico
   histDesenharGrafico(voo.pontos, voo.alt_max, voo.t_total_s);
 }
-
-function histDesenharGrafico(pontos, altMax, tMax){
+function histDesenharGrafico(pontos,altMax,tMax){
   if(!pontos.length) return;
-  const W=700, H=180, PL=8, PR=8, PT=6, PB=6;
-  const aMax = altMax * 1.12 || 10;
-  const tFim = tMax   * 1.05 || 1;
-
-  const pts = pontos.map(p => {
-    const x = PL + (p.t / tFim) * (W - PL - PR);
-    const y = H - PB - (p.alt / aMax) * (H - PT - PB);
+  const W=700,H=180,PL=8,PR=8,PT=6,PB=6;
+  const aMax=altMax*1.12||10, tFim=tMax*1.05||1;
+  const pts=pontos.map(p=>{
+    const x=PL+(p.t/tFim)*(W-PL-PR);
+    const y=H-PB-(p.alt/aMax)*(H-PT-PB);
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
-
-  const ultimo = pts[pts.length - 1].split(',');
-  const fill   = pts.join(' ') +
-    ` ${ultimo[0]},${(H-PB).toFixed(1)} ${PL},${(H-PB).toFixed(1)}`;
-
-  document.getElementById('hist-fill').setAttribute('points', fill);
-  document.getElementById('hist-line').setAttribute('points', pts.join(' '));
+  const ul=pts[pts.length-1].split(',');
+  const fill=pts.join(' ')+` ${ul[0]},${(H-PB).toFixed(1)} ${PL},${(H-PB).toFixed(1)}`;
+  document.getElementById('hist-fill').setAttribute('points',fill);
+  document.getElementById('hist-line').setAttribute('points',pts.join(' '));
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────────────
 drawRef();
 addLog('Interface inicializada.','ok');
 addLog('Conectando ao backend em produção...','warn');
