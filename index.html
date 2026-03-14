@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BANCO DE TESTE — ALTÍMETROS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+
+:root {
+  --bg:     #07090d;
+  --panel:  #0b0f14;
+  --border: #162030;
+  --cyan:   #00d4ff;
+  --orange: #ff6b35;
+  --green:  #00e87a;
+  --yellow: #ffc940;
+  --red:    #ff3e3e;
+  --text:   #bdd0dc;
+  --muted:  #3d5568;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;flex-shrink:0;background:var(--panel);border-bottom:1px solid var(--border);position:relative;}
+header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan) 40%,var(--cyan) 60%,transparent);opacity:.3;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-mark{width:36px;height:36px;border:1.5px solid var(--cyan);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(0,212,255,.05);box-shadow:0 0 14px rgba(0,212,255,.2);}
+.brand h1{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 12px rgba(0,212,255,.5);}
+.brand p{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:2px;}
+.hstats{display:flex;align-items:center;gap:22px;}
+.hstat{text-align:center;}
+.hstat .lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);display:block;}
+.hstat .val{font-family:'Share Tech Mono',monospace;font-size:12px;margin-top:2px;display:block;}
+.vc{color:var(--cyan);text-shadow:0 0 8px rgba(0,212,255,.4);}
+.vg{color:var(--green);text-shadow:0 0 8px rgba(0,232,122,.5);}
+.vo{color:var(--orange);}
+.vy{color:var(--yellow);}
+.vm{color:var(--muted);}
+.ws-dot{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:5px;transition:background .3s;}
+.ws-dot.on{background:var(--green);box-shadow:0 0 7px var(--green);animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* LAYOUT */
+.ws{display:grid;grid-template-columns:296px 1fr 252px;flex:1;min-height:0;gap:1px;background:var(--border);}
+.col{background:var(--panel);display:flex;flex-direction:column;overflow:hidden;}
+.sec{padding:15px 17px;border-bottom:1px solid var(--border);}
+.sec:last-child{border-bottom:none;}
+.sec.grow{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.st{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2.5px;color:var(--muted);margin-bottom:13px;display:flex;align-items:center;gap:6px;}
+.st::before{content:'';display:inline-block;width:3px;height:11px;background:var(--cyan);border-radius:1px;box-shadow:0 0 6px var(--cyan);}
+
+/* PARAMS */
+.param{margin-bottom:17px;}
+.param-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;}
+.param-head .nm{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);}
+.ro{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--cyan);text-shadow:0 0 14px rgba(0,212,255,.5);}
+.ro.o{color:var(--orange);text-shadow:0 0 14px rgba(255,107,53,.5);}
+.ro.y{color:var(--yellow);text-shadow:0 0 10px rgba(255,201,64,.4);}
+.un{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-left:3px;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;}
+input[type=range].tc{background:linear-gradient(90deg,var(--cyan) var(--f,0%),var(--border) var(--f,0%));}
+input[type=range].to{background:linear-gradient(90deg,var(--orange) var(--f,0%),var(--border) var(--f,0%));}
+input[type=range].ty{background:linear-gradient(90deg,var(--yellow) var(--f,0%),var(--border) var(--f,0%));}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan);cursor:pointer;transition:transform .15s;}
+input[type=range].to::-webkit-slider-thumb{background:var(--orange);box-shadow:0 0 7px var(--orange);}
+input[type=range].ty::-webkit-slider-thumb{background:var(--yellow);box-shadow:0 0 7px var(--yellow);}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.35);}
+.rh{display:flex;justify-content:space-between;margin-top:3px;}
+.rh span{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);}
+
+/* INFO GRID */
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:14px;}
+.ic{background:rgba(0,0,0,.3);padding:8px 10px;}
+.ic .k{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--muted);}
+.ic .v{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);margin-top:2px;}
+.ic .v.hi{color:var(--cyan);}
+
+/* BOTÕES */
+.btn-go{width:100%;padding:14px;background:transparent;border:1.5px solid var(--green);border-radius:4px;color:var(--green);font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:4px;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .2s,transform .1s;text-shadow:0 0 10px rgba(0,232,122,.5);box-shadow:0 0 16px rgba(0,232,122,.1),inset 0 0 16px rgba(0,232,122,.03);}
+.btn-go::before{content:'';position:absolute;inset:0;background:var(--green);transform:scaleX(0);transform-origin:left;transition:transform .3s;opacity:.07;}
+.btn-go:hover::before{transform:scaleX(1);}
+.btn-go:hover{box-shadow:0 0 26px rgba(0,232,122,.22);}
+.btn-go:active{transform:scale(.98);}
+.btn-go:disabled{border-color:var(--muted);color:var(--muted);box-shadow:none;text-shadow:none;cursor:not-allowed;}
+.btn-go:disabled::before{display:none;}
+.btn-stop{width:100%;padding:10px;margin-top:7px;background:transparent;border:1px solid rgba(255,62,62,.35);border-radius:4px;color:rgba(255,62,62,.5);font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+.btn-stop:hover{color:var(--red);border-color:var(--red);background:rgba(255,62,62,.06);}
+
+/* RESULT */
+#result{margin-top:10px;}
+.rrow{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-family:'Share Tech Mono',monospace;font-size:10px;}
+.rrow:last-child{border:none;}
+.rrow .rk{color:var(--muted);}
+.rrow .rv{color:var(--text);}
+.rrow .rv.g{color:var(--green);}
+.rrow .rv.c{color:var(--cyan);}
+.rrow .rv.w{color:var(--yellow);}
+
+/* CENTRO */
+.alt-hero{display:flex;align-items:center;gap:20px;}
+.alt-big{font-family:'Orbitron',monospace;font-size:66px;font-weight:900;color:var(--cyan);line-height:1;text-shadow:0 0 40px rgba(0,212,255,.5),0 0 80px rgba(0,212,255,.12);letter-spacing:-2px;}
+.alt-big .u{font-size:20px;color:var(--muted);margin-left:4px;letter-spacing:1px;}
+.alt-sub{display:flex;gap:22px;margin-top:9px;}
+.asi .lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);}
+.asi .v{font-family:'Share Tech Mono',monospace;font-size:13px;margin-top:2px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:2px;margin-top:9px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;border:1px solid;transition:all .3s;}
+.b-idle{color:var(--muted);border-color:var(--muted);}
+.b-cal{color:var(--yellow);border-color:var(--yellow);background:rgba(255,201,64,.05);}
+.b-sub{color:var(--green);border-color:var(--green);background:rgba(0,232,122,.05);}
+.b-desc{color:var(--orange);border-color:var(--orange);background:rgba(255,107,53,.05);}
+.b-done{color:var(--cyan);border-color:var(--cyan);background:rgba(0,212,255,.05);}
+.b-err{color:var(--red);border-color:var(--red);background:rgba(255,62,62,.05);}
+.bdot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.b-sub .bdot,.b-cal .bdot{animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+
+/* GRÁFICO */
+.chart-area{flex:1;display:flex;flex-direction:column;min-height:0;}
+#csv{flex:1;width:100%;display:block;}
+.sbar{display:flex;gap:3px;padding:0 18px 11px;flex-shrink:0;}
+.ss{flex:1;height:5px;border-radius:1px;background:var(--border);transition:all .3s;}
+.ss.dn{background:var(--green);box-shadow:0 0 5px var(--green);}
+.ss.ac{background:var(--cyan);box-shadow:0 0 7px var(--cyan);animation:sp .6s infinite alternate;}
+@keyframes sp{to{opacity:.35}}
+
+/* GAUGES */
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.gauge{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;padding:9px 9px 7px;}
+.gauge .gl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);}
+.gauge .gv{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;margin:4px 0;}
+.gauge .gb{height:2px;background:var(--border);border-radius:1px;overflow:hidden;}
+.gauge .gf{height:100%;border-radius:1px;transition:width .5s ease;}
+
+/* LOG */
+.log-body{flex:1;overflow-y:auto;min-height:0;}
+#log{font-family:'Share Tech Mono',monospace;font-size:9.5px;line-height:1.75;}
+.lok{color:var(--green)}.lwn{color:var(--yellow)}.ler{color:var(--red)}.lin{color:var(--cyan)}.lda{color:#7a9bb0;}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">🚀</div>
+    <div>
+      <h1>ALTÍMETRO · TCC</h1>
+      <p>BANCO DE TESTE DE ALTÍMETROS · UFPB · 2026</p>
+    </div>
+  </div>
+  <div class="hstats">
+    <div class="hstat">
+      <span class="lbl">SERVIDOR</span>
+      <span class="val vm"><span class="ws-dot" id="wsd"></span><span id="wst">OFFLINE</span></span>
+    </div>
+    <div class="hstat">
+      <span class="lbl">HARDWARE</span>
+      <span class="val vm" id="h-hw">—</span>
+    </div>
+    <div class="hstat">
+      <span class="lbl">P_REF</span>
+      <span class="val vm" id="h-pref">—</span>
+    </div>
+    <div class="hstat">
+      <span class="lbl">HORA</span>
+      <span class="val vm" id="h-hora">—</span>
+    </div>
+  </div>
+</header>
+
+<div class="ws">
+
+  <!-- ── ESQUERDA ── -->
+  <div class="col">
+    <div class="sec">
+      <div class="st">PARÂMETROS DE MISSÃO</div>
+
+      <div class="param">
+        <div class="param-head">
+          <span class="nm">APOGEU ALVO</span>
+          <span><span class="ro" id="r-ap">500</span><span class="un">m</span></span>
+        </div>
+        <input type="range" id="sl-ap" class="tc" min="100" max="3000" step="50" value="500"
+               oninput="setPar('ap',+this.value)">
+        <div class="rh"><span>100m</span><span>3000m</span></div>
+      </div>
+
+      <div class="param">
+        <div class="param-head">
+          <span class="nm">DURAÇÃO SUBIDA</span>
+          <span><span class="ro o" id="r-dur">30</span><span class="un">s</span></span>
+        </div>
+        <input type="range" id="sl-dur" class="to" min="10" max="120" step="5" value="30"
+               oninput="setPar('dur',+this.value)">
+        <div class="rh"><span>10s</span><span>120s</span></div>
+      </div>
+
+      <div class="param" style="margin-bottom:0">
+        <div class="param-head">
+          <span class="nm">Nº DEGRAUS</span>
+          <span><span class="ro y" id="r-nd">10</span><span class="un">—</span></span>
+        </div>
+        <input type="range" id="sl-nd" class="ty" min="5" max="20" step="1" value="10"
+               oninput="setPar('nd',+this.value)">
+        <div class="rh"><span>5</span><span>20</span></div>
+      </div>
+
+      <div class="ig">
+        <div class="ic"><div class="k">JANELA/DEGRAU</div><div class="v hi" id="i-jan">3.0s</div></div>
+        <div class="ic"><div class="k">ALT/DEGRAU</div><div class="v hi" id="i-adeg">50m</div></div>
+        <div class="ic"><div class="k">ON ESTIMADO</div><div class="v" id="i-on">152ms</div></div>
+        <div class="ic"><div class="k">VAZAMENTO</div><div class="v">~5 m/s</div></div>
+        <div class="ic"><div class="k">TAXA PLANTA</div><div class="v">365.9 m/s</div></div>
+        <div class="ic"><div class="k">PORTA SERIAL</div><div class="v">/dev/ttyACM0</div></div>
+      </div>
+    </div>
+
+    <div class="sec grow">
+      <div class="st">CONTROLE</div>
+      <button class="btn-go" id="btn-go" onclick="cmdIniciar()">▶ INICIAR MISSÃO</button>
+      <button class="btn-stop" onclick="cmdParar()">■ PARAR EMERGÊNCIA</button>
+      <div style="margin-top:18px;">
+        <div class="st">RESULTADO</div>
+        <div id="result">
+          <div class="rrow"><span class="rk">Aguardando voo...</span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CENTRO ── -->
+  <div class="col">
+    <div class="sec" style="padding:20px 22px 15px;flex-shrink:0;">
+      <div class="alt-hero">
+        <!-- altímetro SVG -->
+        <svg width="128" height="128" viewBox="0 0 128 128" style="flex-shrink:0">
+          <defs>
+            <filter id="gc"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="go"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <circle cx="64" cy="64" r="60" fill="#040810" stroke="#162030" stroke-width="1.5"/>
+          <circle cx="64" cy="64" r="48" fill="none" stroke="#111c26" stroke-width="10"
+                  stroke-dasharray="258 44" stroke-dashoffset="44" transform="rotate(135 64 64)"/>
+          <circle cx="64" cy="64" r="48" fill="none" stroke="var(--cyan)" stroke-width="3.5"
+                  stroke-dasharray="0 302" stroke-dashoffset="44" transform="rotate(135 64 64)"
+                  id="arc" filter="url(#gc)" style="transition:stroke-dasharray .5s ease"/>
+          <line id="needle" x1="64" y1="64" x2="64" y2="22"
+                stroke="var(--orange)" stroke-width="2.5" stroke-linecap="round"
+                filter="url(#go)" transform="rotate(-135 64 64)"
+                style="transition:transform .5s ease"/>
+          <circle cx="64" cy="64" r="4.5" fill="var(--orange)" filter="url(#go)"/>
+          <text x="64" y="80" text-anchor="middle" font-family="'Share Tech Mono',monospace"
+                font-size="7" fill="#3d5568" letter-spacing="1">ALT · m</text>
+        </svg>
+        <div style="flex:1">
+          <div class="alt-big"><span id="alt-num">0</span><span class="u">m</span></div>
+          <div class="alt-sub">
+            <div class="asi"><div class="lbl">PRESSÃO</div><div class="v vc" id="m-pres">— hPa</div></div>
+            <div class="asi"><div class="lbl">TEMPO</div><div class="v vo" id="m-t">0.0s</div></div>
+            <div class="asi"><div class="lbl">DEGRAU</div><div class="v vg" id="m-deg">—</div></div>
+          </div>
+          <div class="badge b-idle" id="badge"><span class="bdot"></span><span id="btxt">AGUARDANDO</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec grow chart-area" style="padding:13px 18px 0;">
+      <div class="st">ALTITUDE × TEMPO</div>
+      <svg id="csv" viewBox="0 0 760 200" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="gr-r" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="rgba(0,212,255,.35)"/>
+            <stop offset="100%" stop-color="rgba(0,212,255,0)"/>
+          </linearGradient>
+          <linearGradient id="gr-ref" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="rgba(255,201,64,.2)"/>
+            <stop offset="100%" stop-color="rgba(255,201,64,0)"/>
+          </linearGradient>
+        </defs>
+        <polyline id="ref-p" fill="url(#gr-ref)" stroke="var(--yellow)"
+                  stroke-width="1" stroke-dasharray="5 4" opacity=".65" points="0,200"/>
+        <polyline id="real-p" fill="url(#gr-r)" stroke="var(--cyan)"
+                  stroke-width="2.5" points="0,200"
+                  style="filter:drop-shadow(0 0 4px rgba(0,212,255,.55))"/>
+      </svg>
+      <div class="sbar" id="sbar"></div>
+    </div>
+  </div>
+
+  <!-- ── DIREITA ── -->
+  <div class="col">
+    <div class="sec" style="flex-shrink:0;">
+      <div class="st">TELEMETRIA</div>
+      <div class="gauges">
+        <div class="gauge">
+          <div class="gl">ALT MÁX</div>
+          <div class="gv vc" id="g-am">0</div>
+          <div class="gb"><div class="gf" id="gf-am" style="width:0%;background:var(--cyan)"></div></div>
+        </div>
+        <div class="gauge">
+          <div class="gl">DEGRAU</div>
+          <div class="gv vg" id="g-dg">0/10</div>
+          <div class="gb"><div class="gf" id="gf-dg" style="width:0%;background:var(--green)"></div></div>
+        </div>
+        <div class="gauge">
+          <div class="gl">PRESSÃO</div>
+          <div class="gv vo" id="g-pr" style="font-size:12px">—</div>
+          <div class="gb"><div class="gf" id="gf-pr" style="width:100%;background:var(--orange)"></div></div>
+        </div>
+        <div class="gauge">
+          <div class="gl">PROGRESSO</div>
+          <div class="gv vy" id="g-pg">0%</div>
+          <div class="gb"><div class="gf" id="gf-pg" style="width:0%;background:var(--yellow)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec grow" style="overflow:hidden;display:flex;flex-direction:column;">
+      <div class="st">LOG DE MISSÃO</div>
+      <div class="log-body"><div id="log"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── ESTADO ──────────────────────────────────────────────────────────────────
+const S={ap:500,dur:30,nd:10,fase:'idle',alt:0,pres:0,t:0,dg:0,altMax:0,hT:[],hA:[],pref:null,ws:null};
+const CW=760,CH=200,PL=8,PR=8,PT=8,PB=8;
+const TAXA=365.9, VAZ=5.0;
+
+// ─── RELÓGIO ─────────────────────────────────────────────────────────────────
+setInterval(()=>document.getElementById('h-hora').textContent=
+  new Date().toLocaleTimeString('pt-BR',{hour12:false}),1000);
+
+// ─── WEBSOCKET ───────────────────────────────────────────────────────────────
+// URL dinâmica: funciona tanto em localhost quanto pelo IP da rede (celular/tablet)
+const BACKEND = window.BACKEND_URL || 'wss://altimetro-backend.onrender.com';
+const WS_URL  = `${BACKEND}/ws/frontend`;
+
+function connectWS(){
+  try{
+    S.ws=new WebSocket(WS_URL);
+    S.ws.onopen=()=>{
+      document.getElementById('wsd').classList.add('on');
+      document.getElementById('wst').textContent='ONLINE';
+      document.getElementById('wsd').parentElement.className='val vg';
+      log('Servidor conectado','ok');
+    };
+    S.ws.onclose=()=>{
+      document.getElementById('wsd').classList.remove('on');
+      document.getElementById('wst').textContent='OFFLINE';
+      document.getElementById('wsd').parentElement.className='val vm';
+      log('Servidor desconectado — tentando reconectar...','wn');
+      setTimeout(connectWS,3000);
+    };
+    S.ws.onerror=()=>{
+      log(`Falha em ${WS_URL}`,'er');
+      log('Execute: python servidor_gui.py','wn');
+    };
+    S.ws.onmessage=e=>{
+      let m; try{m=JSON.parse(e.data);}catch{return;}
+      handle(m);
+    };
+  }catch{setTimeout(connectWS,3000);}
+}
+function send(o){if(S.ws&&S.ws.readyState===1)S.ws.send(JSON.stringify(o));}
+
+function handle(m){
+  if(m.tipo==='log'){log(m.msg,m.nivel);}
+  else if(m.tipo==='status'){
+    setFase(m.fase);
+    if(m.msg) log(m.msg,'in');
+    if(['idle','concluido','erro'].includes(m.fase)){
+      const b=document.getElementById('btn-go');
+      b.disabled=false; b.textContent='▶ INICIAR MISSÃO';
+    }
+  }
+  else if(m.tipo==='pref'){
+    S.pref=m.pref;
+    document.getElementById('h-pref').textContent=m.pref.toFixed(2)+' hPa';
+    document.getElementById('h-pref').className='val vc';
+  }
+  else if(m.tipo==='hw'){
+    document.getElementById('h-hw').textContent=m.modo;
+    document.getElementById('h-hw').className='val '+(m.modo==='REAL'?'vg':'vy');
+  }
+  else if(m.tipo==='telemetria') onTelem(m);
+  else if(m.tipo==='resultado')  onResult(m);
+}
+
+// ─── PARÂMETROS ──────────────────────────────────────────────────────────────
+function setPar(id,v){
+  if(id==='ap'){S.ap=v;document.getElementById('r-ap').textContent=v;fill('sl-ap',(v-100)/(3000-100));}
+  else if(id==='dur'){S.dur=v;document.getElementById('r-dur').textContent=v;fill('sl-dur',(v-10)/(120-10));}
+  else if(id==='nd'){S.nd=v;document.getElementById('r-nd').textContent=v;fill('sl-nd',(v-5)/(20-5));buildSteps();}
+  updateInfo(); drawRef();
+}
+function fill(id,f){document.getElementById(id).style.setProperty('--f',(f*100).toFixed(1)+'%');}
+function updateInfo(){
+  const jan=(S.dur/S.nd).toFixed(1);
+  const adeg=Math.round(S.ap/S.nd);
+  const on=Math.round((adeg+VAZ*(S.dur/S.nd*0.85))/TAXA*1000);
+  document.getElementById('i-jan').textContent=jan+'s';
+  document.getElementById('i-adeg').textContent=adeg+'m';
+  document.getElementById('i-on').textContent=on+'ms';
+}
+fill('sl-ap',(500-100)/(3000-100));fill('sl-dur',(30-10)/(120-10));fill('sl-nd',(10-5)/(20-5));
+updateInfo();
+
+// ─── DEGRAUS BAR ─────────────────────────────────────────────────────────────
+function buildSteps(){
+  const b=document.getElementById('sbar');b.innerHTML='';
+  for(let i=0;i<S.nd;i++){const d=document.createElement('div');d.className='ss';d.id='s'+i;b.appendChild(d);}
+}
+buildSteps();
+function updSteps(d){
+  for(let i=0;i<S.nd;i++){
+    const e=document.getElementById('s'+i); if(!e)continue;
+    e.className='ss'+(i<d?' dn':i===d?' ac':'');
+  }
+}
+
+// ─── GRÁFICO ─────────────────────────────────────────────────────────────────
+function drawRef(){
+  const pts=[`${PL},${CH-PB}`];
+  for(let d=0;d<=S.nd;d++){
+    const t=d*S.dur/S.nd, alt=d*S.ap/S.nd;
+    const x=PL+(t/S.dur)*(CW-PL-PR);
+    const y=CH-PB-(alt/S.ap)*(CH-PT-PB);
+    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    if(d<S.nd){const xn=PL+((d+1)*S.dur/S.nd/S.dur)*(CW-PL-PR);pts.push(`${xn.toFixed(1)},${y.toFixed(1)}`);}
+  }
+  pts.push(`${CW-PR},${CH-PB}`);
+  document.getElementById('ref-p').setAttribute('points',pts.join(' '));
+}
+drawRef();
+
+function updChart(){
+  if(!S.hT.length)return;
+  const mxT=Math.max(S.dur*1.05,S.hT[S.hT.length-1]+1);
+  const mxA=Math.max(S.ap*1.08,Math.max(...S.hA)+10);
+  const pts=S.hT.map((t,i)=>{
+    const x=PL+(t/mxT)*(CW-PL-PR);
+    const y=CH-PB-(S.hA[i]/mxA)*(CH-PT-PB);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const xl=PL+(S.hT[S.hT.length-1]/mxT)*(CW-PL-PR);
+  pts.push(`${xl.toFixed(1)},${(CH-PB).toFixed(1)}`,`${PL},${(CH-PB).toFixed(1)}`);
+  document.getElementById('real-p').setAttribute('points',pts.join(' '));
+}
+
+// ─── ALTÍMETRO ───────────────────────────────────────────────────────────────
+function updAlt(alt,maxA){
+  const f=Math.min(Math.max(alt/maxA,0),1);
+  document.getElementById('arc').setAttribute('stroke-dasharray',`${(f*258).toFixed(1)} ${(302-f*258).toFixed(1)}`);
+  document.getElementById('needle').setAttribute('transform',`rotate(${(-135+f*270).toFixed(1)} 64 64)`);
+  document.getElementById('alt-num').textContent=Math.round(alt);
+}
+
+// ─── FASE ─────────────────────────────────────────────────────────────────────
+const FCFG={idle:{c:'b-idle',t:'AGUARDANDO'},calibra:{c:'b-cal',t:'CALIBRANDO'},subida:{c:'b-sub',t:'SUBIDA ATIVA'},descida:{c:'b-desc',t:'DESCIDA'},concluido:{c:'b-done',t:'CONCLUÍDO'},erro:{c:'b-err',t:'ERRO'}};
+function setFase(f){
+  S.fase=f; const c=FCFG[f]||FCFG.idle;
+  document.getElementById('badge').className='badge '+c.c;
+  document.getElementById('btxt').textContent=c.t;
+}
+
+// ─── TELEMETRIA ───────────────────────────────────────────────────────────────
+function onTelem(m){
+  const{t,alt,pres,degrau,n_degraus:nd}=m;
+  S.alt=alt;S.pres=pres;S.t=t;S.dg=degrau;
+  if(alt>S.altMax)S.altMax=alt;
+  S.hT.push(t);S.hA.push(alt);
+
+  document.getElementById('m-pres').textContent=pres.toFixed(2)+' hPa';
+  document.getElementById('m-t').textContent=t.toFixed(1)+'s';
+  document.getElementById('m-deg').textContent=degrau+'/'+(nd||S.nd);
+
+  const p=Math.min(S.altMax/S.ap*100,100);
+  document.getElementById('g-am').textContent=Math.round(S.altMax);
+  document.getElementById('gf-am').style.width=p+'%';
+  document.getElementById('g-dg').textContent=degrau+'/'+(nd||S.nd);
+  document.getElementById('gf-dg').style.width=(degrau/(nd||S.nd)*100)+'%';
+  document.getElementById('g-pr').textContent=pres.toFixed(1);
+  const pg=Math.min(t/S.dur*100,100);
+  document.getElementById('g-pg').textContent=pg.toFixed(0)+'%';
+  document.getElementById('gf-pg').style.width=pg+'%';
+
+  updAlt(alt,Math.max(S.ap*1.05,alt));
+  updChart();
+  updSteps(degrau-1);
+}
+
+// ─── RESULTADO ────────────────────────────────────────────────────────────────
+function onResult(m){
+  const err=Math.abs(m.alt_max-m.alt_alvo);
+  const ep=(err/m.alt_alvo*100).toFixed(1);
+  const ok=err<m.alt_alvo*0.1;
+  document.getElementById('result').innerHTML=`
+    <div class="rrow"><span class="rk">APOGEU ATINGIDO</span><span class="rv ${ok?'g':'w'}">${m.alt_max.toFixed(1)} m</span></div>
+    <div class="rrow"><span class="rk">APOGEU ALVO</span><span class="rv c">${m.alt_alvo} m</span></div>
+    <div class="rrow"><span class="rk">ERRO</span><span class="rv ${ok?'g':'w'}">${err.toFixed(1)} m (${ep}%)</span></div>
+    <div class="rrow"><span class="rk">DUR. SUBIDA</span><span class="rv">${m.t_subida.toFixed(1)} s</span></div>
+    <div class="rrow"><span class="rk">DUR. TOTAL</span><span class="rv">${m.t_total.toFixed(1)} s</span></div>
+    <div class="rrow"><span class="rk">DEGRAUS</span><span class="rv">${m.degraus.length}/${m.n_degraus}</span></div>`;
+
+  log(`── RESULTADO: ${m.alt_max.toFixed(1)}m  erro=${err.toFixed(0)}m (${ep}%) ──`,'in');
+
+  // marca pontos dos degraus no gráfico
+  const mxA=Math.max(S.ap*1.08,S.altMax+10);
+  const mxT=Math.max(S.dur*1.05,m.t_total);
+  const svg=document.getElementById('csv');
+  m.degraus.forEach(d=>{
+    const x=PL+(d.t/mxT)*(CW-PL-PR);
+    const y=CH-PB-(d.alt/mxA)*(CH-PT-PB);
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',x.toFixed(1));c.setAttribute('cy',y.toFixed(1));
+    c.setAttribute('r','4');c.setAttribute('fill','var(--green)');
+    c.setAttribute('filter','url(#gc)');
+    svg.appendChild(c);
+  });
+}
+
+// ─── LOG ─────────────────────────────────────────────────────────────────────
+function log(msg,cls='da'){
+  const el=document.getElementById('log');
+  const ts=S.t>0?`[${S.t.toFixed(1).padStart(5)}s]`:'[  ---  ]';
+  const d=document.createElement('div');
+  const map={ok:'lok',wn:'lwn',er:'ler',in:'lin',da:'lda',warn:'lwn',err:'ler',info:'lin',data:'lda'};
+  d.className=map[cls]||'lda';
+  d.textContent=ts+' '+msg;
+  el.appendChild(d);
+  el.parentElement.scrollTop=el.parentElement.scrollHeight;
+}
+
+// ─── COMANDOS ────────────────────────────────────────────────────────────────
+function cmdIniciar(){
+  if(!['idle','concluido','erro'].includes(S.fase))return;
+  S.hT=[];S.hA=[];S.altMax=0;S.alt=0;S.dg=0;S.t=0;S.pref=null;
+  document.getElementById('real-p').setAttribute('points','0,200');
+  document.getElementById('result').innerHTML='<div class="rrow"><span class="rk">Voo em andamento...</span><span></span></div>';
+  document.getElementById('h-pref').textContent='—';
+  document.getElementById('h-pref').className='val vm';
+  document.getElementById('csv').querySelectorAll('circle').forEach(c=>c.remove());
+  buildSteps(); updAlt(0,S.ap); drawRef();
+  const b=document.getElementById('btn-go');b.disabled=true;b.textContent='● MISSÃO ATIVA';
+  setFase('calibra');
+  log('Missão iniciada','in');
+  log(`Apogeu=${S.ap}m  Dur=${S.dur}s  Degraus=${S.nd}`,'in');
+  send({cmd:'iniciar',apogeu:S.ap,dur:S.dur,n_degraus:S.nd});
+}
+function cmdParar(){
+  send({cmd:'parar'});
+  log('⚠ Parada solicitada','er');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+log('Interface inicializada.','ok');
+log('Inicie o servidor: python servidor_gui.py','wn');
+connectWS();
+</script>
+
+<style>
+#hist-panel{position:fixed;bottom:0;left:0;right:0;max-height:240px;overflow-y:auto;
+background:#0d1117;border-top:1px solid #222;font-family:monospace;z-index:100;display:none}
+#hist-panel header{display:flex;justify-content:space-between;align-items:center;
+padding:6px 12px;border-bottom:1px solid #222}
+#hist-panel header span{color:#888;font-size:12px}
+#hist-panel header button{background:none;border:none;color:#888;cursor:pointer;font-size:16px}
+#hist-lista{padding:0 8px;font-size:12px}
+.hr{display:flex;gap:12px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer}
+.hr:hover{background:rgba(255,255,255,.04)}
+.hr .d{flex:2;color:#888}.hr .a{flex:1.5}.hr .m{flex:1;color:#4af}
+.hr .e{flex:1;color:#fa4}.hr .s{flex:.5;text-align:center}
+#btn-hist{position:fixed;bottom:12px;right:12px;background:#1a2030;border:1px solid #334;
+color:#aaa;padding:6px 14px;border-radius:4px;cursor:pointer;font-family:monospace;
+font-size:12px;z-index:101}
+</style>
+<div id="hist-panel">
+  <header>
+    <span>HISTÓRICO DE VOOS</span>
+    <button onclick="document.getElementById('hist-panel').style.display='none'">✕</button>
+  </header>
+  <div id="hist-lista"></div>
+</div>
+<button id="btn-hist" onclick="toggleHist()">📋 Histórico</button>
+<script>
+function toggleHist(){
+  const p=document.getElementById('hist-panel');
+  p.style.display=p.style.display==='none'?'block':'none';
+  if(p.style.display==='block') carregarHist();
+}
+async function carregarHist(){
+  try{
+    const r=await fetch(BACKEND+'/voos');
+    const voos=await r.json();
+    const el=document.getElementById('hist-lista');
+    if(!voos.length){el.innerHTML='<p style="color:#666;padding:1rem">Nenhum voo salvo.</p>';return;}
+    el.innerHTML=voos.map(v=>{
+      const dt=new Date(v.criado_em).toLocaleString('pt-BR');
+      const err=v.erro_pct!=null?v.erro_pct.toFixed(1)+'%':'—';
+      const max=v.alt_max?v.alt_max.toFixed(0)+'m':'—';
+      return `<div class="hr" onclick="window.open(BACKEND+'/voos/${v.id}/csv','_blank')">
+        <span class="d">${dt}</span>
+        <span class="a">${v.apogeu_alvo}m/${v.dur_subida}s</span>
+        <span class="m">${max}</span>
+        <span class="e">${err}</span>
+        <span class="s">${v.salvo?'✓':'○'}</span>
+      </div>`;
+    }).join('');
+  }catch(e){console.warn('Histórico:',e);}
+}
+setTimeout(carregarHist,2000);
+</script>
+
+</body>
+</html>
