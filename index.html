@@ -178,6 +178,45 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
 .ll{padding:0 2px;}
 .ll.ok{color:var(--green)}.ll.warn{color:var(--amber)}.ll.err{color:var(--red)}.ll.info{color:var(--cyan)}.ll.data{color:var(--text2)}
 
+/* ABAS */
+.tab-bar{display:flex;gap:1px;background:var(--line);flex-shrink:0;}
+.tab{flex:1;padding:11px 0;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text2);cursor:pointer;background:var(--bg1);border-bottom:2px solid transparent;transition:all .2s;}
+.tab:hover{color:var(--text1);}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:var(--bg2);}
+.tab-pane{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.tab-pane.active{display:flex;}
+
+/* HISTÓRICO */
+.hist-layout{display:grid;grid-template-columns:280px 1fr;flex:1;min-height:0;gap:1px;background:var(--line);}
+.hist-list{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;}
+.hist-scroll{flex:1;overflow-y:auto;min-height:0;}
+.hist-item{padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;}
+.hist-item:hover{background:var(--bg2);}
+.hist-item.sel{background:var(--bg2);border-left:2px solid var(--cyan);}
+.hist-item .hi-date{font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:4px;}
+.hist-item .hi-alt{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--cyan);}
+.hist-item .hi-alt span{font-size:11px;color:var(--text2);}
+.hist-item .hi-meta{font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:3px;}
+.hist-detail{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;padding:16px 20px;}
+.hist-empty{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--text2);}
+.hist-detail-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-shrink:0;}
+.hist-big{font-family:var(--mono);font-size:54px;font-weight:600;letter-spacing:-2px;}
+.hist-big.g{color:var(--green);text-shadow:0 0 28px rgba(77,187,122,.3);}
+.hist-big.a{color:var(--amber);text-shadow:0 0 28px rgba(232,184,78,.3);}
+.hist-big.r{color:var(--red);}
+.hist-big-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text2);margin-top:3px;}
+.hist-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;flex-shrink:0;}
+.hstat-c{background:var(--bg2);border:1px solid var(--line);border-radius:2px;padding:8px 10px;}
+.hstat-c .k{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--text2);}
+.hstat-c .v{font-family:var(--mono);font-size:14px;color:var(--text0);margin-top:3px;}
+.hstat-c .v.c{color:var(--cyan);}
+.hist-chart{flex:1;min-height:0;display:flex;flex-direction:column;}
+.hist-chart-title{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--text2);margin-bottom:6px;flex-shrink:0;}
+#hist-svg{flex:1;display:block;width:100%;}
+.hist-loading{font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:20px;}
+.btn-reload{padding:8px 14px;background:transparent;border:1px solid var(--line2);border-radius:2px;color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-left:auto;}
+.btn-reload:hover{border-color:var(--cyan);color:var(--cyan);}
+
 /* TOAST */
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:9px 20px;border-radius:2px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;z-index:1000;opacity:0;transition:opacity .3s;pointer-events:none;}
 #toast.show{opacity:1;}
@@ -210,6 +249,12 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
   </div>
 </div>
 
+<div class="tab-bar">
+  <div class="tab active" id="tab-ensaio" onclick="setTab('ensaio')">ENSAIO</div>
+  <div class="tab" id="tab-historico" onclick="setTab('historico')">HISTÓRICO</div>
+</div>
+
+<div class="tab-pane active" id="pane-ensaio">
 <div id="app">
 
   <!-- ESQUERDA -->
@@ -400,7 +445,25 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
     </div>
   </div>
 
-</div>
+</div><!-- #app -->
+</div><!-- pane-ensaio -->
+
+<div class="tab-pane" id="pane-historico">
+  <div class="hist-layout">
+    <div class="hist-list">
+      <div class="sec" style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+        <div class="stitle" style="margin:0;">ENSAIOS REALIZADOS</div>
+        <button class="btn-reload" onclick="histCarregar()">↻ ATUALIZAR</button>
+      </div>
+      <div class="hist-scroll" id="hist-lista">
+        <div class="hist-loading">Carregando...</div>
+      </div>
+    </div>
+    <div class="hist-detail" id="hist-detalhe">
+      <div class="hist-empty">← Selecione um ensaio</div>
+    </div>
+  </div>
+</div><!-- pane-historico -->
 
 <div id="toast"></div>
 
@@ -807,6 +870,123 @@ function cmdIniciar(){
 function cmdParar(){
   wsSend({cmd:'parar'});
   addLog('Sinal de abortar enviado.','err');
+}
+
+// ─── ABAS ─────────────────────────────────────────────────────────────────────
+function setTab(nome){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+nome).classList.add('active');
+  document.getElementById('pane-'+nome).classList.add('active');
+  if(nome==='historico') histCarregar();
+}
+
+// ─── HISTÓRICO ────────────────────────────────────────────────────────────────
+let _histVoos = [];
+let _histSel  = null;
+
+async function histCarregar(){
+  const lista = document.getElementById('hist-lista');
+  lista.innerHTML = '<div class="hist-loading">Carregando...</div>';
+  try {
+    const r = await fetch(BACKEND + '/voos?limit=50');
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    _histVoos = await r.json();
+    histRenderLista();
+  } catch(e) {
+    lista.innerHTML = `<div class="hist-loading">Erro: ${e.message}</div>`;
+  }
+}
+
+function histRenderLista(){
+  const lista = document.getElementById('hist-lista');
+  if(!_histVoos.length){
+    lista.innerHTML = '<div class="hist-loading">Nenhum ensaio no banco.</div>';
+    return;
+  }
+  lista.innerHTML = _histVoos.map(v => {
+    const dt  = new Date(v.data_inicio).toLocaleString('pt-BR');
+    const sel = _histSel === v.id_voo ? ' sel' : '';
+    return `<div class="hist-item${sel}" onclick="histSelecionar(${v.id_voo})">
+      <div class="hi-date">${dt}</div>
+      <div class="hi-alt">${v.alt_max.toFixed(1)}<span> m</span></div>
+      <div class="hi-meta">${v.t_total_s.toFixed(1)}s · ${v.n_pontos} pontos</div>
+    </div>`;
+  }).join('');
+}
+
+async function histSelecionar(id){
+  _histSel = id;
+  histRenderLista();
+  const det = document.getElementById('hist-detalhe');
+  det.innerHTML = '<div class="hist-loading">Carregando telemetria...</div>';
+
+  try {
+    const r = await fetch(`${BACKEND}/voos/${id}/telemetria`);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const voo = await r.json();
+    histRenderDetalhe(voo);
+  } catch(e) {
+    det.innerHTML = `<div class="hist-loading">Erro: ${e.message}</div>`;
+  }
+}
+
+function histRenderDetalhe(voo){
+  const det   = document.getElementById('hist-detalhe');
+  const dt    = new Date(voo.data_inicio).toLocaleString('pt-BR');
+  const alvo  = _histVoos.find(v=>v.id_voo===_histSel);
+  const cor   = voo.alt_max > 0 ? 'g' : 'a';
+
+  det.innerHTML = `
+    <div class="hist-detail-hdr">
+      <div>
+        <div class="hist-big ${cor}">${voo.alt_max.toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div>
+        <div class="hist-big-lbl">APOGEU ATINGIDO · ${dt}</div>
+      </div>
+    </div>
+    <div class="hist-stats">
+      <div class="hstat-c"><div class="k">DURAÇÃO</div><div class="v c">${voo.t_total_s.toFixed(1)} s</div></div>
+      <div class="hstat-c"><div class="k">PONTOS</div><div class="v">${voo.pontos.length}</div></div>
+      <div class="hstat-c"><div class="k">ALT MÁX</div><div class="v c">${voo.alt_max.toFixed(1)} m</div></div>
+      <div class="hstat-c"><div class="k">VEL MÉD</div><div class="v">${voo.t_total_s > 0 ? (voo.alt_max/voo.t_total_s).toFixed(1) : '—'} m/s</div></div>
+    </div>
+    <div class="hist-chart">
+      <div class="hist-chart-title">ALTITUDE × TEMPO</div>
+      <svg id="hist-svg" viewBox="0 0 700 180" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="hgr" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(78,201,232,.3)"/>
+            <stop offset="100%" stop-color="rgba(78,201,232,0)"/>
+          </linearGradient>
+        </defs>
+        <polyline id="hist-fill" fill="url(#hgr)" stroke="none" points=""/>
+        <polyline id="hist-line" fill="none" stroke="var(--cyan)" stroke-width="2"
+                  points="" style="filter:drop-shadow(0 0 3px rgba(78,201,232,.5))"/>
+      </svg>
+    </div>`;
+
+  // Desenha o gráfico
+  histDesenharGrafico(voo.pontos, voo.alt_max, voo.t_total_s);
+}
+
+function histDesenharGrafico(pontos, altMax, tMax){
+  if(!pontos.length) return;
+  const W=700, H=180, PL=8, PR=8, PT=6, PB=6;
+  const aMax = altMax * 1.12 || 10;
+  const tFim = tMax   * 1.05 || 1;
+
+  const pts = pontos.map(p => {
+    const x = PL + (p.t / tFim) * (W - PL - PR);
+    const y = H - PB - (p.alt / aMax) * (H - PT - PB);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+
+  const ultimo = pts[pts.length - 1].split(',');
+  const fill   = pts.join(' ') +
+    ` ${ultimo[0]},${(H-PB).toFixed(1)} ${PL},${(H-PB).toFixed(1)}`;
+
+  document.getElementById('hist-fill').setAttribute('points', fill);
+  document.getElementById('hist-line').setAttribute('points', pts.join(' '));
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
