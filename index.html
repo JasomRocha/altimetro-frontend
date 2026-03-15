@@ -596,24 +596,23 @@
 <div id="toast"></div>
 
 <!-- Módulos JS (ordem importa: state → ws → charts → historico → sistema → auth) -->
-<script defer src="js/state.js"></script>
-<script defer src="js/ws.js"></script>
-<script defer src="js/charts.js"></script>
-<script defer src="js/historico.js"></script>
-<script defer src="js/sistema.js"></script>
-<script defer src="js/auth.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ws.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/historico.js"></script>
+<script src="js/sistema.js"></script>
+<script src="js/auth.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  setApogeu(700);
-  setTSubida(20);
-  setPotencia(50);
-  document.getElementById('sl-ap').style.setProperty('--f',((700-100)/(2000-100)*100).toFixed(1)+'%');
-  drawRef();
-  atualizarDiagrama('idle');
-  addLog('Interface inicializada.','ok');
-  addLog('Conectando ao backend em produção...','warn');
-  connectWS();
-});
+// Scripts no final do body — DOM e módulos já disponíveis
+setApogeu(700);
+setTSubida(20);
+setPotencia(50);
+document.getElementById('sl-ap').style.setProperty('--f',((700-100)/(2000-100)*100).toFixed(1)+'%');
+drawRef();
+atualizarDiagrama('idle');
+addLog('Interface inicializada.','ok');
+addLog('Conectando ao backend em produção...','warn');
+connectWS();
 </script>
 </body>
 </html>

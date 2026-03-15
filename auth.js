@@ -1,13 +1,15 @@
 // ── auth.js — Autenticação de usuários ──────────────────────────
+// (carregado no final do body — DOM já disponível)
 
 let _usuarioLogado = null;
 let _modoCadastro  = false;
 
-// Configura os listeners do formulário de login após DOM pronto
-document.addEventListener('DOMContentLoaded', function() {
+// ── Configura listeners do formulário ────────────────────────────
+(function initAuth() {
+  const btnLogin  = document.getElementById('btn-login');
+  const senhaInp  = document.getElementById('senha-input');
+  const loginInp  = document.getElementById('login-input');
 
-  // Botão principal (Entrar / Cadastrar)
-  const btnLogin = document.getElementById('btn-login');
   if (btnLogin) {
     btnLogin.addEventListener('click', function() {
       if (_modoCadastro) fazerCadastro();
@@ -15,10 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Enter no campo senha → submete
-  const senhaInput = document.getElementById('senha-input');
-  if (senhaInput) {
-    senhaInput.addEventListener('keydown', function(e) {
+  if (senhaInp) {
+    senhaInp.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         if (_modoCadastro) fazerCadastro();
         else               fazerLogin();
@@ -26,10 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Enter no campo login → foca senha
-  const loginInput = document.getElementById('login-input');
-  if (loginInput) {
-    loginInput.addEventListener('keydown', function(e) {
+  if (loginInp) {
+    loginInp.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         const s = document.getElementById('senha-input');
         if (s) s.focus();
@@ -44,14 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
       const u = JSON.parse(usr);
       _usuarioLogado = { ...u, token: tok };
-      document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('user-label').textContent       = u.nome;
-      document.getElementById('btn-logout').style.display     = 'block';
+      const overlay = document.getElementById('login-overlay');
+      const label   = document.getElementById('user-label');
+      const btnOut  = document.getElementById('btn-logout');
+      if (overlay) overlay.style.display = 'none';
+      if (label)   label.textContent     = u.nome;
+      if (btnOut)  btnOut.style.display  = 'block';
     } catch { localStorage.clear(); }
   }
-});
+})();
 
-// ── Alterna entre modo login e cadastro ─────────────────────────
+// ── Alterna modo login / cadastro ────────────────────────────────
 function toggleCadastro() {
   const ex  = document.getElementById('cadastro-extra');
   const btn = document.getElementById('btn-login');
@@ -61,20 +62,20 @@ function toggleCadastro() {
   _modoCadastro = !_modoCadastro;
 
   if (_modoCadastro) {
-    ex.style.display  = 'block';
-    btn.textContent   = 'CADASTRAR';
-    tog.textContent   = 'Já tenho conta';
+    ex.style.display = 'block';
+    btn.textContent  = 'CADASTRAR';
+    tog.textContent  = 'Já tenho conta';
   } else {
-    ex.style.display  = 'none';
-    btn.textContent   = 'ENTRAR';
-    tog.textContent   = 'Criar conta';
+    ex.style.display = 'none';
+    btn.textContent  = 'ENTRAR';
+    tog.textContent  = 'Criar conta';
   }
 }
 
-// ── Login ────────────────────────────────────────────────────────
+// ── Login ─────────────────────────────────────────────────────────
 async function fazerLogin() {
-  const li = document.getElementById('login-input').value.trim();
-  const se = document.getElementById('senha-input').value;
+  const li = (document.getElementById('login-input').value || '').trim();
+  const se = document.getElementById('senha-input').value || '';
   const er = document.getElementById('login-erro');
   er.style.display = 'none';
 
@@ -95,16 +96,17 @@ async function fazerLogin() {
     }
     _aplicarLogin(await r.json());
   } catch (e) {
-    er.textContent   = e.message;
-    er.style.display = 'block';
+    const er2 = document.getElementById('login-erro');
+    er2.textContent   = e.message;
+    er2.style.display = 'block';
   }
 }
 
-// ── Cadastro ─────────────────────────────────────────────────────
+// ── Cadastro ──────────────────────────────────────────────────────
 async function fazerCadastro() {
-  const no = document.getElementById('nome-input').value.trim();
-  const li = document.getElementById('login-input').value.trim();
-  const se = document.getElementById('senha-input').value;
+  const no = (document.getElementById('nome-input').value || '').trim();
+  const li = (document.getElementById('login-input').value || '').trim();
+  const se = document.getElementById('senha-input').value || '';
   const er = document.getElementById('login-erro');
   er.style.display = 'none';
 
@@ -130,29 +132,36 @@ async function fazerCadastro() {
     }
     _aplicarLogin(await r.json());
   } catch (e) {
-    er.textContent   = e.message;
-    er.style.display = 'block';
+    const er2 = document.getElementById('login-erro');
+    er2.textContent   = e.message;
+    er2.style.display = 'block';
   }
 }
 
-// ── Aplica sessão após login/cadastro bem-sucedido ───────────────
+// ── Aplica sessão ─────────────────────────────────────────────────
 function _aplicarLogin(d) {
   _usuarioLogado = d;
   localStorage.setItem('altimetro_token', d.token);
   localStorage.setItem('altimetro_user',
     JSON.stringify({ id: d.id, nome: d.nome, login: d.login }));
-  document.getElementById('login-overlay').style.display = 'none';
-  document.getElementById('user-label').textContent       = d.nome;
-  document.getElementById('btn-logout').style.display     = 'block';
-  addLog('Sessão iniciada: ' + d.nome, 'ok');
+  const overlay = document.getElementById('login-overlay');
+  const label   = document.getElementById('user-label');
+  const btnOut  = document.getElementById('btn-logout');
+  if (overlay) overlay.style.display = 'none';
+  if (label)   label.textContent     = d.nome;
+  if (btnOut)  btnOut.style.display  = 'block';
+  if (typeof addLog === 'function') addLog('Sessão iniciada: ' + d.nome, 'ok');
 }
 
-// ── Logout ───────────────────────────────────────────────────────
+// ── Logout ────────────────────────────────────────────────────────
 function fazerLogout() {
   localStorage.removeItem('altimetro_token');
   localStorage.removeItem('altimetro_user');
   _usuarioLogado = null;
-  document.getElementById('user-label').textContent   = '';
-  document.getElementById('btn-logout').style.display = 'none';
-  document.getElementById('login-overlay').style.display = 'flex';
+  const overlay = document.getElementById('login-overlay');
+  const label   = document.getElementById('user-label');
+  const btnOut  = document.getElementById('btn-logout');
+  if (label)   label.textContent   = '';
+  if (btnOut)  btnOut.style.display = 'none';
+  if (overlay) overlay.style.display = 'flex';
 }
