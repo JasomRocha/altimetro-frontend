@@ -8,6 +8,7 @@
 <style>
 /* ── TOKENS ─────────────────────────────────────────────────── */
 :root {
+  /* Paleta: cinza petróleo + verde teal técnico */
   --bg0: #0a0e14;
   --bg1: #0f1520;
   --bg2: #141c28;
@@ -41,9 +42,10 @@ html, body {
   color: var(--text0);
   font-family: var(--sans);
   font-size: 14px;
-  overflow: hidden;
+  overflow: hidden;        /* desktop: layout fixo */
   -webkit-font-smoothing: antialiased;
 }
+/* tela muito pequena: permite rolar */
 @media (max-height: 600px) {
   html, body { overflow-y: auto; height: auto; }
   #app { height: auto; min-height: 400px; }
@@ -159,13 +161,14 @@ html, body {
 
 /* ── LAYOUT DESKTOP ─────────────────────────────────────────── */
 #app {
-  height: calc(100vh - 98px);
+  height: calc(100vh - 98px); /* topbar 54 + tabbar 44 */
   display: grid;
   grid-template-columns: 300px 1fr 240px;
   gap: 1px;
   background: var(--line);
 }
 .panel { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; }
+/* painel esquerdo: scroll quando altura insuficiente */
 #app > .panel:first-child { overflow-y: auto; }
 .sec { padding: 14px 16px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
 .sec.grow { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 120px; }
@@ -189,7 +192,7 @@ html, body {
   flex-shrink: 0;
 }
 
-/* ── SLIDERS E CAMPOS ────────────────────────────────────────── */
+/* ── SLIDERS ─────────────────────────────────────────────────── */
 input[type=range] {
   -webkit-appearance: none; appearance: none;
   width: 100%; height: 2px;
@@ -214,44 +217,69 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 .range-marks { display: flex; justify-content: space-between; margin-top: 4px; }
 .range-marks span { font-family: var(--mono); font-size: 9px; color: var(--text2); }
 
+/* param block */
 .param-block { margin-bottom: 15px; }
-.param-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+.param-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 7px;
+}
 .param-head .nm { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; color: var(--text2); }
 .param-num { font-family: var(--mono); font-size: 32px; font-weight: 600; letter-spacing: -.02em; color: var(--teal); }
 .param-num.o { color: var(--amber); }
 .param-num.g { color: var(--green); }
 .param-unit { font-family: var(--mono); font-size: 13px; color: var(--text2); margin-left: 3px; }
 
+/* PWM ticks */
 .pwm-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
 .pwm-label { font-family: var(--mono); font-size: 9px; color: var(--text2); }
 .pwm-val { font-family: var(--mono); font-size: 11px; color: var(--amber); }
 
-.ig { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; margin-top: 12px; }
+/* info grid */
+.ig {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 3px; overflow: hidden;
+  margin-top: 12px;
+}
 .ic { background: var(--bg2); padding: 7px 9px; }
 .ic .k { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; color: var(--text2); text-transform: uppercase; }
 .ic .v { font-family: var(--mono); font-size: 11px; color: var(--text0); margin-top: 3px; }
 .ic .v.c { color: var(--teal); }
 
-.valve-note { margin-top: 11px; padding: 8px 10px; background: var(--bg2); border: 1px solid var(--line2); border-left: 2px solid var(--amber); border-radius: 2px; }
+/* valve note */
+.valve-note {
+  margin-top: 11px; padding: 8px 10px;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-left: 2px solid var(--amber);
+  border-radius: 2px;
+}
 .valve-note .vn-hd { font-family: var(--mono); font-size: 8px; letter-spacing: .1em; color: var(--amber); margin-bottom: 5px; }
 .vn-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; padding: 2px 0; }
 .vna { color: var(--text1); } .vne { color: var(--text1); }
 
-.field-block{margin-bottom:13px;}
-.field-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px;}
-.field-input{width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--line2);border-radius:3px;color:var(--text0);font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s;}
-.field-input:focus{border-color:var(--teal);}
-.field-input::placeholder{color:var(--text2);}
-.field-req{color:var(--red);margin-left:2px;}
-
-/* ── BOTÕES E BADGES ─────────────────────────────────────────── */
+/* ── BOTÕES ──────────────────────────────────────────────────── */
 .btn-go {
-  width: 100%; padding: 13px; background: transparent; border: 1px solid var(--green); border-radius: 3px;
-  color: var(--green); font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .12em;
-  cursor: pointer; position: relative; overflow: hidden; transition: all .2s;
+  width: 100%; padding: 13px;
+  background: transparent;
+  border: 1px solid var(--green);
+  border-radius: 3px;
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .12em;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: all .2s;
 }
 .btn-go::before {
-  content: ''; position: absolute; inset: 0; background: var(--green-d); transform: scaleX(0); transform-origin: left; transition: transform .25s;
+  content: ''; position: absolute; inset: 0;
+  background: var(--green-d);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .25s;
 }
 .btn-go:hover::before { transform: scaleX(1); }
 .btn-go:active { transform: scale(.99); }
@@ -260,13 +288,29 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 .btn-go span { position: relative; z-index: 1; }
 
 .btn-abort {
-  width: 100%; padding: 8px; margin-top: 6px; background: transparent; border: 1px solid rgba(230,57,70,.25); border-radius: 3px;
-  color: rgba(230,57,70,.45); font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .1em;
+  width: 100%; padding: 8px; margin-top: 6px;
+  background: transparent;
+  border: 1px solid rgba(230,57,70,.25);
+  border-radius: 3px;
+  color: rgba(230,57,70,.45);
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .1em;
   cursor: pointer; transition: all .2s;
 }
 .btn-abort:hover { border-color: var(--red); color: var(--red); background: var(--red-d); }
 
-.fbadge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 3px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .1em; border: 1px solid; transition: all .3s; margin-top: 9px; text-transform: uppercase; }
+/* fase badge */
+.fbadge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .1em;
+  border: 1px solid; transition: all .3s;
+  margin-top: 9px; text-transform: uppercase;
+}
 .fdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 .f-idle  { color: var(--text2); border-color: var(--line2); }
 .f-cal   { color: var(--amber); border-color: rgba(244,162,97,.35); background: var(--amber-d); }
@@ -276,68 +320,136 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 .f-err   { color: var(--red);   border-color: rgba(230,57,70,.35);  background: var(--red-d); }
 .f-sub .fdot, .f-cal .fdot { animation: blink 1s infinite; }
 
-.sys-badge{display:flex;align-items:center;gap:7px;padding:5px 14px;border:1px solid var(--line2);border-radius:20px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text2);transition:all .3s;}
-.sys-dot{width:8px;height:8px;border-radius:50%;background:var(--s600);transition:all .3s;flex-shrink:0;}
-.sys-badge.ativo{border-color:rgba(244,162,97,.5);color:var(--amber);background:var(--amber-d);}
-.sys-badge.ativo .sys-dot{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1s ease-in-out infinite;}
-.sys-badge.leitura{border-color:rgba(46,196,182,.4);color:var(--teal);background:var(--teal-d);}
-.sys-badge.leitura .sys-dot{background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pulse 2s ease-in-out infinite;}
-.sys-badge.alerta{border-color:rgba(230,57,70,.4);color:var(--red);background:var(--red-d);}
-.sys-badge.alerta .sys-dot{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse .6s ease-in-out infinite;}
-
 /* ── RESULTADO ───────────────────────────────────────────────── */
 .result-area { flex: 1; overflow-y: auto; min-height: 0; padding-right: 2px; }
-.apogeu-destaque { text-align: center; padding: 14px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
-.apogeu-num { font-family: var(--mono); font-size: 52px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
-.apogeu-num.g { color: var(--green); } .apogeu-num.a { color: var(--amber); } .apogeu-num.r { color: var(--red); }
+
+.apogeu-destaque {
+  text-align: center; padding: 14px 0 12px;
+  border-bottom: 1px solid var(--line); margin-bottom: 12px;
+}
+.apogeu-num {
+  font-family: var(--mono); font-size: 52px; font-weight: 600;
+  line-height: 1; letter-spacing: -.02em;
+}
+.apogeu-num.g { color: var(--green); }
+.apogeu-num.a { color: var(--amber); }
+.apogeu-num.r { color: var(--red); }
 .apogeu-label { font-family: var(--mono); font-size: 9px; letter-spacing: .12em; color: var(--text2); margin-top: 4px; }
-.erro-badge { display: inline-block; margin-top: 7px; padding: 3px 12px; border-radius: 2px; font-family: var(--mono); font-size: 12px; font-weight: 600; border: 1px solid; }
+.erro-badge {
+  display: inline-block; margin-top: 7px; padding: 3px 12px;
+  border-radius: 2px; font-family: var(--mono);
+  font-size: 12px; font-weight: 600; border: 1px solid;
+}
 .erro-badge.g { color: var(--green); border-color: rgba(61,220,132,.4); background: var(--green-d); }
 .erro-badge.a { color: var(--amber); border-color: rgba(244,162,97,.4); background: var(--amber-d); }
 .erro-badge.r { color: var(--red);   border-color: rgba(230,57,70,.4);  background: var(--red-d); }
 
 .r-sec { margin-bottom: 10px; }
-.r-sec-title { font-family: var(--mono); font-size: 8px; letter-spacing: .12em; color: var(--text2); margin-bottom: 5px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
-.r-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; border-bottom: 1px solid rgba(30,46,66,.5); font-family: var(--mono); font-size: 11px; }
+.r-sec-title {
+  font-family: var(--mono); font-size: 8px; letter-spacing: .12em;
+  color: var(--text2); margin-bottom: 5px;
+  padding-bottom: 4px; border-bottom: 1px solid var(--line);
+}
+.r-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0; border-bottom: 1px solid rgba(30,46,66,.5);
+  font-family: var(--mono); font-size: 11px;
+}
 .r-row:last-child { border: none; }
 .rk { color: var(--text2); } .rv { color: var(--text0); }
-.rv.g { color: var(--green); } .rv.c { color: var(--teal); } .rv.a { color: var(--amber); } .rv.r { color: var(--red); }
+.rv.g { color: var(--green); } .rv.c { color: var(--teal); }
+.rv.a { color: var(--amber); } .rv.r { color: var(--red); }
 
-.btn-csv, .btn-salvar { width: 100%; padding: 8px; margin-top: 6px; background: transparent; border-radius: 2px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .1em; cursor: pointer; transition: all .2s; display: none; }
+.btn-csv, .btn-salvar {
+  width: 100%; padding: 8px; margin-top: 6px;
+  background: transparent; border-radius: 2px;
+  font-family: var(--mono); font-size: 10px;
+  font-weight: 600; letter-spacing: .1em;
+  cursor: pointer; transition: all .2s; display: none;
+}
 .btn-csv    { border: 1px solid rgba(46,196,182,.3); color: var(--teal); }
 .btn-csv:hover    { background: var(--teal-d); border-color: var(--teal); }
 .btn-salvar { border: 1px solid rgba(61,220,132,.3); color: var(--green); }
 .btn-salvar:hover { background: var(--green-d); border-color: var(--green); }
 .btn-salvar:disabled { opacity: .5; cursor: not-allowed; }
-.salvo-badge { display: none; text-align: center; margin-top: 6px; padding: 7px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--green); border: 1px solid rgba(61,220,132,.3); border-radius: 2px; }
+.salvo-badge {
+  display: none; text-align: center; margin-top: 6px; padding: 7px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+  color: var(--green); border: 1px solid rgba(61,220,132,.3); border-radius: 2px;
+}
 
 /* ── CENTRO — LIVE ───────────────────────────────────────────── */
 .center-top { padding: 16px 20px 13px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
 .altimeter-row { display: flex; align-items: center; gap: 22px; }
 .live-readings { flex: 1; }
-.live-big { font-family: var(--mono); font-size: 56px; font-weight: 600; color: var(--teal); line-height: 1; letter-spacing: -.02em; }
+.live-big {
+  font-family: var(--mono); font-size: 56px; font-weight: 600;
+  color: var(--teal); line-height: 1; letter-spacing: -.02em;
+}
 .live-big .lu { font-size: 18px; color: var(--text2); margin-left: 3px; }
-.live-sub { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 10px; }
+.live-sub {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 8px; margin-top: 10px;
+}
 .li .lik { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); }
 .li .liv { font-family: var(--mono); font-size: 13px; color: var(--text1); margin-top: 2px; transition: color .3s; }
 .alt-bar { margin-top: 10px; }
 .alt-bar-track { width: 100%; height: 3px; background: var(--line2); border-radius: 1px; overflow: hidden; }
-.alt-bar-fill { height: 100%; background: var(--teal); border-radius: 1px; transition: width .4s ease; }
+.alt-bar-fill {
+  height: 100%; background: var(--teal);
+  border-radius: 1px; transition: width .4s ease;
+}
 .alt-bar-labels { display: flex; justify-content: space-between; margin-top: 3px; }
 .alt-bar-labels span { font-family: var(--mono); font-size: 9px; color: var(--text2); }
 
 /* ── MULTI-CHART ─────────────────────────────────────────────── */
-.charts-area { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 10px 16px 8px; gap: 6px; overflow: hidden; }
-.chart-block { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--bg2); border: 1px solid var(--line); border-radius: 3px; padding: 8px 10px 6px; }
-.chart-block-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-shrink: 0; }
-.chart-block-title { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); text-transform: uppercase; }
-.chart-block-unit { font-family: var(--mono); font-size: 9px; color: var(--text2); }
+.charts-area {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  padding: 10px 16px 8px;
+  gap: 6px;
+  overflow: hidden;
+}
+.chart-block {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 8px 10px 6px;
+}
+.chart-block-hdr {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 4px; flex-shrink: 0;
+}
+.chart-block-title {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: .1em; color: var(--text2); text-transform: uppercase;
+}
+.chart-block-unit {
+  font-family: var(--mono); font-size: 9px;
+  color: var(--text2);
+}
 .chart-svg { flex: 1; display: block; width: 100%; min-height: 0; }
+
+/* eixos dos gráficos */
 .chart-axes { position: relative; flex: 1; min-height: 0; display: flex; }
-.axis-y { width: 34px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 2px 4px 2px 0; }
-.axis-y span { font-family: var(--mono); font-size: 8px; color: var(--text2); text-align: right; line-height: 1; }
+.axis-y {
+  width: 34px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 2px 4px 2px 0;
+}
+.axis-y span {
+  font-family: var(--mono); font-size: 8px;
+  color: var(--text2); text-align: right; line-height: 1;
+}
 .axis-x-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.axis-x { display: flex; justify-content: space-between; padding: 2px 2px 0; flex-shrink: 0; }
+.axis-x {
+  display: flex; justify-content: space-between;
+  padding: 2px 2px 0;
+  flex-shrink: 0;
+}
 .axis-x span { font-family: var(--mono); font-size: 8px; color: var(--text2); }
 
 /* ── GAUGES ──────────────────────────────────────────────────── */
@@ -359,10 +471,16 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 .ll.data { color: var(--text2); }
 
 /* ── HISTÓRICO ───────────────────────────────────────────────── */
-.hist-layout { display: grid; grid-template-columns: 280px 1fr; flex: 1; min-height: 0; gap: 1px; background: var(--line); }
+.hist-layout {
+  display: grid; grid-template-columns: 280px 1fr;
+  flex: 1; min-height: 0; gap: 1px; background: var(--line);
+}
 .hist-list { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; }
 .hist-scroll { flex: 1; overflow-y: auto; min-height: 0; }
-.hist-item { padding: 11px 14px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .15s; }
+.hist-item {
+  padding: 11px 14px; border-bottom: 1px solid var(--line);
+  cursor: pointer; transition: background .15s;
+}
 .hist-item:hover { background: var(--bg2); }
 .hist-item.sel { background: var(--bg2); border-left: 2px solid var(--teal); }
 .hist-item .hi-date { font-family: var(--mono); font-size: 10px; color: var(--text2); margin-bottom: 4px; }
@@ -383,14 +501,43 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 .hist-chart-title { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); margin-bottom: 6px; flex-shrink: 0; }
 #hist-svg { flex: 1; display: block; width: 100%; }
 .hist-loading { font-family: var(--mono); font-size: 11px; color: var(--text2); text-align: center; padding: 20px; }
-.btn-reload { padding: 6px 12px; background: transparent; border: 1px solid var(--line2); border-radius: 2px; color: var(--text2); font-family: var(--mono); font-size: 10px; letter-spacing: .08em; cursor: pointer; transition: all .2s; }
+.btn-reload {
+  padding: 6px 12px; background: transparent;
+  border: 1px solid var(--line2); border-radius: 2px;
+  color: var(--text2); font-family: var(--mono); font-size: 10px;
+  letter-spacing: .08em; cursor: pointer; transition: all .2s;
+}
 .btn-reload:hover { border-color: var(--teal); color: var(--teal); }
 
-/* ── TOAST E SCROLLBAR ───────────────────────────────────────── */
-#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 9px 20px; border-radius: 3px; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; z-index: 1000; opacity: 0; transition: opacity .3s; pointer-events: none; }
+/* ── SISTEMA ────────────────────────────────────────────── */
+.sys-badge{display:flex;align-items:center;gap:7px;padding:5px 14px;border:1px solid var(--line2);border-radius:20px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text2);transition:all .3s;}
+.sys-dot{width:8px;height:8px;border-radius:50%;background:var(--s600);transition:all .3s;flex-shrink:0;}
+.sys-badge.ativo{border-color:rgba(244,162,97,.5);color:var(--amber);background:var(--amber-d);}
+.sys-badge.ativo .sys-dot{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1s ease-in-out infinite;}
+.sys-badge.leitura{border-color:rgba(46,196,182,.4);color:var(--teal);background:var(--teal-d);}
+.sys-badge.leitura .sys-dot{background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pulse 2s ease-in-out infinite;}
+.sys-badge.alerta{border-color:rgba(230,57,70,.4);color:var(--red);background:var(--red-d);}
+.sys-badge.alerta .sys-dot{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse .6s ease-in-out infinite;}
+/* ── CAMPOS TEXTO ──────────────────────────────────────── */
+.field-block{margin-bottom:13px;}
+.field-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px;}
+.field-input{width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--line2);border-radius:3px;color:var(--text0);font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s;}
+.field-input:focus{border-color:var(--teal);}
+.field-input::placeholder{color:var(--text2);}
+.field-req{color:var(--red);margin-left:2px;}
+/* ── TOAST ───────────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 20px; border-radius: 3px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+  z-index: 1000; opacity: 0; transition: opacity .3s; pointer-events: none;
+}
 #toast.show { opacity: 1; }
 #toast.ok  { background: var(--green-d); border: 1px solid rgba(61,220,132,.5); color: var(--green); }
 #toast.er  { background: var(--red-d);   border: 1px solid rgba(230,57,70,.5);  color: var(--red); }
+
+/* ── SCROLLBAR ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
@@ -398,22 +545,39 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 /* ── MOBILE ──────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   html, body { overflow-y: auto; overflow-x: hidden; }
-  #topbar { height: auto; flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+
+  #topbar {
+    height: auto; flex-wrap: wrap;
+    padding: 10px 14px; gap: 8px;
+  }
   .tb-stats { display: grid; grid-template-columns: repeat(3,1fr); flex: none; width: 100%; gap: 0; }
   .tb-stat { height: 38px; padding: 0 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .tb-right { width: 100%; justify-content: flex-end; padding: 4px 0 0; }
+
   .tab-bar { height: 40px; padding: 0 14px; }
   .tab { padding: 7px 14px 8px; font-size: 11px; }
-  #app { height: auto; grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+
+  #app {
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
   .panel { min-height: 0; }
+
+  /* painel esquerdo em mobile: scroll interno */
   .panel:first-child { overflow-y: auto; max-height: 70vh; }
+
+  /* resultado cresce em mobile */
   .sec.grow { max-height: 60vh; }
+
   .live-sub { grid-template-columns: repeat(2,1fr); }
   .gauge-grid { grid-template-columns: repeat(4,1fr); }
+
   .hist-layout { grid-template-columns: 1fr; grid-template-rows: 200px 1fr; }
   .hist-list { max-height: 200px; }
   .hist-stats { grid-template-columns: repeat(2,1fr); }
 }
+
 @media (max-width: 500px) {
   .tb-stats { grid-template-columns: repeat(2,1fr); }
   .gauge-grid { grid-template-columns: repeat(2,1fr); }
@@ -424,37 +588,12 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 </head>
 <body>
 
-<div id="login-overlay" style="position:fixed;inset:0;z-index:9000;background:#0a0e14;display:flex;align-items:center;justify-content:center;">
-  <div style="background:#0f1520;border:1px solid #1e2e42;border-radius:6px;padding:36px 40px;width:340px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#2ec4b6;margin-bottom:4px;">BANCO DE TESTE · ALTÍMETROS</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:#3a5470;margin-bottom:28px;">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div>
-    <div id="login-erro" style="display:none;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.4);border-radius:3px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e63946;margin-bottom:14px;"></div>
-
-    <div style="margin-bottom:14px;">
-      <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Login</label>
-      <input id="login-input" type="text" placeholder="admin" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;" onkeydown="if(event.key==='Enter')document.getElementById('senha-input').focus()">
-    </div>
-    <div style="margin-bottom:20px;">
-      <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Senha</label>
-      <input id="senha-input" type="password" placeholder="••••••" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;" onkeydown="if(event.key==='Enter')fazerLogin()">
-    </div>
-
-    <button onclick="fazerLogin()" id="btn-login" style="width:100%;padding:11px;background:#2ec4b6;border:none;border-radius:3px;color:#0a0e14;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;cursor:pointer;">ENTRAR</button>
-    <div style="margin-top:12px;text-align:center;">
-      <span id="toggle-cad" onclick="toggleCadastro()" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#3a5470;cursor:pointer;">Criar conta</span>
-    </div>
-
-    <div id="cadastro-extra" style="display:none;margin-top:14px;border-top:1px solid #1e2e42;padding-top:14px;">
-      <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Nome completo</label>
-      <input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;">
-    </div>
-  </div>
-</div>
-
+<!-- ── TOPBAR ── -->
+<div id="login-overlay" style="position:fixed;inset:0;z-index:9000;background:#0a0e14;display:flex;align-items:center;justify-content:center;"><div style="background:#0f1520;border:1px solid #1e2e42;border-radius:6px;padding:36px 40px;width:340px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#2ec4b6;margin-bottom:4px;">BANCO DE TESTE · ALTÍMETROS</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:#3a5470;margin-bottom:28px;">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div><div id="login-erro" style="display:none;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.4);border-radius:3px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e63946;margin-bottom:14px;"></div><div style="margin-bottom:14px;"><label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Login</label><input id="login-input" type="text" placeholder="admin" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;" onkeydown="if(event.key==='Enter')document.getElementById('senha-input').focus()"></div><div style="margin-bottom:20px;"><label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Senha</label><input id="senha-input" type="password" placeholder="••••••" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;" onkeydown="if(event.key==='Enter')fazerLogin()"></div><button onclick="fazerLogin()" id="btn-login" style="width:100%;padding:11px;background:#2ec4b6;border:none;border-radius:3px;color:#0a0e14;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;cursor:pointer;">ENTRAR</button><div style="margin-top:12px;text-align:center;"><span id="toggle-cad" onclick="toggleCadastro()" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#3a5470;cursor:pointer;">Criar conta</span></div><div id="cadastro-extra" style="display:none;margin-top:14px;border-top:1px solid #1e2e42;padding-top:14px;"><label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Nome completo</label><input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;"></div></div></div>
 <div id="topbar">
   <div class="tb-brand">
     <div class="title">BANCO DE TESTE · ALTÍMETROS</div>
-    <div class="sub">UFPB · ENGENHARIA ELÉTRICA · TCC 2026</div>
+    <div class="sub">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div>
   </div>
   <div class="tb-stats">
     <div class="tb-stat"><span class="k">ALTITUDE</span><span class="v v-teal" id="h-alt">0.0 m</span></div>
@@ -472,14 +611,18 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
   </div>
 </div>
 
+<!-- ── NAV ── -->
 <div class="tab-bar">
   <div class="tab active" id="tab-ensaio"    onclick="setTab('ensaio')">Ensaio</div>
   <div class="tab"        id="tab-historico" onclick="setTab('historico')">Histórico</div>
-  <div class="tab"        id="tab-sistema"   onclick="setTab('sistema')">Sistema</div>
+  <div class="nav-tab" id="tab-sistema" onclick="setTab('sistema')">Sistema</div>
 </div>
 
+<!-- ── PANE ENSAIO ── -->
 <div class="tab-pane active" id="pane-ensaio">
 <div id="app">
+
+  <!-- ESQUERDA -->
   <div class="panel">
     <div class="sec">
       <div class="stitle">Parâmetros do Ensaio</div>
@@ -500,7 +643,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
           <span class="nm">APOGEU ALVO</span>
           <span><span class="param-num" id="r-ap">700</span><span class="param-unit">m</span></span>
         </div>
-        <input type="range" id="sl-ap" class="rc" min="100" max="2000" step="50" value="700" oninput="setApogeu(+this.value)">
+        <input type="range" id="sl-ap" class="rc" min="100" max="2000" step="50" value="700"
+               oninput="setApogeu(+this.value)">
         <div class="range-marks"><span>100 m</span><span>1000 m</span><span>2000 m</span></div>
       </div>
 
@@ -509,7 +653,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
           <span class="nm">TEMPO DE SUBIDA</span>
           <span><span class="param-num g" id="r-ts">20</span><span class="param-unit">s</span></span>
         </div>
-        <input type="range" id="sl-ts" class="rg" min="5" max="60" step="1" value="20" oninput="setTSubida(+this.value)">
+        <input type="range" id="sl-ts" class="rg" min="5" max="60" step="1" value="20"
+               oninput="setTSubida(+this.value)">
         <div class="range-marks"><span>5 s</span><span>30 s</span><span>60 s</span></div>
       </div>
 
@@ -518,7 +663,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
           <span class="nm">POTÊNCIA DA BOMBA</span>
           <span><span class="param-num o" id="r-pot">50</span><span class="param-unit">%</span></span>
         </div>
-        <input type="range" id="sl-pot" class="ra" min="0" max="100" step="5" value="50" oninput="setPotencia(+this.value)">
+        <input type="range" id="sl-pot" class="ra" min="0" max="100" step="5" value="50"
+               oninput="setPotencia(+this.value)">
         <div class="range-marks"><span>0%</span><span>50% nom.</span><span>100%</span></div>
         <div class="pwm-row">
           <span class="pwm-label">PWM</span>
@@ -560,20 +706,29 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
     </div>
   </div>
 
+  <!-- CENTRO -->
   <div class="panel">
     <div class="center-top">
       <div class="altimeter-row">
+        <!-- Altímetro SVG analógico -->
         <svg width="112" height="112" viewBox="0 0 116 116" style="flex-shrink:0">
           <defs>
             <filter id="gc"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             <filter id="ga"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           </defs>
           <circle cx="58" cy="58" r="56" fill="#0a0e14" stroke="#1e2e42" stroke-width="1.5"/>
-          <circle cx="58" cy="58" r="42" fill="none" stroke="#1e2e42" stroke-width="8" stroke-dasharray="220 38" stroke-dashoffset="38" transform="rotate(135 58 58)"/>
-          <circle cx="58" cy="58" r="42" fill="none" stroke="var(--teal)" stroke-width="3" stroke-dasharray="0 258" stroke-dashoffset="38" transform="rotate(135 58 58)" id="alt-arc" filter="url(#gc)" style="transition:stroke-dasharray .5s ease"/>
-          <line id="alt-needle" x1="58" y1="58" x2="58" y2="20" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" filter="url(#ga)" transform="rotate(-135 58 58)" style="transition:transform .5s ease"/>
+          <circle cx="58" cy="58" r="42" fill="none" stroke="#1e2e42" stroke-width="8"
+                  stroke-dasharray="220 38" stroke-dashoffset="38" transform="rotate(135 58 58)"/>
+          <circle cx="58" cy="58" r="42" fill="none" stroke="var(--teal)" stroke-width="3"
+                  stroke-dasharray="0 258" stroke-dashoffset="38" transform="rotate(135 58 58)"
+                  id="alt-arc" filter="url(#gc)" style="transition:stroke-dasharray .5s ease"/>
+          <line id="alt-needle" x1="58" y1="58" x2="58" y2="20"
+                stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round"
+                filter="url(#ga)" transform="rotate(-135 58 58)"
+                style="transition:transform .5s ease"/>
           <circle cx="58" cy="58" r="4" fill="var(--amber)" filter="url(#ga)"/>
-          <text x="58" y="73" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" fill="var(--text2)" letter-spacing="1">ALT · m</text>
+          <text x="58" y="73" text-anchor="middle" font-family="'IBM Plex Mono',monospace"
+                font-size="6" fill="var(--text2)" letter-spacing="1">ALT · m</text>
         </svg>
         <div class="live-readings">
           <div class="live-big"><span id="live-alt">0</span><span class="lu">m</span></div>
@@ -591,7 +746,10 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
       </div>
     </div>
 
+    <!-- MULTI-CHART: Altitude, Velocidade, Pressão -->
     <div class="charts-area">
+
+      <!-- Gráfico 1: Altitude -->
       <div class="chart-block">
         <div class="chart-block-hdr">
           <span class="chart-block-title">Altitude</span>
@@ -611,11 +769,15 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
                   <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
                 </linearGradient>
               </defs>
+              <!-- grade horizontal -->
               <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
-              <polyline id="ref-line" fill="none" stroke="var(--amber)" stroke-width="1" stroke-dasharray="4 3" opacity=".5" points=""/>
+              <polyline id="ref-line" fill="none" stroke="var(--amber)" stroke-width="1"
+                        stroke-dasharray="4 3" opacity=".5" points=""/>
               <polyline id="real-fill" fill="url(#gr-alt)" stroke="none" points=""/>
               <polyline id="real-line" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
-              <g id="ap-rocket" transform="translate(-40,-40)" style="filter:drop-shadow(0 0 4px rgba(244,162,97,.6))">
+              <!-- Foguete com orientação tangencial -->
+              <g id="ap-rocket" transform="translate(-40,-40)"
+                 style="filter:drop-shadow(0 0 4px rgba(244,162,97,.6))">
                 <path d="M0,-9 C3,-9 5,-6 5,-2 L5,4 L0,7 L-5,4 L-5,-2 C-5,-6 -3,-9 0,-9 Z" fill="#f4a261"/>
                 <path d="M0,-9 L2.5,-5 L-2.5,-5 Z" fill="white" opacity=".75"/>
                 <path d="M5,1 L8,6 L5,5 Z" fill="#f4a261" opacity=".7"/>
@@ -634,6 +796,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
         </div>
       </div>
 
+      <!-- Gráfico 2: Velocidade -->
       <div class="chart-block">
         <div class="chart-block-hdr">
           <span class="chart-block-title">Velocidade</span>
@@ -664,6 +827,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
         </div>
       </div>
 
+      <!-- Gráfico 3: Pressão -->
       <div class="chart-block">
         <div class="chart-block-hdr">
           <span class="chart-block-title">Pressão</span>
@@ -697,6 +861,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
     </div>
   </div>
 
+  <!-- DIREITA -->
   <div class="panel">
     <div class="sec">
       <div class="stitle">Telemetria</div>
@@ -714,7 +879,282 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
   </div>
 
 </div>
-</div><div class="tab-pane" id="pane-historico">
+</div><!-- pane-ensaio -->
+
+<!-- ── PANE HISTÓRICO ── -->
+<div class="tab-pane" id="pane-sistema">
+  <!-- Barra de status -->
+  <div style="padding:12px 20px;border-bottom:1px solid var(--line);background:var(--bg1);display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0;">
+    <span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text2);margin-right:4px;">STATUS DOS COMPONENTES</span>
+    <div class="sys-badge" id="sb-arduino"><span class="sys-dot"></span>ARDUINO UNO</div>
+    <div class="sys-badge" id="sb-bomba"><span class="sys-dot"></span>BOMBA DC</div>
+    <div class="sys-badge" id="sb-valvula"><span class="sys-dot"></span>SOLENOIDE</div>
+    <div class="sys-badge" id="sb-bmp"><span class="sys-dot"></span>BMP180</div>
+    <div class="sys-badge" id="sb-rele"><span class="sys-dot"></span>MÓDULO RELÉ</div>
+    <div style="margin-left:auto;display:flex;gap:10px;">
+      <div style="background:var(--bg2);border:1px solid var(--line);border-radius:3px;padding:4px 12px;text-align:center;">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text2);">ALTITUDE CÂMARA</div>
+        <div id="sys-alt-txt" style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--teal);line-height:1.3;">0 <span style="font-size:10px;color:var(--text2);">m</span></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--line);border-radius:3px;padding:4px 14px;text-align:center;min-width:160px;">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text2);">FASE DE TESTE</div>
+        <div id="sys-fase-txt" style="font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--text2);line-height:1.3;">AGUARDANDO</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagrama -->
+  <div style="flex:1;position:relative;overflow:auto;background:var(--bg0);display:flex;align-items:center;justify-content:center;min-height:500px;">
+    <style>
+      .hw-box {
+        position:absolute; background:var(--bg2);
+        border:1.5px solid var(--text2); border-radius:6px;
+        padding:12px; transition:border-color .3s, box-shadow .3s;
+        z-index:2; display:flex; flex-direction:column;
+        align-items:center; justify-content:center; text-align:center;
+      }
+      .hw-title { font-family:var(--mono); font-size:9px; letter-spacing:.1em; font-weight:600; margin-bottom:6px; color:var(--text1); }
+      .hw-sub   { font-family:var(--mono); font-size:7.5px; color:var(--text2); margin-top:4px; }
+      .wire { fill:none; stroke-width:2.5; stroke-linecap:round; transition:stroke .3s; }
+      @keyframes dashFlow { to { stroke-dashoffset:-20; } }
+      .flow-air     { stroke:var(--teal);   stroke-dasharray:6 6; }
+      .flow-air.active   { animation:dashFlow .5s linear infinite; stroke-width:3.5; filter:drop-shadow(0 0 3px rgba(46,196,182,.6)); }
+      .flow-pwm     { stroke:var(--amber);  stroke-dasharray:4 4; }
+      .flow-pwm.active   { animation:dashFlow .3s linear infinite; stroke-width:3.5; filter:drop-shadow(0 0 3px rgba(244,162,97,.6)); }
+      .flow-signal  { stroke:var(--red);    stroke-dasharray:8 4; }
+      .flow-signal.active { stroke-width:3.5; filter:drop-shadow(0 0 3px rgba(230,57,70,.6)); }
+      .flow-i2c     { stroke:var(--teal);   stroke-dasharray:2 4; opacity:.5; }
+      .flow-i2c.active   { animation:dashFlow 1s linear infinite; opacity:1; }
+      .flow-power   { stroke:var(--violet); stroke-dasharray:5 3; opacity:.6; }
+      .flow-power.active { opacity:1; filter:drop-shadow(0 0 3px rgba(123,108,246,.5)); }
+    </style>
+
+    <!--
+      LAYOUT (px, canvas 900×520):
+      ┌─────────────────────────────────────────────────────────────────┐
+      │  BOMBA(40,40)        VÁLV.REG(370,40)     CÂMARA(640,40)        │
+      │                                            ┌───────────────┐    │
+      │  FONTE(40,340)                             │  BMP180       │    │
+      │                                            └───────────────┘    │
+      │  ARDUINO(260,240)   MOTORSHIELD(460,240)                        │
+      │                                                                  │
+      │  RELÉ(260,400)      SOLENOIDE(640,340)                          │
+      └─────────────────────────────────────────────────────────────────┘
+    -->
+
+    <div style="width:900px;height:520px;position:relative;flex-shrink:0;">
+
+      <!-- SVG de conexões (fios e mangueiras) -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1;" viewBox="0 0 900 520">
+
+        <!-- MANGUEIRA: Bomba → Válv. Reguladora (ar, teal sólido) -->
+        <path class="wire flow-air" id="wire-ar-bomba-vreg"
+              d="M 200,80 L 370,80"/>
+
+        <!-- MANGUEIRA: Válv. Reguladora → Câmara (ar, teal sólido) -->
+        <path class="wire flow-air" id="wire-ar-vreg-camara"
+              d="M 490,80 L 640,80"/>
+
+        <!-- MANGUEIRA: Solenoide → Câmara (escape, teal tracejado) -->
+        <path class="wire flow-air" id="wire-ar-sol-camara"
+              d="M 700,340 L 700,200 L 660,200 L 660,160"
+              style="stroke:var(--red);stroke-dasharray:6 4;opacity:.5;"/>
+
+        <!-- I2C: BMP180 → Arduino -->
+        <path class="wire flow-i2c" id="wire-i2c"
+              d="M 640,155 L 560,155 L 560,260 L 460,260"/>
+
+        <!-- PWM: MotorShield → Bomba -->
+        <path class="wire flow-pwm" id="wire-pwm"
+              d="M 510,240 L 510,150 L 120,150 L 120,100"/>
+
+        <!-- Sinal digital: Arduino → Relé -->
+        <path class="wire flow-signal" id="wire-digital"
+              d="M 300,400 L 260,400"/>
+
+        <!-- 12V: Fonte → Arduino (alimentação lógica) -->
+        <path class="wire flow-power" id="wire-12v-ard"
+              d="M 170,360 L 170,280 L 260,280"/>
+
+        <!-- 12V: Fonte → MotorShield (alimentação força bomba) -->
+        <path class="wire flow-power" id="wire-12v-ms"
+              d="M 170,370 L 200,370 L 200,300 L 460,300"/>
+
+        <!-- 12V chaveado: Relé → Solenoide -->
+        <path class="wire flow-power" id="wire-12v-sol"
+              d="M 400,420 L 640,420 L 640,400"
+              style="stroke:var(--violet);opacity:.4;"/>
+
+        <!-- USB: Arduino → PC (canto) -->
+        <path class="wire" style="stroke:var(--text2);stroke-dasharray:3 3;opacity:.4;"
+              d="M 260,295 L 220,295 L 220,480 L 870,480 L 870,440"/>
+
+        <!-- Labels nos fios -->
+        <text x="285" y="72" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(46,196,182,.6)">AR</text>
+        <text x="560" y="72" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(46,196,182,.6)">AR</text>
+        <text x="515" y="198" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(244,162,97,.7)">PWM M1</text>
+        <text x="266" y="392" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(230,57,70,.7)">PIN 2</text>
+        <text x="510" y="415" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(123,108,246,.6)">12V</text>
+        <text x="175" y="320" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(123,108,246,.6)">12V</text>
+        <text x="700" y="270" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(230,57,70,.5)">ESCAPE</text>
+        <text x="870" y="460" font-family="'IBM Plex Mono',monospace" font-size="8" fill="rgba(58,84,112,.8)">PC</text>
+      </svg>
+
+      <!-- ── BOMBA DC ── -->
+      <div class="hw-box" id="hw-bomba"
+           style="left:40px;top:40px;width:160px;height:100px;">
+        <div class="hw-title">BOMBA DE VÁCUO</div>
+        <svg viewBox="0 0 44 44" style="width:36px;height:36px;margin-bottom:2px;">
+          <circle cx="22" cy="22" r="20" fill="var(--bg1)" stroke="var(--text2)" stroke-width="1.5"/>
+          <g id="helice" style="transform-origin:22px 22px;">
+            <line x1="22" y1="8"  x2="22" y2="22" stroke="var(--text1)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="9"  y1="29" x2="22" y2="22" stroke="var(--text1)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="35" y1="29" x2="22" y2="22" stroke="var(--text1)" stroke-width="3" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <div class="hw-sub">Motor DC 12V</div>
+      </div>
+
+      <!-- ── VÁLVULA REGULADORA (agulha) ── -->
+      <div class="hw-box"
+           style="left:370px;top:48px;width:120px;height:60px;padding:6px;border-radius:20px;">
+        <div class="hw-title" style="margin:0;font-size:8.5px;">VÁLV. AGULHA</div>
+        <div class="hw-sub">Limitador de Fluxo</div>
+      </div>
+
+      <!-- ── CÂMARA DE PRESSÃO ── -->
+      <div class="hw-box" id="hw-camara"
+           style="right:40px;top:40px;width:200px;height:200px;border-color:var(--teal);">
+        <div class="hw-title" style="color:var(--teal);">CÂMARA DE PRESSÃO</div>
+        <div style="width:130px;height:50px;border:1px dashed rgba(46,196,182,.25);border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
+          <span style="font-family:var(--mono);font-size:8px;color:rgba(46,196,182,.4);">PRESSÃO REDUZIDA</span>
+        </div>
+        <!-- BMP180 dentro da câmara -->
+        <div class="hw-box" id="hw-bmp"
+             style="position:static;padding:6px 10px;border-color:var(--teal);width:auto;border-radius:4px;">
+          <div style="font-family:var(--mono);font-size:8.5px;color:var(--text1);font-weight:600;">BMP180</div>
+          <div class="hw-sub">I2C · afixado na tampa</div>
+        </div>
+        <div class="hw-sub" style="margin-top:6px;">(Recipiente de Vidro)</div>
+      </div>
+
+      <!-- ── ARDUINO UNO ── -->
+      <div class="hw-box" id="hw-ard"
+           style="left:260px;top:240px;width:180px;height:110px;border-color:var(--green);">
+        <div class="hw-title" style="color:var(--green);">ARDUINO UNO</div>
+        <div style="display:flex;gap:6px;align-items:center;margin:4px 0;">
+          <!-- PCB simplificado -->
+          <div style="width:50px;height:30px;background:var(--bg1);border:1px solid var(--line2);border-radius:2px;display:flex;align-items:center;justify-content:center;">
+            <div style="width:22px;height:14px;background:var(--line2);border-radius:1px;"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;gap:3px;">
+              <div id="ard-led-pwr" style="width:7px;height:7px;border-radius:50%;background:#2a9d5c;"></div>
+              <div id="ard-led-13"  style="width:7px;height:7px;border-radius:50%;background:var(--line2);"></div>
+            </div>
+            <div style="width:40px;height:4px;background:var(--line2);border-radius:1px;"></div>
+            <div style="width:28px;height:4px;background:var(--line2);border-radius:1px;"></div>
+          </div>
+        </div>
+        <div class="hw-sub">ATmega328P · USB Serial</div>
+        <div class="hw-sub">Pino 2: Relé · I2C: BMP180</div>
+      </div>
+
+      <!-- ── MOTOR SHIELD ── -->
+      <div class="hw-box" id="hw-ms"
+           style="left:460px;top:240px;width:170px;height:110px;border-color:var(--amber);">
+        <div class="hw-title" style="color:var(--amber);">MOTOR SHIELD</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:4px 0;">
+          <div style="background:var(--bg1);border:1px solid var(--line2);border-radius:2px;height:18px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-family:var(--mono);font-size:7px;color:var(--amber);">M1</span>
+          </div>
+          <div style="background:var(--bg1);border:1px solid var(--line2);border-radius:2px;height:18px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-family:var(--mono);font-size:7px;color:var(--text2);">M2</span>
+          </div>
+          <div style="background:var(--bg1);border:1px solid var(--line2);border-radius:2px;height:18px;"></div>
+          <div style="background:var(--bg1);border:1px solid var(--line2);border-radius:2px;height:18px;"></div>
+        </div>
+        <div class="hw-sub">Adafruit AF Motor Shield</div>
+        <div class="hw-sub">Encaixado no Arduino</div>
+      </div>
+
+      <!-- ── RELÉ ── -->
+      <div class="hw-box" id="hw-rele"
+           style="left:260px;top:390px;width:140px;height:80px;">
+        <div class="hw-title" style="color:var(--red);">MÓDULO RELÉ</div>
+        <div style="display:flex;gap:6px;align-items:center;margin:4px 0;">
+          <div style="width:32px;height:20px;background:var(--bg1);border:1px solid var(--line2);border-radius:2px;"></div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="width:18px;height:6px;background:var(--line2);border-radius:1px;"></div>
+            <div id="rele-contato" style="width:18px;height:6px;background:var(--line2);border-radius:1px;transition:background .3s;"></div>
+          </div>
+        </div>
+        <div class="hw-sub">Active-Low · Pino 2</div>
+      </div>
+
+      <!-- ── VÁLVULA SOLENOIDE ── -->
+      <div class="hw-box" id="hw-vsol"
+           style="right:40px;top:340px;width:200px;height:90px;">
+        <div class="hw-title" style="color:var(--red);">VÁLVULA SOLENOIDE</div>
+        <div style="display:flex;gap:6px;align-items:center;margin:4px 0;">
+          <div style="width:44px;height:40px;background:var(--bg1);border:1px solid var(--line2);border-radius:3px;display:flex;flex-direction:column;justify-content:space-around;padding:4px;">
+            <div style="height:2px;background:var(--line2);border-radius:1px;"></div>
+            <div style="height:2px;background:var(--line2);border-radius:1px;"></div>
+            <div style="height:2px;background:var(--line2);border-radius:1px;"></div>
+            <div style="height:2px;background:var(--line2);border-radius:1px;"></div>
+          </div>
+          <div id="vsol-embolo" style="width:26px;height:18px;background:var(--line2);border:1px solid var(--text2);border-radius:2px;transition:transform .3s, background .3s;"></div>
+        </div>
+        <div class="hw-sub">Normalmente Fechada · 12V</div>
+      </div>
+
+      <!-- ── FONTE 12V ── -->
+      <div class="hw-box" id="hw-fonte"
+           style="left:40px;top:330px;width:130px;height:90px;border-color:var(--violet);">
+        <div class="hw-title" style="color:var(--violet);">FONTE DE BANCADA</div>
+        <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--violet);line-height:1;">12V</div>
+        <div class="hw-sub">GND Comum</div>
+      </div>
+
+      <!-- PC/USB -->
+      <div style="position:absolute;right:20px;bottom:30px;background:var(--bg2);border:1px solid var(--text2);border-radius:4px;padding:4px 8px;opacity:.5;">
+        <span style="font-family:var(--mono);font-size:8px;color:var(--text2);">PC / USB</span>
+      </div>
+
+    </div><!-- canvas 900x520 -->
+  </div><!-- diagrama -->
+
+  <!-- Legenda rodapé -->
+  <div style="border-top:1px solid var(--line);background:var(--bg1);padding:10px 24px;display:flex;gap:18px;flex-wrap:wrap;flex-shrink:0;align-items:center;">
+    <span style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text2);">LEGENDA</span>
+    <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--text2);">
+      <span style="display:inline-block;width:18px;height:4px;background:var(--teal);border-radius:2px;"></span>Mangueira de ar
+    </span>
+    <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--text2);">
+      <span style="display:inline-block;width:18px;height:2px;background:repeating-linear-gradient(to right,var(--amber) 0,var(--amber) 4px,transparent 4px,transparent 8px);"></span>Sinal PWM
+    </span>
+    <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--text2);">
+      <span style="display:inline-block;width:18px;height:2px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 5px,transparent 5px,transparent 9px);"></span>Sinal digital
+    </span>
+    <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--text2);">
+      <span style="display:inline-block;width:18px;height:2px;background:var(--violet);opacity:.7;"></span>Alimentação 12V
+    </span>
+    <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--text2);">
+      <span style="display:inline-block;width:18px;height:2px;background:repeating-linear-gradient(to right,var(--teal) 0,var(--teal) 2px,transparent 2px,transparent 5px);opacity:.5;"></span>I2C (dados)
+    </span>
+    <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;color:var(--text2);">
+      <span style="display:inline-block;width:18px;height:2px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 5px,transparent 5px,transparent 9px);opacity:.4;"></span>Escape de ar
+    </span>
+    <span style="margin-left:auto;font-family:var(--mono);font-size:7.5px;color:var(--text2);">UFPB · ENG. COMPUTAÇÃO · TCC 2026</span>
+  </div>
+
+</div><!-- pane-sistema -->
+
+
+
+
+
+<div class="tab-pane" id="pane-historico">
   <div class="hist-layout">
     <div class="hist-list">
       <div class="sec" style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
@@ -730,147 +1170,20 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
     </div>
   </div>
 </div>
-<div class="tab-pane" id="pane-sistema">
-  <div style="padding:12px 20px;border-bottom:1px solid var(--line);background:var(--bg1);display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0;">
-    <span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text2);margin-right:4px;">STATUS DOS COMPONENTES</span>
-    <div class="sys-badge" id="sb-arduino"><span class="sys-dot"></span>ARDUINO UNO</div>
-    <div class="sys-badge" id="sb-bomba"><span class="sys-dot"></span>BOMBA DC</div>
-    <div class="sys-badge" id="sb-valvula"><span class="sys-dot"></span>SOLENOIDE</div>
-    <div class="sys-badge" id="sb-bmp"><span class="sys-dot"></span>BMP180</div>
-    <div class="sys-badge" id="sb-rele"><span class="sys-dot"></span>MÓDULO RELÉ</div>
 
-    <div style="margin-left:auto;display:flex;gap:10px;">
-      <div style="background:var(--bg2);border:1px solid var(--line);border-radius:3px;padding:4px 12px;text-align:center;">
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text2);">ALTITUDE CÂMARA</div>
-        <div id="sys-alt-txt" style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--teal);line-height:1.3;">0 <span style="font-size:10px;color:var(--text2);">m</span></div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--line);border-radius:3px;padding:4px 14px;text-align:center;min-width:140px;">
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text2);">FASE DE TESTE</div>
-        <div id="sys-fase-txt" style="font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--text2);line-height:1.3;">AGUARDANDO</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="flex:1; position:relative; overflow:auto; background:var(--bg0); display:flex; align-items:center; justify-content:center; min-height: 500px;">
-
-    <style>
-      .hw-box { position:absolute; background:var(--bg2); border:1.5px solid var(--text2); border-radius:6px; padding:12px; transition: border-color 0.3s, box-shadow 0.3s; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
-      .hw-title { font-family:var(--mono); font-size:9px; letter-spacing:0.1em; font-weight:600; margin-bottom:6px; }
-      .hw-sub { font-family:var(--mono); font-size:7.5px; color:var(--text2); margin-top:4px; }
-      .wire { fill:none; stroke-width:2.5; stroke-linecap:round; transition: stroke 0.3s, opacity 0.3s; }
-
-      /* Animações de fluxo */
-      @keyframes dashFlow { to { stroke-dashoffset: -20; } }
-      .flow-air { stroke: var(--teal); stroke-dasharray: 6 6; }
-      .flow-air.active { animation: dashFlow 0.5s linear infinite; stroke-width: 3.5; filter: drop-shadow(0 0 4px var(--teal)); }
-      .flow-pwm { stroke: var(--amber); stroke-dasharray: 4 4; }
-      .flow-pwm.active { animation: dashFlow 0.3s linear infinite; stroke-width: 3.5; filter: drop-shadow(0 0 4px var(--amber)); }
-      .flow-signal { stroke: var(--red); stroke-dasharray: 8 4; }
-      .flow-signal.active { stroke-width: 3.5; filter: drop-shadow(0 0 4px var(--red)); }
-      .flow-i2c { stroke: var(--teal); stroke-dasharray: 2 4; }
-      .flow-i2c.active { animation: dashFlow 1s linear infinite; }
-    </style>
-
-    <div style="width: 860px; height: 480px; position:relative;">
-
-      <svg style="position:absolute; inset:0; width:100%; height:100%; z-index:1;">
-        <path class="wire flow-air" id="wire-air-bomba" d="M 640,90 L 450,90 L 450,110 L 260,110" />
-        <path class="wire flow-air" id="wire-air-solenoide" d="M 730,160 L 730,350" />
-
-        <path class="wire flow-i2c" id="wire-i2c" d="M 450,260 L 650,260 L 650,160" />
-
-        <path class="wire flow-signal" id="wire-pino2" d="M 450,300 L 520,300" />
-
-        <path class="wire flow-pwm" id="wire-pwm" d="M 320,240 L 320,110 L 260,110" />
-
-        <path class="wire" stroke="var(--violet)" d="M 170,400 L 300,400 L 300,320" /> <path class="wire" stroke="var(--violet)" d="M 170,410 L 560,410 L 560,340" /> <path class="wire" stroke="var(--violet)" id="wire-12v-sw" d="M 580,340 L 580,390 L 670,390" /> <path class="wire" stroke="#3a5470" d="M 170,420 L 280,420 L 280,320" /> <path class="wire" stroke="#3a5470" d="M 280,420 L 520,420 L 520,340" /> <path class="wire" stroke="#3a5470" d="M 520,420 L 690,420 L 690,390" /> </svg>
-
-      <div class="hw-box" id="hw-camara" style="right:40px; top:40px; width:180px; height:120px; border-color:var(--teal);">
-        <div class="hw-title" style="color:var(--teal)">CÂMARA DE PRESSÃO</div>
-        <div style="width:100px; height:40px; border:1px dashed rgba(46,196,182,0.3); border-radius:4px; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
-          <span style="font-family:var(--mono); font-size:8px; color:var(--teal); opacity:0.6;">VÁCUO</span>
-        </div>
-        <div class="hw-box" id="hw-bmp" style="position:static; padding:4px 8px; border-color:var(--teal); width:auto;">
-          <div style="font-family:var(--mono); font-size:8px; color:var(--text0);">BMP180 (I2C)</div>
-        </div>
-      </div>
-
-      <div class="hw-box" style="left:400px; top:65px; width:100px; height:50px; padding:6px; border-radius:20px;">
-        <div class="hw-title" style="margin:0; color:var(--text2);">VÁLV. AGULHA</div>
-        <div class="hw-sub">Limitador Fluxo</div>
-      </div>
-
-      <div class="hw-box" id="hw-bomba" style="left:40px; top:40px; width:160px; height:100px;">
-        <div class="hw-title">BOMBA DE VÁCUO</div>
-        <svg viewBox="0 0 40 40" style="width:40px;height:40px; margin-bottom:4px;">
-          <circle cx="20" cy="20" r="18" fill="var(--bg1)" stroke="var(--text2)" stroke-width="2"/>
-          <g id="helice" style="transform-origin:20px 20px;">
-            <line x1="20" y1="6" x2="20" y2="20" stroke="var(--text1)" stroke-width="3" stroke-linecap="round"/>
-            <line x1="8" y1="27" x2="20" y2="20" stroke="var(--text1)" stroke-width="3" stroke-linecap="round"/>
-            <line x1="32" y1="27" x2="20" y2="20" stroke="var(--text1)" stroke-width="3" stroke-linecap="round"/>
-          </g>
-        </svg>
-        <div class="hw-sub">Motor DC 12V</div>
-      </div>
-
-      <div class="hw-box" id="hw-ard" style="left:260px; top:240px; width:190px; height:100px; border-color:var(--green);">
-        <div class="hw-title" style="color:var(--green);">ARDUINO + MOTOR SHIELD</div>
-        <div style="display:flex; gap:10px; margin-top:6px;">
-          <div style="width:40px; height:20px; background:#1a2535; border:1px solid var(--line2); border-radius:2px;"></div> <div style="width:80px; height:20px; background:#1a2535; border:1px solid var(--line2); border-radius:2px;"></div> </div>
-        <div class="hw-sub">Controle Lógico e PWM (M1)</div>
-      </div>
-
-      <div class="hw-box" id="hw-rele" style="right:220px; top:260px; width:120px; height:80px;">
-        <div class="hw-title" style="color:var(--red);">MÓDULO RELÉ</div>
-        <div style="width:30px; height:20px; background:#1a2535; border:1px solid var(--text2); border-radius:2px; margin-bottom:4px;"></div>
-        <div class="hw-sub">Active-Low (Pino 2)</div>
-      </div>
-
-      <div class="hw-box" id="hw-vsol" style="right:40px; top:350px; width:180px; height:80px;">
-        <div class="hw-title">VÁLVULA SOLENOIDE</div>
-        <div id="vsol-embolo" style="width:30px; height:15px; background:var(--line2); border-radius:2px; transition: 0.3s; margin-bottom:4px;"></div>
-        <div class="hw-sub">Entrada de Ar (Despressurização)</div>
-      </div>
-
-      <div class="hw-box" id="hw-fonte" style="left:40px; top:360px; width:130px; height:80px; border-color:var(--violet);">
-        <div class="hw-title" style="color:var(--violet);">FONTE DE BANCADA</div>
-        <div style="font-family:var(--mono); font-size:24px; font-weight:600; color:var(--violet); line-height:1;">12V</div>
-        <div class="hw-sub">Terra Comum (GND)</div>
-      </div>
-
-    </div>
-  </div>
-
-  <div style="border-top:1px solid var(--line);background:var(--bg1);padding:10px 32px;display:flex;gap:20px;flex-wrap:wrap;flex-shrink:0;">
-    <span style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--text2);">LEGENDA DE CABEAMENTO</span>
-    <span style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--text2);">
-      <span style="display:inline-block;width:20px;height:4px;background:var(--teal);border-radius:2px;"></span>Ar (Vácuo)
-    </span>
-    <span style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--text2);">
-      <span style="display:inline-block;width:20px;height:2px;background:repeating-linear-gradient(to right,var(--amber) 0,var(--amber) 4px,transparent 4px,transparent 8px);"></span>PWM
-    </span>
-    <span style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--text2);">
-      <span style="display:inline-block;width:20px;height:2px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 4px,transparent 4px,transparent 8px);"></span>Sinal Digital
-    </span>
-    <span style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--text2);">
-      <span style="display:inline-block;width:20px;height:2px;background:var(--violet);"></span>Força 12V
-    </span>
-    <span style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--text2);">
-      <span style="display:inline-block;width:20px;height:2px;background:var(--text2);"></span>Terra Comum (GND)
-    </span>
-  </div>
-</div>
 <div id="toast"></div>
 
 <script>
-// ── CONSTANTES E ESTADO GLOBAL ────────────────────────────────
+// ── BACKEND ────────────────────────────────────────────────────
 const BACKEND = 'https://altimetro-backend.onrender.com';
 const WS_URL  = 'wss://altimetro-backend.onrender.com/ws/frontend';
 
+// ── MAPEAMENTO PWM ─────────────────────────────────────────────
 const PWM_MIN=160, PWM_NOM=200, PWM_MAX=255;
 function pctToPWM(p){ return p<=50?Math.round(PWM_MIN+(p/50)*(PWM_NOM-PWM_MIN)):Math.round(PWM_NOM+((p-50)/50)*(PWM_MAX-PWM_NOM)); }
 function potLabel(p){ if(p===0)return'MÍNIMO'; if(p===50)return'NOMINAL'; if(p===100)return'MÁXIMO'; return p<50?'ABAIXO NOM.':'ACIMA NOM.'; }
 
+// ── ESTADO ─────────────────────────────────────────────────────
 const S = {
   apAlvo:700, tSubida:20, potPct:50, pwm:200,
   fase:'idle', alt:0, pres:0, t:0,
@@ -880,6 +1193,7 @@ const S = {
   lastResult:null, ws:null,
 };
 
+// dimensões dos SVGs internos
 const CW=700, CH=80, PL=0, PR=0, PT=4, PB=4;
 
 setInterval(()=>{ document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour12:false}); },1000);
@@ -891,7 +1205,7 @@ function toast(msg,tipo='ok'){
   clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),3500);
 }
 
-// ── WEBSOCKET E PROTOCOLO ──────────────────────────────────────
+// ── WEBSOCKET ──────────────────────────────────────────────────
 function connectWS(){
   try{
     S.ws=new WebSocket(WS_URL);
@@ -901,14 +1215,13 @@ function connectWS(){
     S.ws.onmessage=e=>{try{handle(JSON.parse(e.data));}catch{}};
   }catch{setTimeout(connectWS,3000);}
 }
-
 function wsSend(o){if(S.ws&&S.ws.readyState===1)S.ws.send(JSON.stringify(o));}
-
 function setConn(on){
   const b=document.getElementById('cbadge'),t=document.getElementById('ctxt');
   b.className='conn-badge'+(on?' on':''); t.textContent=on?'ONLINE':'OFFLINE';
 }
 
+// ── HANDLE ─────────────────────────────────────────────────────
 function handle(m){
   if(m.tipo==='log'){ addLog(m.msg, m.nivel||'data'); }
   else if(m.tipo==='status'){
@@ -933,11 +1246,10 @@ function handle(m){
   }
   else if(m.tipo==='erro'){ addLog(m.msg||'Erro no servidor','err'); }
 }
-
 function setHW(modo){ const el=document.getElementById('h-hw'); el.textContent=modo; el.className='v '+(modo==='REAL'?'v-green':'v-amber'); }
 function setPref(p){ S.pref=p; document.getElementById('h-pref').textContent=p.toFixed(2)+' hPa'; document.getElementById('h-pref').className='v v-teal'; }
 
-// ── PARÂMETROS DE INTERFACE ────────────────────────────────────
+// ── PARÂMETROS ─────────────────────────────────────────────────
 function setApogeu(v){
   S.apAlvo=v;
   document.getElementById('r-ap').textContent=v;
@@ -947,16 +1259,13 @@ function setApogeu(v){
   document.getElementById('sl-ap').style.setProperty('--f',((v-100)/(2000-100)*100).toFixed(1)+'%');
   updVel(); drawRef();
 }
-
 function setTSubida(v){
   S.tSubida=v;
   document.getElementById('r-ts').textContent=v;
   document.getElementById('sl-ts').style.setProperty('--f',((v-5)/(60-5)*100).toFixed(1)+'%');
   updVel(); drawRef();
 }
-
 function updVel(){ document.getElementById('i-vel').textContent=(S.apAlvo/S.tSubida).toFixed(1)+' m/s'; }
-
 function setPotencia(pct){
   S.potPct=pct; S.pwm=pctToPWM(pct);
   document.getElementById('r-pot').textContent=pct;
@@ -965,11 +1274,10 @@ function setPotencia(pct){
   document.getElementById('g-pot').textContent=pct+'%';
   document.getElementById('gf-pot').style.width=pct+'%';
 }
-
 setApogeu(700); setTSubida(20); setPotencia(50);
 document.getElementById('sl-ap').style.setProperty('--f',((700-100)/(2000-100)*100).toFixed(1)+'%');
 
-// ── MÁQUINA DE ESTADOS E ANIMAÇÃO DE HARDWARE ──────────────────
+// ── FASE ───────────────────────────────────────────────────────
 const FCFG={
   idle:     {c:'f-idle',t:'AGUARDANDO'},
   calibra:  {c:'f-cal', t:'CALIBRANDO'},
@@ -978,88 +1286,6 @@ const FCFG={
   concluido:{c:'f-ok',  t:'CONCLUÍDO'},
   erro:     {c:'f-err', t:'ERRO'},
 };
-
-function _hwBorder(id, cor, shadow=false){
-  const el = document.getElementById(id);
-  if(el) {
-    el.style.borderColor = cor;
-    el.style.boxShadow = shadow ? `0 0 10px ${cor}40` : 'none';
-  }
-}
-
-function _sysBadge(id, estado){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.className = 'sys-badge' + (estado ? ' ' + estado : '');
-}
-
-function _sysFase(txt, cor){
-  const el = document.getElementById('sys-fase-txt');
-  if(el){ el.textContent = txt; el.style.color = cor; }
-}
-
-function atualizarDiagrama(fase){
-  _hwBorder('hw-camara','var(--teal)');
-  _hwBorder('hw-bmp','var(--teal)');
-  _hwBorder('hw-bomba','var(--text2)');
-  _hwBorder('hw-ard','var(--green)');
-  _hwBorder('hw-rele','var(--text2)');
-  _hwBorder('hw-vsol','var(--text2)');
-
-  _sysBadge('sb-bomba',''); _sysBadge('sb-valvula','');
-  _sysBadge('sb-bmp','leitura'); _sysBadge('sb-rele','');
-  _sysBadge('sb-arduino','leitura');
-
-  const wAirB = document.getElementById('wire-air-bomba');
-  const wAirS = document.getElementById('wire-air-solenoide');
-  const wPwm  = document.getElementById('wire-pwm');
-  const wPin2 = document.getElementById('wire-pino2');
-  const wI2c  = document.getElementById('wire-i2c');
-
-  if(wAirB) wAirB.classList.remove('active');
-  if(wAirS) wAirS.classList.remove('active');
-  if(wPwm) wPwm.classList.remove('active');
-  if(wPin2) wPin2.classList.remove('active');
-  if(wI2c) wI2c.classList.add('active');
-
-  const helice = document.getElementById('helice');
-  if(helice) helice.style.animation = 'none';
-
-  const embolo = document.getElementById('vsol-embolo');
-  if(embolo) embolo.style.background = 'var(--line2)';
-
-  const wire12Sw = document.getElementById('wire-12v-sw');
-  if(wire12Sw) wire12Sw.style.stroke = 'var(--text2)';
-
-  if(fase === 'calibra'){
-    _sysFase('CALIBRANDO','var(--amber)');
-  }
-  else if(fase === 'subida'){
-    _hwBorder('hw-bomba','var(--amber)', true);
-    _sysBadge('sb-bomba','ativo');
-    _sysFase('SUBIDA','var(--green)');
-    if(wAirB) wAirB.classList.add('active');
-    if(wPwm) wPwm.classList.add('active');
-    if(helice) helice.style.animation = 'dashFlow 0.5s linear infinite';
-  }
-  else if(fase === 'descida'){
-    _hwBorder('hw-rele','var(--red)', true);
-    _hwBorder('hw-vsol','var(--red)', true);
-    _sysBadge('sb-valvula','alerta'); _sysBadge('sb-rele','alerta');
-    _sysFase('DESCIDA','var(--teal)');
-    if(wPin2) wPin2.classList.add('active');
-    if(wAirS) wAirS.classList.add('active');
-    if(wire12Sw) wire12Sw.style.stroke = 'var(--violet)';
-    if(embolo) embolo.style.background = 'var(--red)';
-  }
-  else if(fase === 'concluido'){
-    _sysFase('CONCLUÍDO','var(--green)');
-  }
-  else {
-    _sysFase('AGUARDANDO','var(--text2)');
-  }
-}
-
 function setFase(f){
   S.fase=f; const cfg=FCFG[f]||FCFG.idle;
   document.getElementById('fbadge').className='fbadge '+cfg.c;
@@ -1067,11 +1293,9 @@ function setFase(f){
   const btn=document.getElementById('btn-go');
   if(['idle','concluido','erro'].includes(f)){ btn.disabled=false; btn.querySelector('span').textContent='INICIAR ENSAIO'; }
   else{ btn.disabled=true; btn.querySelector('span').textContent='ENSAIO ATIVO'; }
-
-  atualizarDiagrama(f);
 }
 
-// ── ATUALIZAÇÃO DE TELEMETRIA ──────────────────────────────────
+// ── TELEMETRIA ─────────────────────────────────────────────────
 function onTelem(m){
   const{t,alt,pres}=m;
   const dt=t-S.tPrev;
@@ -1088,40 +1312,35 @@ function onTelem(m){
   document.getElementById('h-pres').textContent = pres.toFixed(2)+' hPa';
   document.getElementById('h-t').textContent    = t.toFixed(1)+' s';
   document.getElementById('h-amax').textContent = S.altMax.toFixed(0)+' m';
-
-  // live panel
+  // live
   document.getElementById('live-alt').textContent  = Math.round(alt);
   document.getElementById('live-pres').textContent = pres.toFixed(2)+' hPa';
   document.getElementById('live-t').textContent    = t.toFixed(1)+' s';
   document.getElementById('live-vel').textContent  = (vel>=0?'+':'')+vel.toFixed(1)+' m/s';
   document.getElementById('live-amax').textContent = S.altMax.toFixed(0)+' m';
-
+  // barra progresso
   const pct=Math.min(alt/S.apAlvo*100,100);
   document.getElementById('alt-fill').style.width=pct+'%';
-
+  // altímetro
   updAltimeter(alt);
-
-  // gauges right panel
+  // gauges
   document.getElementById('g-alt').textContent  = Math.round(alt)+' m';
   document.getElementById('gf-alt').style.width = pct+'%';
   document.getElementById('g-amax').textContent = Math.round(S.altMax)+' m';
   document.getElementById('gf-amax').style.width= Math.min(S.altMax/S.apAlvo*100,100)+'%';
   document.getElementById('g-pres').textContent = pres.toFixed(1)+' hPa';
-
-  // diagram panel
-  const elAltSys = document.getElementById('sys-alt-txt');
-  if(elAltSys) elAltSys.innerHTML = `${Math.round(alt)} <span style="font-size:10px;color:var(--text2);">m</span>`;
-
+  // gráficos
   updCharts();
 }
 
-// ── COMPONENTES VISUAIS ────────────────────────────────────────
+// ── ALTÍMETRO ──────────────────────────────────────────────────
 function updAltimeter(alt){
   const f=Math.min(Math.max(alt/(S.apAlvo*1.1),0),1);
   document.getElementById('alt-arc').setAttribute('stroke-dasharray',`${(f*220).toFixed(1)} ${(258-f*220).toFixed(1)}`);
   document.getElementById('alt-needle').setAttribute('transform',`rotate(${(-135+f*270).toFixed(1)} 58 58)`);
 }
 
+// ── GRÁFICOS ───────────────────────────────────────────────────
 function ptXY(t,v,tMax,vMin,vMax){
   const x = PL+(t/tMax)*(CW-PL-PR);
   const range = vMax-vMin || 1;
@@ -1130,6 +1349,7 @@ function ptXY(t,v,tMax,vMin,vMax){
 }
 
 function drawRef(){
+  // Curva de referência no gráfico de altitude
   const ap=S.apAlvo, ts=S.tSubida, td=ts*(13/18);
   const tTot=(ts+td)*1.12, aMax=ap*1.12;
   const pts=[];
@@ -1144,8 +1364,10 @@ function updCharts(){
   const ap=S.apAlvo, ts=S.tSubida, td=ts*(13/18);
   const tMax = Math.max(tLast*1.05,(ts+td)*1.12);
 
+  // ── Altitude ──────────────────────────────────────────────────
   const aMax = Math.max(S.altMax*1.1, ap*1.12);
   const ptsA = S.hT.map((t,i)=>ptXY(t,S.hA[i],tMax,0,aMax));
+  // referência
   const rp=[];
   for(let i=0;i<=24;i++){const t=i/24*ts; rp.push(ptXY(t,ap*t/ts,tMax,0,aMax));}
   for(let i=1;i<=24;i++){const t=ts+i/24*td; rp.push(ptXY(t,ap*(1-i/24),tMax,0,aMax));}
@@ -1153,25 +1375,31 @@ function updCharts(){
   const xlA=ptXY(tLast,0,tMax,0,aMax), x0A=ptXY(S.hT[0],0,tMax,0,aMax);
   document.getElementById('real-fill').setAttribute('points',ptsA.join(' ')+' '+xlA+' '+x0A);
   document.getElementById('real-line').setAttribute('points',ptsA.join(' '));
-
+  // eixos altitude
   document.getElementById('ay-alt-max').textContent = Math.round(aMax)+'m';
   document.getElementById('ay-alt-mid').textContent = Math.round(aMax/2)+'m';
   document.getElementById('ax-alt-mid').textContent = (tMax/2).toFixed(0)+'s';
   document.getElementById('ax-alt-max').textContent = tMax.toFixed(0)+'s';
 
+  // Foguete tangencial ao gráfico de altitude
   const iLast = S.hT.length-1;
   if(iLast>=1){
     const [x1,y1] = ptXY(S.hT[iLast-1],S.hA[iLast-1],tMax,0,aMax).split(',');
     const [x2,y2] = ptXY(S.hT[iLast],  S.hA[iLast],  tMax,0,aMax).split(',');
     const rx=parseFloat(x2), ry=parseFloat(y2);
+    // ângulo tangente à curva no ponto atual
     const dx=parseFloat(x2)-parseFloat(x1);
     const dy=parseFloat(y2)-parseFloat(y1);
+    // no SVG: y cresce para baixo, então subida = dy negativo
+    // foguete aponta na direção do movimento
     const angRad = Math.atan2(dy, dx);
-    const angDeg = angRad*(180/Math.PI) + 90;
-    document.getElementById('ap-rocket').setAttribute('transform', `translate(${rx},${ry}) rotate(${angDeg.toFixed(1)})`);
+    const angDeg = angRad*(180/Math.PI) + 90; // +90 porque o foguete aponta "para cima" por padrão
+    document.getElementById('ap-rocket').setAttribute('transform',
+      `translate(${rx},${ry}) rotate(${angDeg.toFixed(1)})`);
     document.getElementById('rk-flame').style.display = S.fase==='subida'?'':'none';
   }
 
+  // ── Velocidade ────────────────────────────────────────────────
   const velArr = S.hV.filter(v=>isFinite(v));
   if(velArr.length){
     const vMax = Math.max(...velArr)*1.1||10;
@@ -1186,6 +1414,7 @@ function updCharts(){
     document.getElementById('ax-vel-max').textContent = tMax.toFixed(0)+'s';
   }
 
+  // ── Pressão ───────────────────────────────────────────────────
   if(S.hP.length){
     const pMax = S.presMax * 1.001 || 1015;
     const pMin = S.presMin * 0.999 || 990;
@@ -1201,7 +1430,7 @@ function updCharts(){
   }
 }
 
-// ── FINALIZAÇÃO DE ENSAIO ──────────────────────────────────────
+// ── RESULTADO ──────────────────────────────────────────────────
 function onResult(m){
   m.t_subida_alvo=S.tSubida; S.lastResult=m;
   const err=m.alt_max-m.alt_alvo;
@@ -1256,13 +1485,16 @@ function onResult(m){
   if(sug) addLog(err>0?'Sugestão: fechar válvula de fluxo.':'Sugestão: abrir válvula de fluxo.','warn');
 }
 
+// ── SALVAR NO BANCO ────────────────────────────────────────────
 function salvarNoBanco(){
+  // O agente já gravou via fim_voo → WebSocket → backend
   document.getElementById('btn-salvar').style.display='none';
   document.getElementById('salvo-badge').style.display='block';
   toast('Ensaio registrado no banco.','ok');
   addLog('Ensaio confirmado no banco de dados.','ok');
 }
 
+// ── EXPORT CSV ─────────────────────────────────────────────────
 function exportCSV(){
   const m=S.lastResult; if(!m) return;
   const err=m.alt_max-m.alt_alvo;
@@ -1288,7 +1520,7 @@ function exportCSV(){
   addLog('CSV exportado.','ok'); toast('CSV baixado.','ok');
 }
 
-// ── UTILITÁRIOS E CONTROLES ────────────────────────────────────
+// ── LOG ────────────────────────────────────────────────────────
 function addLog(msg,cls='data'){
   const el=document.getElementById('log-body');
   const ts=S.t>0?`[${S.t.toFixed(1).padStart(6)}s]`:'[  ---  ]';
@@ -1300,6 +1532,7 @@ function addLog(msg,cls='data'){
   el.parentElement.scrollTop=el.parentElement.scrollHeight;
 }
 
+// ── COMANDOS ───────────────────────────────────────────────────
 function cmdIniciar(){
   if(!['idle','concluido','erro'].includes(S.fase)) return;
   const nomeEnsaio=(document.getElementById('inp-nome')?.value||'').trim();
@@ -1313,12 +1546,10 @@ function cmdIniciar(){
   S.obs=(document.getElementById('inp-obs')?.value||'').trim();
   S.hT=[];S.hA=[];S.hV=[];S.hP=[];S.altMax=0;S.alt=0;
   S.t=0;S.tPrev=0;S.altPrev=0;S.presMin=9999;S.presMax=0;S.lastResult=null;
-
   ['real-line','real-fill','vel-line','vel-fill','pres-line','pres-fill'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.setAttribute('points','');
   });
-
   document.getElementById('ap-rocket').setAttribute('transform','translate(-40,-40)');
   document.getElementById('rk-flame').style.display='none';
   document.getElementById('result-body').innerHTML='<div class="r-row"><span class="rk">Ensaio em andamento...</span><span></span></div>';
@@ -1327,22 +1558,20 @@ function cmdIniciar(){
   document.getElementById('salvo-badge').style.display='none';
   document.getElementById('h-pref').textContent='— hPa';
   document.getElementById('h-pref').className='v';
-
   updAltimeter(0);
   document.getElementById('alt-fill').style.width='0%';
   const nEl=document.getElementById('inp-nome');if(nEl)nEl.style.borderColor='';
-
   drawRef();
   setFase('calibra');
   addLog('Ensaio iniciado  apogeu='+S.apAlvo+'m  t_sub='+S.tSubida+'s  pot='+S.potPct+'%  PWM='+S.pwm,'info');
   wsSend({cmd:'iniciar',apogeu:S.apAlvo,dur:S.tSubida,potencia_pct:S.potPct,pwm:S.pwm,nome_ensaio:S.nomeEnsaio,altimetro:S.altimetro,obs:S.obs});
 }
-
 function cmdParar(){
   wsSend({cmd:'parar'});
   addLog('Sinal de abortar enviado.','err');
 }
 
+// ── ABAS ───────────────────────────────────────────────────────
 function setTab(nome){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
@@ -1351,7 +1580,7 @@ function setTab(nome){
   if(nome==='historico') histCarregar();
 }
 
-// ── HISTÓRICO REST API ─────────────────────────────────────────
+// ── HISTÓRICO ──────────────────────────────────────────────────
 let _histVoos=[], _histSel=null;
 async function histCarregar(){
   const lista=document.getElementById('hist-lista');
@@ -1363,7 +1592,6 @@ async function histCarregar(){
     histRenderLista();
   }catch(e){ lista.innerHTML=`<div class="hist-loading">Erro: ${e.message}</div>`; }
 }
-
 function histRenderLista(){
   const lista=document.getElementById('hist-lista');
   if(!_histVoos.length){ lista.innerHTML='<div class="hist-loading">Nenhum ensaio no banco.</div>'; return; }
@@ -1379,7 +1607,6 @@ function histRenderLista(){
     </div>`;
   }).join('');
 }
-
 async function histSelecionar(id){
   _histSel=id; histRenderLista();
   const det=document.getElementById('hist-detalhe');
@@ -1390,7 +1617,6 @@ async function histSelecionar(id){
     histRenderDetalhe(await r.json());
   }catch(e){ det.innerHTML=`<div class="hist-loading">Erro: ${e.message}</div>`; }
 }
-
 function histRenderDetalhe(voo){
   const dt=new Date(voo.data_inicio).toLocaleString('pt-BR');
   const pts=voo.pontos||[];
@@ -1401,73 +1627,9 @@ function histRenderDetalhe(voo){
   const presMax=prs.length?Math.max(...prs)*1.001:1015;
   const aMax=(voo.alt_max||0)*1.12||10;
   const tTot=voo.t_total_s||0;
-
-  document.getElementById('hist-detalhe').innerHTML=`
-    <div class="hist-detail-hdr">
-      <div>
-        <div class="hist-big">${(voo.alt_max||0).toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div>
-        <div class="hist-big-lbl">${voo.altimetro?"ALT.: "+voo.altimetro+" · ":""}${dt}${voo.usuario?" · "+voo.usuario:""}</div>
+  document.getElementById('hist-detalhe').innerHTML=`<div class="hist-detail-hdr"><div><div class="hist-big">${(voo.alt_max||0).toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div><div class="hist-big-lbl">${voo.altimetro?"ALT.: "+voo.altimetro+" · ":""}${dt}${voo.usuario?" · "+voo.usuario:""}</div>
         ${voo.nome_ensaio?`<div style="font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text1);margin-bottom:3px;">${voo.nome_ensaio}</div>`:""}
-        ${voo.obs?`<div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:5px;padding:5px 9px;background:var(--bg2);border-radius:2px;border-left:2px solid var(--teal);">${voo.obs}</div>`:""}
-      </div>
-    </div>
-    <div class="hist-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px;">
-      <div class="hstat-c"><div class="k">Alvo</div><div class="v">${(voo.apogeu_alvo||0).toFixed(0)} m</div></div>
-      <div class="hstat-c"><div class="k">Atingido</div><div class="v c">${(voo.alt_max||0).toFixed(1)} m</div></div>
-      <div class="hstat-c"><div class="k">Erro</div><div class="v">${voo.erro_m!=null?(voo.erro_m>=0?'+':'')+voo.erro_m.toFixed(1)+' m':'—'}</div></div>
-      <div class="hstat-c"><div class="k">Erro %</div><div class="v">${voo.erro_pct!=null?voo.erro_pct.toFixed(1)+'%':'—'}</div></div>
-      <div class="hstat-c"><div class="k">Subida</div><div class="v">${(voo.t_subida_s||0).toFixed(1)} s</div></div>
-      <div class="hstat-c"><div class="k">Total</div><div class="v">${tTot.toFixed(1)} s</div></div>
-      <div class="hstat-c"><div class="k">Vel. média</div><div class="v">${voo.vel_media_ms!=null?voo.vel_media_ms.toFixed(1)+' m/s':'—'}</div></div>
-      <div class="hstat-c"><div class="k">Vel. máx.</div><div class="v">${voo.vel_max_ms!=null?voo.vel_max_ms.toFixed(1)+' m/s':'—'}</div></div>
-    </div>
-    <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;overflow-y:auto;">
-      <div class="chart-block" style="min-height:90px;">
-        <div class="chart-block-hdr"><span class="chart-block-title">Altitude</span><span style="font-family:var(--mono);font-size:9px;color:var(--teal)">m</span></div>
-        <div class="chart-axes">
-          <div class="axis-y"><span>${aMax.toFixed(0)}</span><span>${(aMax/2).toFixed(0)}</span><span>0</span></div>
-          <div class="axis-x-wrap">
-            <svg class="chart-svg" id="hs-alt" viewBox="0 0 700 70" preserveAspectRatio="none">
-              <defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(46,196,182,.25)"/><stop offset="100%" stop-color="rgba(46,196,182,0)"/></linearGradient></defs>
-              <line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/>
-              <polyline id="hf-a" fill="url(#hgr-a)" stroke="none" points=""/>
-              <polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
-            </svg>
-            <div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="chart-block" style="min-height:90px;">
-        <div class="chart-block-hdr"><span class="chart-block-title">Velocidade</span><span style="font-family:var(--mono);font-size:9px;color:var(--green)">m/s</span></div>
-        <div class="chart-axes">
-          <div class="axis-y"><span>${velMax.toFixed(0)}</span><span>${(velMax/2).toFixed(0)}</span><span>0</span></div>
-          <div class="axis-x-wrap">
-            <svg class="chart-svg" id="hs-vel" viewBox="0 0 700 70" preserveAspectRatio="none">
-              <defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(61,220,132,.2)"/><stop offset="100%" stop-color="rgba(61,220,132,0)"/></linearGradient></defs>
-              <line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/>
-              <polyline id="hf-v" fill="url(#hgr-v)" stroke="none" points=""/>
-              <polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2" points=""/>
-            </svg>
-            <div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="chart-block" style="min-height:90px;">
-        <div class="chart-block-hdr"><span class="chart-block-title">Pressão</span><span style="font-family:var(--mono);font-size:9px;color:var(--violet)">hPa</span></div>
-        <div class="chart-axes">
-          <div class="axis-y"><span>${presMax.toFixed(0)}</span><span>${((presMax+presMin)/2).toFixed(0)}</span><span>${presMin.toFixed(0)}</span></div>
-          <div class="axis-x-wrap">
-            <svg class="chart-svg" id="hs-pres" viewBox="0 0 700 70" preserveAspectRatio="none">
-              <defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(123,108,246,.2)"/><stop offset="100%" stop-color="rgba(123,108,246,0)"/></linearGradient></defs>
-              <line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/>
-              <polyline id="hf-p" fill="url(#hgr-p)" stroke="none" points=""/>
-              <polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2" points=""/>
-            </svg>
-            <div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
-          </div>
-        </div>
-      </div>
-    </div>`;
+        ${voo.obs?`<div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:5px;padding:5px 9px;background:var(--bg2);border-radius:2px;border-left:2px solid var(--teal);">${voo.obs}</div>`:""}</div></div><div class="hist-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px;"><div class="hstat-c"><div class="k">Alvo</div><div class="v">${(voo.apogeu_alvo||0).toFixed(0)} m</div></div><div class="hstat-c"><div class="k">Atingido</div><div class="v c">${(voo.alt_max||0).toFixed(1)} m</div></div><div class="hstat-c"><div class="k">Erro</div><div class="v">${voo.erro_m!=null?(voo.erro_m>=0?'+':'')+voo.erro_m.toFixed(1)+' m':'—'}</div></div><div class="hstat-c"><div class="k">Erro %</div><div class="v">${voo.erro_pct!=null?voo.erro_pct.toFixed(1)+'%':'—'}</div></div><div class="hstat-c"><div class="k">Subida</div><div class="v">${(voo.t_subida_s||0).toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Total</div><div class="v">${tTot.toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Vel. média</div><div class="v">${voo.vel_media_ms!=null?voo.vel_media_ms.toFixed(1)+' m/s':'—'}</div></div><div class="hstat-c"><div class="k">Vel. máx.</div><div class="v">${voo.vel_max_ms!=null?voo.vel_max_ms.toFixed(1)+' m/s':'—'}</div></div></div><div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;overflow-y:auto;"><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Altitude</span><span style="font-family:var(--mono);font-size:9px;color:var(--teal)">m</span></div><div class="chart-axes"><div class="axis-y"><span>${aMax.toFixed(0)}</span><span>${(aMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-alt" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(46,196,182,.25)"/><stop offset="100%" stop-color="rgba(46,196,182,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-a" fill="url(#hgr-a)" stroke="none" points=""/><polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Velocidade</span><span style="font-family:var(--mono);font-size:9px;color:var(--green)">m/s</span></div><div class="chart-axes"><div class="axis-y"><span>${velMax.toFixed(0)}</span><span>${(velMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-vel" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(61,220,132,.2)"/><stop offset="100%" stop-color="rgba(61,220,132,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-v" fill="url(#hgr-v)" stroke="none" points=""/><polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Pressão</span><span style="font-family:var(--mono);font-size:9px;color:var(--violet)">hPa</span></div><div class="chart-axes"><div class="axis-y"><span>${presMax.toFixed(0)}</span><span>${((presMax+presMin)/2).toFixed(0)}</span><span>${presMin.toFixed(0)}</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-pres" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(123,108,246,.2)"/><stop offset="100%" stop-color="rgba(123,108,246,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-p" fill="url(#hgr-p)" stroke="none" points=""/><polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div></div>`;
   _histDraw(pts, voo.alt_max||0, tTot);
 }
 
@@ -1483,7 +1645,12 @@ function _histDraw(pontos,altMax,tMax){
   if(prs.length){const pMin=Math.min(...prs)*0.999,pMax=Math.max(...prs)*1.001;draw('hf-p','hl-p',pontos.map(p=>p.pres||pMin),pMin,pMax);}
 }
 
-// ── AUTH / LOGIN ───────────────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────────────
+drawRef();
+addLog('Interface inicializada.','ok');
+addLog('Conectando ao backend em produção...','warn');
+
+// ── AUTH / LOGIN ──────────────────────────────────────────
 let _usuarioLogado = null;
 
 function toggleCadastro(){
@@ -1559,6 +1726,7 @@ function fazerLogout(){
   document.getElementById('login-overlay').style.display = 'flex';
 }
 
+// Auto-login com sessão salva
 (function(){
   const tok = localStorage.getItem('altimetro_token');
   const usr = localStorage.getItem('altimetro_user');
@@ -1573,12 +1741,109 @@ function fazerLogout(){
   }
 })();
 
-// ── INIT PRINCIPAL ─────────────────────────────────────────────
-drawRef();
-atualizarDiagrama('idle');
-addLog('Interface inicializada.','ok');
-addLog('Conectando ao backend em produção...','warn');
-connectWS();
-</script>
-</body>
-</html>
+
+// ── ANIMAÇÃO DO HARDWARE ─────────────────────────────────
+function _sysStroke(id, cor, glow=false){
+  const el=document.getElementById(id); if(!el) return;
+  el.setAttribute('stroke', cor);
+  if(glow) el.setAttribute('filter','url(#glow2)');
+  else el.removeAttribute('filter');
+}
+function _sysFill(id, cor){
+  const el=document.getElementById(id); if(!el) return;
+  el.setAttribute('fill', cor);
+}
+function _sysBadge(id, estado){
+  const el=document.getElementById(id); if(!el) return;
+  el.className='sys-badge'+(estado?' '+estado:'');
+}
+function _sysFase(txt, cor){
+  const el=document.getElementById('sys-fase-txt');
+  if(el){ el.textContent=txt; el.style.color=cor; }
+}
+
+let _heliceTimer=null, _heliceAng=0;
+function _heliceStart(){
+  if(_heliceTimer) return;
+  _heliceTimer=setInterval(()=>{
+    _heliceAng=(_heliceAng+18)%360;
+    const g=document.getElementById('bomba-helice');
+    if(g) g.style.transform=`rotate(${_heliceAng}deg)`;
+  },55);
+}
+function _heliceStop(){
+  if(_heliceTimer){clearInterval(_heliceTimer);_heliceTimer=null;}
+  const g=document.getElementById('bomba-helice');
+  if(g) g.style.transform='';
+}
+function _emboloAnim(aberta){
+  const e=document.getElementById('vsol-embolo'); if(!e) return;
+  e.style.transition='transform .3s';
+  e.style.transform=aberta?'translateX(8px)':'';
+  e.style.background=aberta?'var(--red)':'var(--line2)';
+}
+
+
+
+function _hwBorder(id, cor, shadow=false){
+  const el=document.getElementById(id); if(!el) return;
+  el.style.borderColor=cor;
+  el.style.boxShadow=shadow?`0 0 10px ${cor}40`:'none';
+}
+function _hwBg(id,cor){ const el=document.getElementById(id); if(el) el.style.background=cor; }
+function _sysBadge(id,estado){ const el=document.getElementById(id); if(!el) return; el.className='sys-badge'+(estado?' '+estado:''); }
+function _sysFase(txt,cor){ const el=document.getElementById('sys-fase-txt'); if(el){el.textContent=txt;el.style.color=cor;} }
+let _heliceTimer=null,_heliceAng=0;
+function _heliceStart(){
+  if(_heliceTimer) return;
+  _heliceTimer=setInterval(()=>{_heliceAng=(_heliceAng+15)%360;const g=document.getElementById('helice');if(g)g.style.transform=`rotate(${_heliceAng}deg)`;},50);
+}
+function _heliceStop(){
+  if(_heliceTimer){clearInterval(_heliceTimer);_heliceTimer=null;}
+  const g=document.getElementById('helice');if(g)g.style.transform='';
+}
+function _emboloAnim(aberta){
+  const e=document.getElementById('vsol-embolo');if(!e)return;
+  e.style.transform=aberta?'translateX(8px)':'';e.style.background=aberta?'var(--red)':'var(--line2)';
+}
+function _wireActive(id,on){
+  const el=document.getElementById(id);if(!el)return;
+  if(on)el.classList.add('active');else el.classList.remove('active');
+}
+function atualizarDiagrama(fase){
+  ['hw-bomba','hw-rele','hw-vsol','hw-ms'].forEach(id=>_hwBorder(id,'var(--text2)'));
+  _hwBorder('hw-camara','var(--teal)');_hwBorder('hw-bmp','var(--teal)');_hwBorder('hw-ard','var(--green)');
+  _hwBg('rele-contato','var(--line2)');
+  ['sb-bomba','sb-valvula','sb-rele'].forEach(id=>_sysBadge(id,''));
+  _sysBadge('sb-bmp','leitura');_sysBadge('sb-arduino','leitura');
+  ['wire-ar-bomba-vreg','wire-ar-vreg-camara','wire-pwm','wire-digital','wire-ar-sol-camara'].forEach(id=>_wireActive(id,false));
+  _wireActive('wire-i2c',true);
+  _heliceStop();_emboloAnim(false);
+  const led=document.getElementById('ard-led-13');if(led)led.style.background='var(--line2)';
+
+  if(fase==='calibra'){
+    _hwBorder('hw-bmp','var(--teal)',true);
+    _sysBadge('sb-bmp','leitura');
+    _sysFase('CALIBRANDO','var(--amber)');
+    if(led)led.style.background='var(--amber)';
+  } else if(fase==='subida'){
+    _hwBorder('hw-bomba','var(--amber)',true);_hwBorder('hw-ms','var(--amber)',true);
+    _sysBadge('sb-bomba','ativo');
+    _wireActive('wire-ar-bomba-vreg',true);_wireActive('wire-ar-vreg-camara',true);_wireActive('wire-pwm',true);
+    _sysFase('SUBIDA','var(--green)');_heliceStart();
+    if(led)led.style.background='var(--green)';
+  } else if(fase==='descida'){
+    _hwBorder('hw-rele','var(--red)',true);_hwBorder('hw-vsol','var(--red)',true);
+    _hwBg('rele-contato','var(--red)');
+    _sysBadge('sb-valvula','alerta');_sysBadge('sb-rele','alerta');
+    _wireActive('wire-digital',true);_wireActive('wire-ar-sol-camara',true);
+    _emboloAnim(true);_sysFase('DESCIDA','var(--teal)');
+    if(led)led.style.background='var(--teal)';
+  } else if(fase==='concluido'){
+    _hwBorder('hw-ard','var(--green)',true);
+    _sysFase('CONCLUÍDO','var(--green)');if(led)led.style.background='var(--green)';
+  } else {
+    _sysFase('AGUARDANDO','var(--text2)');
+  }
+}
+
