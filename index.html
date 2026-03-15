@@ -6,6 +6,21 @@
 <title>Banco de Teste · Altímetros — UFPB TCC 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
+
+<style>
+  /* 1. Melhoria na legibilidade dos Eixos dos Gráficos */
+  .axis-y { width: 45px !important; padding-right: 6px !important; }
+  .axis-y span { font-size: 10px !important; color: var(--text1) !important; font-weight: 500; }
+  .axis-x { padding-top: 6px !important; }
+  .axis-x span { font-size: 10px !important; color: var(--text1) !important; font-weight: 500; }
+
+  /* 2. Barra de rolagem forçada na aba de Histórico */
+  .hist-detail { overflow-y: auto !important; padding-bottom: 30px !important; }
+
+  /* 3. Aumento da janela do Diagrama do Sistema */
+  .sys-diagram-area { min-height: 760px !important; }
+  .sys-canvas { height: 760px !important; }
+</style>
 </head>
 <body>
 
@@ -289,7 +304,7 @@
     </div>
   </div>
 
-  <div style="flex:1; position:relative; overflow:auto; background-color:var(--bg0); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px; display:flex; align-items:center; justify-content:center; min-height: 640px;">
+  <div class="sys-diagram-area" style="flex:1; position:relative; overflow:auto; background-color:var(--bg0); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px; display:flex; align-items:center; justify-content:center;">
 
     <style>
       .hw-box {
@@ -335,27 +350,25 @@
       .flow-usb.active { animation: flowDash 1s linear infinite; opacity: 1; filter: drop-shadow(0 0 6px rgba(122,154,184,0.6)); }
     </style>
 
-    <div style="width: 1024px; height: 640px; position:relative; flex-shrink:0;">
+    <div class="sys-canvas" style="width: 1024px; position:relative; flex-shrink:0;">
 
-      <svg style="position:absolute; inset:0; width:100%; height:100%; z-index:1;" viewBox="0 0 1024 640">
-
+      <svg style="position:absolute; inset:0; width:100%; height:100%; z-index:1;" viewBox="0 0 1024 750">
         <path class="wire flow-air" id="wire-ar-bomba-vreg" d="M 220 115 L 420 115"/>
         <path class="wire flow-air" id="wire-ar-vreg-camara" d="M 560 115 L 740 115"/>
         <path class="wire flow-air" id="wire-ar-sol-camara" d="M 860 260 L 860 460" style="stroke:var(--red); stroke-dasharray:8 6; opacity:0.4;"/>
 
         <path class="wire flow-usb active" id="wire-usb" d="M 220 340 L 280 340"/>
-        <path class="wire flow-i2c active" id="wire-i2c" d="M 740 220 L 460 220"/>
+        <path class="wire flow-i2c active" id="wire-i2c" d="M 760 155 L 400 155 L 400 280"/>
         <path class="wire flow-signal active" id="wire-ard-ms-ctrl" d="M 460 340 L 520 340" style="stroke:var(--text1);"/>
-        <path class="wire flow-signal" id="wire-digital" d="M 370 400 L 370 460"/>
+        <path class="wire flow-signal" id="wire-digital" d="M 320 400 L 320 430 L 400 430 L 400 460"/>
 
         <path class="wire flow-pwm" id="wire-pwm" d="M 600 280 L 600 190 L 130 190 L 130 170"/>
 
-        <path class="wire flow-5v active" id="wire-5v-ard" d="M 430 400 L 430 430 L 580 430 L 580 400 M 430 430 L 320 430 L 320 460"/>
+        <path class="wire flow-5v active" id="wire-5v-ard" d="M 370 400 L 370 430 L 600 430 L 600 400 M 370 430 L 370 460"/>
 
-        <path class="wire flow-power active" id="wire-12v-ms" d="M 220 530 L 660 530 L 660 400"/>
-        <path class="wire flow-power active" id="wire-12v-rele" d="M 220 500 L 280 500"/>
+        <path class="wire flow-power active" id="wire-12v-ms" d="M 220 550 L 660 550 L 660 400"/>
+        <path class="wire flow-power active" id="wire-12v-rele" d="M 220 515 L 280 515"/>
         <path class="wire flow-power" id="wire-12v-sol" d="M 460 515 L 740 515" style="stroke:var(--violet); opacity:0.4;"/>
-
       </svg>
 
       <div class="wire-label" style="left: 320px; top: 115px;">AR (VÁCUO)</div>
@@ -363,23 +376,22 @@
       <div class="wire-label" style="left: 860px; top: 360px; color:var(--red); border-color:var(--red);">ESCAPE (ATM)</div>
 
       <div class="wire-label" style="left: 250px; top: 340px; color:#7a9ab8; border-color:#7a9ab8;">USB (TELEMETRIA)</div>
-      <div class="wire-label" style="left: 600px; top: 220px; color:var(--teal); border-color:var(--teal);">I2C (SDA/SCL)</div>
+      <div class="wire-label" style="left: 580px; top: 155px; color:var(--teal); border-color:var(--teal);">I2C (SDA/SCL)</div>
       <div class="wire-label" style="left: 490px; top: 340px; color:var(--text1); border-color:var(--text1);">CTRL MS</div>
-      <div class="wire-label" style="left: 370px; top: 430px; color:var(--red); border-color:var(--red);">PINO 2 (SINAL)</div>
+      <div class="wire-label" style="left: 320px; top: 430px; color:var(--red); border-color:var(--red);">PINO 2 (SINAL)</div>
 
       <div class="wire-label" style="left: 365px; top: 190px; color:var(--amber); border-color:var(--amber);">PWM (M1)</div>
 
-      <div class="wire-label" style="left: 450px; top: 430px; color:#e63946; border-color:#e63946;">5V (LÓGICA)</div>
-      <div class="wire-label" style="left: 440px; top: 530px; color:var(--violet); border-color:var(--violet);">12V (FORÇA MS)</div>
-      <div class="wire-label" style="left: 250px; top: 500px; color:var(--violet); border-color:var(--violet);">12V</div>
+      <div class="wire-label" style="left: 485px; top: 430px; color:#e63946; border-color:#e63946;">5V (LÓGICA)</div>
+      <div class="wire-label" style="left: 440px; top: 550px; color:var(--violet); border-color:var(--violet);">12V (FORÇA MS)</div>
+      <div class="wire-label" style="left: 250px; top: 515px; color:var(--violet); border-color:var(--violet);">12V Entrada</div>
       <div class="wire-label" style="left: 600px; top: 515px; color:var(--violet); border-color:var(--violet);">12V CHAVEADO</div>
 
+
       <div class="hw-box" id="hw-pc" style="left:40px; top:280px; width:180px; height:120px; border-color:#7a9ab8;">
-        <div class="hw-title" style="color:#7a9ab8; font-size:12px;">ESTAÇÃO DE CONTROLE</div>
+        <div class="hw-title" style="color:#7a9ab8; font-size:12px;">ESTAÇÃO CONTROLE</div>
         <svg viewBox="0 0 24 24" style="width:40px; height:40px; fill:none; stroke:#7a9ab8; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; margin:6px 0;">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-          <line x1="8" y1="21" x2="16" y2="21"></line>
-          <line x1="12" y1="17" x2="12" y2="21"></line>
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
         </svg>
         <div class="hw-sub" style="color:var(--text1);">Script Python</div>
       </div>
