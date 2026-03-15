@@ -1743,107 +1743,121 @@ function fazerLogout(){
 
 
 // ── ANIMAÇÃO DO HARDWARE ─────────────────────────────────
-function _sysStroke(id, cor, glow=false){
-  const el=document.getElementById(id); if(!el) return;
-  el.setAttribute('stroke', cor);
-  if(glow) el.setAttribute('filter','url(#glow2)');
-  else el.removeAttribute('filter');
-}
-function _sysFill(id, cor){
-  const el=document.getElementById(id); if(!el) return;
-  el.setAttribute('fill', cor);
-}
-function _sysBadge(id, estado){
-  const el=document.getElementById(id); if(!el) return;
-  el.className='sys-badge'+(estado?' '+estado:'');
-}
-function _sysFase(txt, cor){
-  const el=document.getElementById('sys-fase-txt');
-  if(el){ el.textContent=txt; el.style.color=cor; }
-}
-
-let _heliceTimer=null, _heliceAng=0;
-function _heliceStart(){
-  if(_heliceTimer) return;
-  _heliceTimer=setInterval(()=>{
-    _heliceAng=(_heliceAng+18)%360;
-    const g=document.getElementById('bomba-helice');
-    if(g) g.style.transform=`rotate(${_heliceAng}deg)`;
-  },55);
-}
-function _heliceStop(){
-  if(_heliceTimer){clearInterval(_heliceTimer);_heliceTimer=null;}
-  const g=document.getElementById('bomba-helice');
-  if(g) g.style.transform='';
-}
-function _emboloAnim(aberta){
-  const e=document.getElementById('vsol-embolo'); if(!e) return;
-  e.style.transition='transform .3s';
-  e.style.transform=aberta?'translateX(8px)':'';
-  e.style.background=aberta?'var(--red)':'var(--line2)';
-}
-
-
-
 function _hwBorder(id, cor, shadow=false){
-  const el=document.getElementById(id); if(!el) return;
-  el.style.borderColor=cor;
-  el.style.boxShadow=shadow?`0 0 10px ${cor}40`:'none';
+  const el = document.getElementById(id); if(!el) return;
+  el.style.borderColor = cor;
+  el.style.boxShadow = shadow ? `0 0 10px ${cor}40` : 'none';
 }
-function _hwBg(id,cor){ const el=document.getElementById(id); if(el) el.style.background=cor; }
-function _sysBadge(id,estado){ const el=document.getElementById(id); if(!el) return; el.className='sys-badge'+(estado?' '+estado:''); }
-function _sysFase(txt,cor){ const el=document.getElementById('sys-fase-txt'); if(el){el.textContent=txt;el.style.color=cor;} }
-let _heliceTimer=null,_heliceAng=0;
+
+function _hwBg(id,cor){
+  const el = document.getElementById(id);
+  if(el) el.style.background = cor;
+}
+
+function _sysBadge(id,estado){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.className = 'sys-badge' + (estado ? ' ' + estado : '');
+}
+
+function _sysFase(txt,cor){
+  const el = document.getElementById('sys-fase-txt');
+  if(el){ el.textContent = txt; el.style.color = cor; }
+}
+
+// Declarado apenas UMA VEZ agora!
+let _heliceTimer = null, _heliceAng = 0;
+
 function _heliceStart(){
   if(_heliceTimer) return;
-  _heliceTimer=setInterval(()=>{_heliceAng=(_heliceAng+15)%360;const g=document.getElementById('helice');if(g)g.style.transform=`rotate(${_heliceAng}deg)`;},50);
+  _heliceTimer = setInterval(() => {
+    _heliceAng = (_heliceAng + 15) % 360;
+    const g = document.getElementById('helice');
+    if(g) g.style.transform = `rotate(${_heliceAng}deg)`;
+  }, 50);
 }
-function _heliceStop(){
-  if(_heliceTimer){clearInterval(_heliceTimer);_heliceTimer=null;}
-  const g=document.getElementById('helice');if(g)g.style.transform='';
-}
-function _emboloAnim(aberta){
-  const e=document.getElementById('vsol-embolo');if(!e)return;
-  e.style.transform=aberta?'translateX(8px)':'';e.style.background=aberta?'var(--red)':'var(--line2)';
-}
-function _wireActive(id,on){
-  const el=document.getElementById(id);if(!el)return;
-  if(on)el.classList.add('active');else el.classList.remove('active');
-}
-function atualizarDiagrama(fase){
-  ['hw-bomba','hw-rele','hw-vsol','hw-ms'].forEach(id=>_hwBorder(id,'var(--text2)'));
-  _hwBorder('hw-camara','var(--teal)');_hwBorder('hw-bmp','var(--teal)');_hwBorder('hw-ard','var(--green)');
-  _hwBg('rele-contato','var(--line2)');
-  ['sb-bomba','sb-valvula','sb-rele'].forEach(id=>_sysBadge(id,''));
-  _sysBadge('sb-bmp','leitura');_sysBadge('sb-arduino','leitura');
-  ['wire-ar-bomba-vreg','wire-ar-vreg-camara','wire-pwm','wire-digital','wire-ar-sol-camara'].forEach(id=>_wireActive(id,false));
-  _wireActive('wire-i2c',true);
-  _heliceStop();_emboloAnim(false);
-  const led=document.getElementById('ard-led-13');if(led)led.style.background='var(--line2)';
 
-  if(fase==='calibra'){
+function _heliceStop(){
+  if(_heliceTimer){ clearInterval(_heliceTimer); _heliceTimer = null; }
+  const g = document.getElementById('helice');
+  if(g) g.style.transform = '';
+}
+
+function _emboloAnim(aberta){
+  const e = document.getElementById('vsol-embolo'); if(!e) return;
+  e.style.transform = aberta ? 'translateX(8px)' : '';
+  e.style.background = aberta ? 'var(--red)' : 'var(--line2)';
+}
+
+function _wireActive(id,on){
+  const el = document.getElementById(id); if(!el) return;
+  if(on) el.classList.add('active'); else el.classList.remove('active');
+}
+
+function atualizarDiagrama(fase){
+  // Reset visual
+  ['hw-bomba','hw-rele','hw-vsol','hw-ms'].forEach(id => _hwBorder(id,'var(--text2)'));
+  _hwBorder('hw-camara','var(--teal)');
+  _hwBorder('hw-bmp','var(--teal)');
+  _hwBorder('hw-ard','var(--green)');
+  _hwBg('rele-contato','var(--line2)');
+
+  ['sb-bomba','sb-valvula','sb-rele'].forEach(id => _sysBadge(id,''));
+  _sysBadge('sb-bmp','leitura');
+  _sysBadge('sb-arduino','leitura');
+
+  ['wire-ar-bomba-vreg','wire-ar-vreg-camara','wire-pwm','wire-digital','wire-ar-sol-camara'].forEach(id => _wireActive(id,false));
+  _wireActive('wire-i2c',true);
+
+  _heliceStop();
+  _emboloAnim(false);
+
+  const led = document.getElementById('ard-led-13');
+  if(led) led.style.background = 'var(--line2)';
+
+  if(fase === 'calibra'){
     _hwBorder('hw-bmp','var(--teal)',true);
     _sysBadge('sb-bmp','leitura');
     _sysFase('CALIBRANDO','var(--amber)');
-    if(led)led.style.background='var(--amber)';
-  } else if(fase==='subida'){
-    _hwBorder('hw-bomba','var(--amber)',true);_hwBorder('hw-ms','var(--amber)',true);
+    if(led) led.style.background = 'var(--amber)';
+  }
+  else if(fase === 'subida'){
+    _hwBorder('hw-bomba','var(--amber)',true);
+    _hwBorder('hw-ms','var(--amber)',true);
     _sysBadge('sb-bomba','ativo');
-    _wireActive('wire-ar-bomba-vreg',true);_wireActive('wire-ar-vreg-camara',true);_wireActive('wire-pwm',true);
-    _sysFase('SUBIDA','var(--green)');_heliceStart();
-    if(led)led.style.background='var(--green)';
-  } else if(fase==='descida'){
-    _hwBorder('hw-rele','var(--red)',true);_hwBorder('hw-vsol','var(--red)',true);
+    _wireActive('wire-ar-bomba-vreg',true);
+    _wireActive('wire-ar-vreg-camara',true);
+    _wireActive('wire-pwm',true);
+    _sysFase('SUBIDA','var(--green)');
+    _heliceStart();
+    if(led) led.style.background = 'var(--green)';
+  }
+  else if(fase === 'descida'){
+    _hwBorder('hw-rele','var(--red)',true);
+    _hwBorder('hw-vsol','var(--red)',true);
     _hwBg('rele-contato','var(--red)');
-    _sysBadge('sb-valvula','alerta');_sysBadge('sb-rele','alerta');
-    _wireActive('wire-digital',true);_wireActive('wire-ar-sol-camara',true);
-    _emboloAnim(true);_sysFase('DESCIDA','var(--teal)');
-    if(led)led.style.background='var(--teal)';
-  } else if(fase==='concluido'){
+    _sysBadge('sb-valvula','alerta');
+    _sysBadge('sb-rele','alerta');
+    _wireActive('wire-digital',true);
+    _wireActive('wire-ar-sol-camara',true);
+    _emboloAnim(true);
+    _sysFase('DESCIDA','var(--teal)');
+    if(led) led.style.background = 'var(--teal)';
+  }
+  else if(fase === 'concluido'){
     _hwBorder('hw-ard','var(--green)',true);
-    _sysFase('CONCLUÍDO','var(--green)');if(led)led.style.background='var(--green)';
-  } else {
+    _sysFase('CONCLUÍDO','var(--green)');
+    if(led) led.style.background = 'var(--green)';
+  }
+  else {
     _sysFase('AGUARDANDO','var(--text2)');
   }
 }
 
+// Inicializações
+atualizarDiagrama('idle');
+drawRef();
+addLog('Interface inicializada.','ok');
+addLog('Conectando ao backend em produção...','warn');
+connectWS();
+</script>
