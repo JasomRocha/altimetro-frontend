@@ -63,6 +63,11 @@ function _renderSistemaHTML() {
 
       <!-- Estação de Controle (PC) -->
       <div class="hw-box" id="hw-pc" style="left:40px;top:280px;width:180px;height:120px;border-color:#7a9ab8;">
+        <div class="hw-tooltip down">
+          <div class="hw-tt-title">ESTAÇÃO DE CONTROLE</div>
+          <div class="hw-tt-body">Computador do operador executando o agente Python. Envia comandos ao Arduino via USB e transmite telemetria ao backend via WebSocket.</div>
+          <div class="hw-tt-ctrl"><span>Controle:</span> Interface web no browser. O agente serial roda em segundo plano.</div>
+        </div>
         <div class="hw-title" style="color:#7a9ab8;font-size:12px;">ESTAÇÃO CONTROLE</div>
         <svg viewBox="0 0 24 24" style="width:40px;height:40px;fill:none;stroke:#7a9ab8;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin:6px 0;">
           <rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
@@ -72,6 +77,11 @@ function _renderSistemaHTML() {
 
       <!-- Bomba DC -->
       <div class="hw-box" id="hw-bomba" style="left:40px;top:60px;width:180px;height:110px;">
+        <div class="hw-tooltip down">
+          <div class="hw-tt-title">BOMBA DE VÁCUO</div>
+          <div class="hw-tt-body">Motor DC 12V que cria pressão negativa na câmara simulando a redução de pressão atmosférica com a altitude.</div>
+          <div class="hw-tt-ctrl"><span>Controle:</span> PWM via Motor Shield (M1). Velocidade ajustada pelo parâmetro de Potência (%).</div>
+        </div>
         <div class="hw-title">BOMBA DE VÁCUO</div>
         <svg viewBox="0 0 50 50" style="width:48px;height:48px;margin-bottom:4px;">
           <circle cx="25" cy="25" r="23" fill="var(--bg0)" stroke="var(--text2)" stroke-width="2"/>
@@ -93,11 +103,21 @@ function _renderSistemaHTML() {
 
       <!-- Câmara de pressão -->
       <div class="hw-box" id="hw-camara" style="left:740px;top:60px;width:240px;height:200px;border-color:var(--text2);justify-content:flex-start;padding-top:24px;">
+        <div class="hw-tooltip down">
+          <div class="hw-tt-title">CÂMARA DE PRESSÃO</div>
+          <div class="hw-tt-body">Recipiente selado onde o altímetro é colocado para teste. A bomba reduz a pressão interna simulando o perfil de altitude do voo.</div>
+          <div class="hw-tt-ctrl"><span>Ajuste:</span> A válvula agulha controla a taxa de variação de pressão (velocidade de subida).</div>
+        </div>
         <div class="hw-title" style="color:var(--teal);font-size:13px;">CÂMARA DE PRESSÃO</div>
         <div style="width:190px;height:50px;border:1px dashed rgba(46,196,182,.4);border-radius:6px;display:flex;align-items:center;justify-content:center;margin:16px 0;">
           <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:rgba(46,196,182,.6);">AMBIENTE SIMULADO</span>
         </div>
         <div class="hw-box" id="hw-bmp" style="position:absolute;bottom:16px;left:20px;padding:10px 14px;border-color:var(--text2);width:auto;border-radius:6px;box-shadow:none;">
+        <div class="hw-tooltip down">
+          <div class="hw-tt-title">SENSOR BMP180</div>
+          <div class="hw-tt-body">Barômetro digital de alta precisão fixado na tampa da câmara. Mede pressão e temperatura, permitindo calcular a altitude equivalente.</div>
+          <div class="hw-tt-ctrl"><span>Interface:</span> I2C (SDA/SCL) conectado ao Arduino. Leitura a cada ~50ms.</div>
+        </div>
           <div style="font-family:var(--mono);font-size:12px;color:var(--text0);font-weight:600;letter-spacing:.1em;">BMP180</div>
           <div class="hw-sub">Afixado na tampa</div>
         </div>
@@ -105,6 +125,11 @@ function _renderSistemaHTML() {
 
       <!-- Arduino UNO -->
       <div class="hw-box" id="hw-ard" style="left:280px;top:280px;width:180px;height:120px;border-color:var(--text2);">
+        <div class="hw-tooltip">
+          <div class="hw-tt-title">ARDUINO UNO</div>
+          <div class="hw-tt-body">Microcontrolador ATmega328P. Lê o BMP180 via I2C, calcula altitude em tempo real e transmite os dados ao PC via serial USB.</div>
+          <div class="hw-tt-ctrl"><span>Fórmula:</span> alt = 44330 × (1 − (P/P₀)^0.1902)</div>
+        </div>
         <div class="hw-title" style="color:var(--green);font-size:12px;">ARDUINO UNO</div>
         <div style="display:flex;gap:12px;align-items:center;margin:10px 0;">
           <div style="width:40px;height:30px;background:var(--bg0);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;justify-content:center;">
@@ -124,6 +149,11 @@ function _renderSistemaHTML() {
 
       <!-- Motor Shield -->
       <div class="hw-box" id="hw-ms" style="left:520px;top:280px;width:160px;height:120px;border-color:var(--text2);">
+        <div class="hw-tooltip">
+          <div class="hw-tt-title">MOTOR SHIELD</div>
+          <div class="hw-tt-body">Placa AFMotor encaixada no Arduino. Controla a bomba DC com sinal PWM, fornecendo a corrente necessária para acionar o motor 12V.</div>
+          <div class="hw-tt-ctrl"><span>Canal:</span> M1 para a bomba. Suporta até 2A por canal.</div>
+        </div>
         <div class="hw-title" style="color:var(--amber);font-size:12px;">MOTOR SHIELD</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">
           <div style="background:var(--bg0);border:1px solid var(--line2);border-radius:4px;height:26px;display:flex;align-items:center;justify-content:center;">
@@ -138,6 +168,11 @@ function _renderSistemaHTML() {
 
       <!-- Fonte 12V -->
       <div class="hw-box" id="hw-fonte" style="left:40px;top:460px;width:180px;height:110px;border-color:var(--text2);">
+        <div class="hw-tooltip">
+          <div class="hw-tt-title">FONTE CHAVEADA 12V</div>
+          <div class="hw-tt-body">Fornece energia para a bomba DC e o módulo relé. O GND é comum a todo o sistema, incluindo o Arduino.</div>
+          <div class="hw-tt-ctrl"><span>Atenção:</span> Nunca conecte/desconecte com o sistema em operação.</div>
+        </div>
         <div class="hw-title" style="color:var(--violet);">FONTE CHAVEADA</div>
         <div style="font-family:var(--mono);font-size:38px;font-weight:600;color:var(--violet);line-height:1;margin:8px 0;">12V</div>
         <div class="hw-sub" style="color:var(--text1);">Potência e GND Comum</div>
@@ -145,6 +180,11 @@ function _renderSistemaHTML() {
 
       <!-- Relé -->
       <div class="hw-box" id="hw-rele" style="left:280px;top:460px;width:180px;height:110px;">
+        <div class="hw-tooltip">
+          <div class="hw-tt-title">MÓDULO RELÉ</div>
+          <div class="hw-tt-body">Chave eletromecânica controlada pelo Arduino. Na fase de descida, aciona a válvula solenoide para equalizar a pressão da câmara.</div>
+          <div class="hw-tt-ctrl"><span>Lógica:</span> Active-Low — sinal LOW no pino 2 fecha o relé e abre a válvula.</div>
+        </div>
         <div class="hw-title" style="color:var(--red);">MÓDULO RELÉ</div>
         <div style="display:flex;gap:12px;align-items:center;margin:12px 0;">
           <div style="width:44px;height:28px;background:var(--bg0);border:1px solid var(--line2);border-radius:4px;"></div>
@@ -158,6 +198,11 @@ function _renderSistemaHTML() {
 
       <!-- Válvula solenoide -->
       <div class="hw-box" id="hw-vsol" style="left:740px;top:460px;width:240px;height:110px;">
+        <div class="hw-tooltip">
+          <div class="hw-tt-title">VÁLVULA SOLENOIDE</div>
+          <div class="hw-tt-body">Válvula normalmente fechada (NF). Quando energizada pelo relé, abre e permite entrada de ar na câmara, simulando a descida do foguete.</div>
+          <div class="hw-tt-ctrl"><span>Tipo:</span> NF 12V. Controlada pelo relé, acionado pelo Arduino no pino digital 2.</div>
+        </div>
         <div class="hw-title" style="color:var(--red);">VÁLVULA SOLENOIDE</div>
         <div style="display:flex;gap:12px;align-items:center;margin:10px 0;">
           <div style="width:66px;height:54px;background:var(--bg0);border:1px solid var(--line2);border-radius:6px;display:flex;flex-direction:column;justify-content:space-around;padding:8px;">
