@@ -14,10 +14,23 @@
   .axis-x { padding-top: 6px !important; }
   .axis-x span { font-size: 10px !important; color: var(--text1) !important; font-weight: 500; }
 
-  /* 2. Barra de rolagem forçada na aba de Histórico */
-  .hist-detail { overflow-y: auto !important; padding-bottom: 30px !important; }
+  /* 2. Histórico — rolagem e gráficos compactos */
+  .hist-detail {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 20px !important;
+  }
+  /* Cada gráfico do histórico: altura compacta e fixa */
+  .hist-detail .chart-block {
+    min-height: 110px !important;
+    max-height: 140px !important;
+    flex: none !important;
+  }
+  /* Cabeçalho e stats não crescem */
+  .hist-stats      { flex-shrink: 0 !important; }
+  .hist-detail-hdr { flex-shrink: 0 !important; }
 
-  /* 3. Aumento da janela do Diagrama do Sistema */
+  /* 3. Diagrama do Sistema */
   .sys-diagram-area { min-height: 760px !important; }
   .sys-canvas { height: 760px !important; }
 </style>
