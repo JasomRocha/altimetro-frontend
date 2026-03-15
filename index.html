@@ -568,6 +568,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 <body>
 
 <!-- ── TOPBAR ── -->
+<div id="login-overlay" style="position:fixed;inset:0;z-index:9000;background:#0a0e14;display:flex;align-items:center;justify-content:center;"><div style="background:#0f1520;border:1px solid #1e2e42;border-radius:6px;padding:36px 40px;width:340px;"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#2ec4b6;margin-bottom:4px;">BANCO DE TESTE · ALTÍMETROS</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:#3a5470;margin-bottom:28px;">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div><div id="login-erro" style="display:none;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.4);border-radius:3px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e63946;margin-bottom:14px;"></div><div style="margin-bottom:14px;"><label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Login</label><input id="login-input" type="text" placeholder="admin" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;" onkeydown="if(event.key==='Enter')document.getElementById('senha-input').focus()"></div><div style="margin-bottom:20px;"><label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Senha</label><input id="senha-input" type="password" placeholder="••••••" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;" onkeydown="if(event.key==='Enter')fazerLogin()"></div><button onclick="fazerLogin()" id="btn-login" style="width:100%;padding:11px;background:#2ec4b6;border:none;border-radius:3px;color:#0a0e14;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;cursor:pointer;">ENTRAR</button><div style="margin-top:12px;text-align:center;"><span id="toggle-cad" onclick="toggleCadastro()" style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#3a5470;cursor:pointer;">Criar conta</span></div><div id="cadastro-extra" style="display:none;margin-top:14px;border-top:1px solid #1e2e42;padding-top:14px;"><label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Nome completo</label><input id="nome-input" type="text" placeholder="Seu nome" style="width:100%;padding:9px 11px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;"></div></div></div>
 <div id="topbar">
   <div class="tb-brand">
     <div class="title">BANCO DE TESTE · ALTÍMETROS</div>
@@ -582,6 +583,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
     <div class="tb-stat"><span class="k">HARDWARE</span><span class="v" id="h-hw">—</span></div>
   </div>
   <div class="tb-right">
+    <span id="user-label" style="font-family:var(--mono);font-size:10px;color:var(--text2);"></span>
+    <button onclick="fazerLogout()" id="btn-logout" style="display:none;padding:3px 10px;background:transparent;border:1px solid var(--line2);border-radius:20px;color:var(--text2);font-family:var(--mono);font-size:9px;cursor:pointer;">Sair</button>
     <div class="conn-badge" id="cbadge"><div class="conn-dot"></div><span id="ctxt">OFFLINE</span></div>
     <div id="clock">--:--:--</div>
   </div>
@@ -1298,54 +1301,126 @@ async function histSelecionar(id){
 }
 function histRenderDetalhe(voo){
   const dt=new Date(voo.data_inicio).toLocaleString('pt-BR');
-  const velMed=voo.t_total_s>0?(voo.alt_max/voo.t_total_s).toFixed(1):'—';
-  document.getElementById('hist-detalhe').innerHTML=`
-    <div class="hist-detail-hdr">
-      <div>
-        <div class="hist-big">${voo.alt_max.toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div>
-        <div class="hist-big-lbl">APOGEU ATINGIDO · ${dt}</div>
-      </div>
-    </div>
-    <div class="hist-stats">
-      <div class="hstat-c"><div class="k">DURAÇÃO</div><div class="v c">${voo.t_total_s.toFixed(1)} s</div></div>
-      <div class="hstat-c"><div class="k">PONTOS</div><div class="v">${voo.pontos.length}</div></div>
-      <div class="hstat-c"><div class="k">ALT MÁX</div><div class="v c">${voo.alt_max.toFixed(1)} m</div></div>
-      <div class="hstat-c"><div class="k">VEL MÉD</div><div class="v">${velMed} m/s</div></div>
-    </div>
-    <div class="hist-chart">
-      <div class="hist-chart-title">ALTITUDE × TEMPO</div>
-      <svg id="hist-svg" viewBox="0 0 700 180" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="hgr" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(46,196,182,.25)"/>
-            <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
-          </linearGradient>
-        </defs>
-        <polyline id="hist-fill" fill="url(#hgr)" stroke="none" points=""/>
-        <polyline id="hist-line" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
-      </svg>
-    </div>`;
-  histDesenharGrafico(voo.pontos, voo.alt_max, voo.t_total_s);
+  const pts=voo.pontos||[];
+  const vels=pts.map((p,i)=>{if(p.vel!==undefined)return p.vel;if(i===0)return 0;const dt2=p.t-pts[i-1].t;return dt2>0.05?(p.alt-pts[i-1].alt)/dt2:0;});
+  const velMax=pts.length?Math.max(...vels)*1.1||10:10;
+  const prs=pts.filter(p=>p.pres>0).map(p=>p.pres);
+  const presMin=prs.length?Math.min(...prs)*0.999:990;
+  const presMax=prs.length?Math.max(...prs)*1.001:1015;
+  const aMax=(voo.alt_max||0)*1.12||10;
+  const tTot=voo.t_total_s||0;
+  document.getElementById('hist-detalhe').innerHTML=`<div class="hist-detail-hdr"><div><div class="hist-big">${(voo.alt_max||0).toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div><div class="hist-big-lbl">ENSAIO #${voo.id_voo} · ${dt}${voo.usuario?' · '+voo.usuario:''}</div></div></div><div class="hist-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px;"><div class="hstat-c"><div class="k">Alvo</div><div class="v">${(voo.apogeu_alvo||0).toFixed(0)} m</div></div><div class="hstat-c"><div class="k">Atingido</div><div class="v c">${(voo.alt_max||0).toFixed(1)} m</div></div><div class="hstat-c"><div class="k">Erro</div><div class="v">${voo.erro_m!=null?(voo.erro_m>=0?'+':'')+voo.erro_m.toFixed(1)+' m':'—'}</div></div><div class="hstat-c"><div class="k">Erro %</div><div class="v">${voo.erro_pct!=null?voo.erro_pct.toFixed(1)+'%':'—'}</div></div><div class="hstat-c"><div class="k">Subida</div><div class="v">${(voo.t_subida_s||0).toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Total</div><div class="v">${tTot.toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Vel. média</div><div class="v">${voo.vel_media_ms!=null?voo.vel_media_ms.toFixed(1)+' m/s':'—'}</div></div><div class="hstat-c"><div class="k">Vel. máx.</div><div class="v">${voo.vel_max_ms!=null?voo.vel_max_ms.toFixed(1)+' m/s':'—'}</div></div></div><div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;overflow-y:auto;"><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Altitude</span><span style="font-family:var(--mono);font-size:9px;color:var(--teal)">m</span></div><div class="chart-axes"><div class="axis-y"><span>${aMax.toFixed(0)}</span><span>${(aMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-alt" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(46,196,182,.25)"/><stop offset="100%" stop-color="rgba(46,196,182,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-a" fill="url(#hgr-a)" stroke="none" points=""/><polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Velocidade</span><span style="font-family:var(--mono);font-size:9px;color:var(--green)">m/s</span></div><div class="chart-axes"><div class="axis-y"><span>${velMax.toFixed(0)}</span><span>${(velMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-vel" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(61,220,132,.2)"/><stop offset="100%" stop-color="rgba(61,220,132,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-v" fill="url(#hgr-v)" stroke="none" points=""/><polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Pressão</span><span style="font-family:var(--mono);font-size:9px;color:var(--violet)">hPa</span></div><div class="chart-axes"><div class="axis-y"><span>${presMax.toFixed(0)}</span><span>${((presMax+presMin)/2).toFixed(0)}</span><span>${presMin.toFixed(0)}</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-pres" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(123,108,246,.2)"/><stop offset="100%" stop-color="rgba(123,108,246,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-p" fill="url(#hgr-p)" stroke="none" points=""/><polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div></div>`;
+  _histDraw(pts, voo.alt_max||0, tTot);
 }
-function histDesenharGrafico(pontos,altMax,tMax){
-  if(!pontos.length) return;
-  const W=700,H=180,PL=8,PR=8,PT=6,PB=6;
-  const aMax=altMax*1.12||10, tFim=tMax*1.05||1;
-  const pts=pontos.map(p=>{
-    const x=PL+(p.t/tFim)*(W-PL-PR);
-    const y=H-PB-(p.alt/aMax)*(H-PT-PB);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-  const ul=pts[pts.length-1].split(',');
-  const fill=pts.join(' ')+` ${ul[0]},${(H-PB).toFixed(1)} ${PL},${(H-PB).toFixed(1)}`;
-  document.getElementById('hist-fill').setAttribute('points',fill);
-  document.getElementById('hist-line').setAttribute('points',pts.join(' '));
+
+function _histDraw(pontos,altMax,tMax){
+  if(!pontos||!pontos.length)return;
+  const W=700,H=70,PL=0,PR=0,PT=4,PB=4,tFim=tMax*1.05||1;
+  function pt(t,v,vMin,vMax){const x=PL+(t/tFim)*(W-PL-PR);const r=vMax-vMin||1;const y=H-PB-((v-vMin)/r)*(H-PT-PB);return`${x.toFixed(1)},${y.toFixed(1)}`;}
+  function draw(f,l,vals,vMin,vMax){const pp=pontos.map((p,i)=>pt(p.t,vals[i],vMin,vMax));const ul=pp[pp.length-1].split(',');const fill=pp.join(' ')+` ${ul[0]},${(H-PB).toFixed(1)} ${PL},${(H-PB).toFixed(1)}`;const fe=document.getElementById(f),le=document.getElementById(l);if(fe)fe.setAttribute('points',fill);if(le)le.setAttribute('points',pp.join(' '));}
+  draw('hf-a','hl-a',pontos.map(p=>p.alt||0),0,altMax*1.12||10);
+  const vels=pontos.map((p,i)=>{if(p.vel!==undefined)return p.vel;if(i===0)return 0;const dt=p.t-pontos[i-1].t;return dt>0.05?(p.alt-pontos[i-1].alt)/dt:0;});
+  draw('hf-v','hl-v',vels,0,Math.max(...vels)*1.1||10);
+  const prs=pontos.map(p=>p.pres||0).filter(v=>v>0);
+  if(prs.length){const pMin=Math.min(...prs)*0.999,pMax=Math.max(...prs)*1.001;draw('hf-p','hl-p',pontos.map(p=>p.pres||pMin),pMin,pMax);}
 }
 
 // ── INIT ───────────────────────────────────────────────────────
 drawRef();
 addLog('Interface inicializada.','ok');
 addLog('Conectando ao backend em produção...','warn');
+
+// ── AUTH / LOGIN ──────────────────────────────────────────
+let _usuarioLogado = null;
+
+function toggleCadastro(){
+  const ex  = document.getElementById('cadastro-extra');
+  const btn = document.getElementById('btn-login');
+  const tog = document.getElementById('toggle-cad');
+  if(ex.style.display==='none'){
+    ex.style.display='block'; btn.textContent='CADASTRAR';
+    btn.onclick=fazerCadastro; tog.textContent='Já tenho conta';
+  } else {
+    ex.style.display='none'; btn.textContent='ENTRAR';
+    btn.onclick=fazerLogin;   tog.textContent='Criar conta';
+  }
+}
+
+async function fazerLogin(){
+  const li = document.getElementById('login-input').value.trim();
+  const se = document.getElementById('senha-input').value;
+  const er = document.getElementById('login-erro');
+  er.style.display='none';
+  if(!li||!se){ er.textContent='Preencha login e senha.'; er.style.display='block'; return; }
+  try{
+    const r = await fetch(BACKEND+'/auth/login',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({login:li, senha:se})
+    });
+    if(!r.ok){ const d=await r.json(); throw new Error(d.detail||'Login inválido'); }
+    const d = await r.json();
+    _aplicarLogin(d);
+  } catch(e){
+    er.textContent=e.message; er.style.display='block';
+  }
+}
+
+async function fazerCadastro(){
+  const no = document.getElementById('nome-input').value.trim();
+  const li = document.getElementById('login-input').value.trim();
+  const se = document.getElementById('senha-input').value;
+  const er = document.getElementById('login-erro');
+  er.style.display='none';
+  if(!no||!li||!se){ er.textContent='Preencha todos os campos.'; er.style.display='block'; return; }
+  if(se.length<6){ er.textContent='Senha mínima: 6 caracteres.'; er.style.display='block'; return; }
+  try{
+    const r = await fetch(BACKEND+'/auth/register',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({nome:no, login:li, senha:se})
+    });
+    if(!r.ok){ const d=await r.json(); throw new Error(d.detail||'Erro ao cadastrar'); }
+    const d = await r.json();
+    _aplicarLogin(d);
+  } catch(e){
+    document.getElementById('login-erro').textContent=e.message;
+    document.getElementById('login-erro').style.display='block';
+  }
+}
+
+function _aplicarLogin(d){
+  _usuarioLogado = d;
+  localStorage.setItem('altimetro_token', d.token);
+  localStorage.setItem('altimetro_user',  JSON.stringify({id:d.id, nome:d.nome, login:d.login}));
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('user-label').textContent       = d.nome;
+  document.getElementById('btn-logout').style.display     = 'block';
+  addLog('Sessão iniciada: '+d.nome, 'ok');
+}
+
+function fazerLogout(){
+  localStorage.removeItem('altimetro_token');
+  localStorage.removeItem('altimetro_user');
+  _usuarioLogado = null;
+  document.getElementById('user-label').textContent   = '';
+  document.getElementById('btn-logout').style.display = 'none';
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+
+// Auto-login com sessão salva
+(function(){
+  const tok = localStorage.getItem('altimetro_token');
+  const usr = localStorage.getItem('altimetro_user');
+  if(tok && usr){
+    try{
+      const u = JSON.parse(usr);
+      _usuarioLogado = {...u, token:tok};
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('user-label').textContent       = u.nome;
+      document.getElementById('btn-logout').style.display     = 'block';
+    } catch { localStorage.clear(); }
+  }
+})();
+
 connectWS();
 </script>
 </body>
