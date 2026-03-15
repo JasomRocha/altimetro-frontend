@@ -69,7 +69,11 @@ function _atualizarBtnGo(){
 
   // Botão "INICIAR NOVO ENSAIO" do painel
   const btnNovo = document.getElementById('btn-novo-ensaio');
-  if(btnNovo) btnNovo.disabled = false;
+  if(btnNovo){
+    btnNovo.disabled = false;
+    const sp = btnNovo.querySelector('span');
+    if(sp) sp.textContent = 'INICIAR NOVO ENSAIO';
+  }
 }
 
 // ── HANDLER DE MENSAGENS ──────────────────────────────────────────
