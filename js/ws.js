@@ -119,32 +119,43 @@ function setPref(p){
 // ── PARÂMETROS ────────────────────────────────────────────────────
 function setApogeu(v){
   S.apAlvo = v;
-  document.getElementById('r-ap').textContent = v;
-  document.getElementById('bar-alvo').textContent = v+' m';
-  const tRef = Math.round(18*v/700);
-  document.getElementById('i-ref').textContent = v+' m / '+tRef+' s';
-  document.getElementById('sl-ap').style.setProperty('--f', ((v-100)/(2000-100)*100).toFixed(1)+'%');
+  const elAp   = document.getElementById('r-ap');
+  const elBar  = document.getElementById('bar-alvo');
+  const elRef  = document.getElementById('i-ref');
+  const elSlAp = document.getElementById('sl-ap');
+  if(elAp)  elAp.textContent  = v;
+  if(elBar) elBar.textContent = v+' m';
+  if(elRef) elRef.textContent = v+' m / '+Math.round(18*v/700)+' s';
+  if(elSlAp) elSlAp.style.setProperty('--f', ((v-100)/(2000-100)*100).toFixed(1)+'%');
   updVel(); drawRef();
 }
 
 function setTSubida(v){
   S.tSubida = v;
-  document.getElementById('r-ts').textContent = v;
-  document.getElementById('sl-ts').style.setProperty('--f', ((v-5)/(60-5)*100).toFixed(1)+'%');
+  const elTs   = document.getElementById('r-ts');
+  const elSlTs = document.getElementById('sl-ts');
+  if(elTs)   elTs.textContent = v;
+  if(elSlTs) elSlTs.style.setProperty('--f', ((v-5)/(60-5)*100).toFixed(1)+'%');
   updVel(); drawRef();
 }
 
 function updVel(){
-  document.getElementById('i-vel').textContent = (S.apAlvo/S.tSubida).toFixed(1)+' m/s';
+  const el = document.getElementById('i-vel');
+  if(el) el.textContent = (S.apAlvo/S.tSubida).toFixed(1)+' m/s';
 }
 
 function setPotencia(pct){
   S.potPct = pct; S.pwm = pctToPWM(pct);
-  document.getElementById('r-pot').textContent = pct;
-  document.getElementById('r-pwm').textContent = S.pwm+' · '+potLabel(pct);
-  document.getElementById('sl-pot').style.setProperty('--f', pct+'%');
-  document.getElementById('g-pot').textContent = pct+'%';
-  document.getElementById('gf-pot').style.width = pct+'%';
+  const elPot   = document.getElementById('r-pot');
+  const elPwm   = document.getElementById('r-pwm');
+  const elSlPot = document.getElementById('sl-pot');
+  const elGPot  = document.getElementById('g-pot');
+  const elGfPot = document.getElementById('gf-pot');
+  if(elPot)   elPot.textContent  = pct;
+  if(elPwm)   elPwm.textContent  = S.pwm+' · '+potLabel(pct);
+  if(elSlPot) elSlPot.style.setProperty('--f', pct+'%');
+  if(elGPot)  elGPot.textContent = pct+'%';
+  if(elGfPot) elGfPot.style.width = pct+'%';
 }
 
 // ── MÁQUINA DE ESTADOS ────────────────────────────────────────────
@@ -160,8 +171,10 @@ const FCFG = {
 function setFase(f){
   S.fase = f;
   const cfg = FCFG[f] || FCFG.idle;
-  document.getElementById('fbadge').className = 'fbadge '+cfg.c;
-  document.getElementById('ftxt').textContent  = cfg.t;
+  const elBadge = document.getElementById('fbadge');
+  const elTxt   = document.getElementById('ftxt');
+  if(elBadge) elBadge.className   = 'fbadge '+cfg.c;
+  if(elTxt)   elTxt.textContent   = cfg.t;
   _atualizarBtnGo();  // centraliza lógica do botão
   atualizarDiagrama(f);
 }

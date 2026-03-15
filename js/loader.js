@@ -61,12 +61,12 @@ function _initApp() {
   setApogeu(700);
   setTSubida(20);
   setPotencia(50);
-  document.getElementById('sl-ap')
-    .style.setProperty('--f', ((700-100)/(2000-100)*100).toFixed(1)+'%');
+  const slAp = document.getElementById('sl-ap');
+  if(slAp) slAp.style.setProperty('--f', ((700-100)/(2000-100)*100).toFixed(1)+'%');
 
   // Gráficos e diagrama
-  drawRef();
-  atualizarDiagrama('idle');
+  if(typeof drawRef         === 'function') drawRef();
+  if(typeof atualizarDiagrama === 'function') atualizarDiagrama('idle');
 
   // Log e conexão
   addLog('Interface inicializada.', 'ok');
