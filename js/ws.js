@@ -46,6 +46,8 @@ function _atualizarBtnGo(){
     btn.title = 'Aguardando conexão com o backend...';
     btn.style.borderColor = 'var(--red)';
     btn.style.color       = 'var(--red)';
+    const btnN1 = document.getElementById('btn-novo-ensaio');
+    if(btnN1){ btnN1.disabled = true; btnN1.querySelector('span').textContent = 'SEM CONEXÃO'; }
     return;
   }
   if(!S.agenteOk){
@@ -54,6 +56,8 @@ function _atualizarBtnGo(){
     btn.title = 'O agente serial não está conectado ao backend.';
     btn.style.borderColor = 'var(--amber)';
     btn.style.color       = 'var(--amber)';
+    const btnN2 = document.getElementById('btn-novo-ensaio');
+    if(btnN2){ btnN2.disabled = true; btnN2.querySelector('span').textContent = 'AGENTE OFFLINE'; }
     return;
   }
   // Tudo OK — habilita
@@ -62,6 +66,10 @@ function _atualizarBtnGo(){
   btn.title = '';
   btn.style.borderColor = '';
   btn.style.color       = '';
+
+  // Botão "INICIAR NOVO ENSAIO" do painel
+  const btnNovo = document.getElementById('btn-novo-ensaio');
+  if(btnNovo) btnNovo.disabled = false;
 }
 
 // ── HANDLER DE MENSAGENS ──────────────────────────────────────────
@@ -222,6 +230,39 @@ function onTelem(m){
   updCharts();
 }
 
+
+// ── MODAL DE NOVO ENSAIO ──────────────────────────────────────────
+function abrirModalEnsaio(){
+  if(!S.conectado){ toast('Sem conexão com o backend.','er'); return; }
+  if(!S.agenteOk){  toast('Agente serial não conectado.','er'); return; }
+  if(!['idle','concluido','erro'].includes(S.fase)){
+    toast('Ensaio em andamento — aguarde o término.','er'); return;
+  }
+  const m = document.getElementById('modal-novo-ensaio');
+  if(m){ m.style.display = 'flex'; }
+  // Foca no campo nome
+  setTimeout(() => {
+    const el = document.getElementById('inp-nome');
+    if(el) el.focus();
+  }, 100);
+}
+
+function fecharModalEnsaio(){
+  const m = document.getElementById('modal-novo-ensaio');
+  if(m) m.style.display = 'none';
+}
+
+// Fecha modal ao clicar fora
+document.addEventListener('click', function(e){
+  const m = document.getElementById('modal-novo-ensaio');
+  if(m && e.target === m) fecharModalEnsaio();
+});
+
+// Esc fecha o modal
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') fecharModalEnsaio();
+});
+
 // ── COMANDOS ──────────────────────────────────────────────────────
 function cmdIniciar(){
   // Guards de segurança
@@ -264,6 +305,25 @@ function cmdIniciar(){
   drawRef();
   setFase('calibra');
   addLog(`Ensaio iniciado  apogeu=${S.apAlvo}m  t_sub=${S.tSubida}s  pot=${S.potPct}%  PWM=${S.pwm}`,'info');
+  // Fecha o modal
+  fecharModalEnsaio();
+
+  // Atualiza painel de configuração no lado esquerdo
+  const cfgSec  = document.getElementById('cfg-atual-sec');
+  const cfgNome = document.getElementById('cfg-nome-txt');
+  const cfgAlt  = document.getElementById('cfg-alt-txt');
+  const cfgAp   = document.getElementById('cfg-ap');
+  const cfgTs   = document.getElementById('cfg-ts');
+  const cfgPot  = document.getElementById('cfg-pot');
+  const cfgPwm  = document.getElementById('cfg-pwm');
+  if(cfgSec)  cfgSec.style.display = 'block';
+  if(cfgNome) cfgNome.textContent  = S.nomeEnsaio;
+  if(cfgAlt)  cfgAlt.textContent   = S.altimetro ? 'Altímetro: '+S.altimetro : '';
+  if(cfgAp)   cfgAp.innerHTML      = S.apAlvo+'<span style="font-size:10px;color:var(--text2);margin-left:2px;">m</span>';
+  if(cfgTs)   cfgTs.innerHTML      = S.tSubida+'<span style="font-size:10px;color:var(--text2);margin-left:2px;">s</span>';
+  if(cfgPot)  cfgPot.innerHTML     = S.potPct+'<span style="font-size:10px;color:var(--text2);margin-left:2px;">%</span>';
+  if(cfgPwm)  cfgPwm.textContent   = S.pwm+' · '+potLabel(S.potPct);
+
   wsSend({ cmd:'iniciar', apogeu:S.apAlvo, dur:S.tSubida,
             potencia_pct:S.potPct, pwm:S.pwm,
             nome_ensaio:S.nomeEnsaio, altimetro:S.altimetro, obs:S.obs });
