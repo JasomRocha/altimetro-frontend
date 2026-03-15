@@ -239,33 +239,66 @@ function _updSysAlt(alt){
 
 // ── Máquina de estados do diagrama ────────────────────────────────
 function atualizarDiagrama(fase){
-  // Reset tudo
-  ['hw-bomba','hw-rele','hw-vsol','hw-ms'].forEach(id=>_hwBorder(id,'var(--text2)'));
-  _hwBorder('hw-camara','var(--teal)');
-  _hwBorder('hw-bmp','var(--teal)');
-  _hwBorder('hw-ard','var(--green)');
-  _hwBg('rele-contato','var(--line2)');
-  ['sb-bomba','sb-valvula','sb-rele'].forEach(id=>_sysBadge(id,''));
-  _sysBadge('sb-bmp','leitura');
-  _sysBadge('sb-arduino','leitura');
-  // Fios sempre ativos (permanentes)
-  _wireActive('wire-usb',true);
-  _wireActive('wire-i2c',true);
-  _wireActive('wire-ard-ms-ctrl',true);
-  _wireActive('wire-5v-ard',true);
-  _wireActive('wire-12v-ms',true);
-  _wireActive('wire-12v-rele',true);
-  // Fios que mudam por fase
-  ['wire-ar-bomba-vreg','wire-ar-vreg-camara','wire-pwm',
-   'wire-digital','wire-ar-sol-camara','wire-12v-sol'].forEach(id=>_wireActive(id,false));
+  const led = document.getElementById('ard-led-13');
 
-  _heliceStop(); _emboloAnim(false);
-  const led=document.getElementById('ard-led-13');
+  // ── RESET COMPLETO ─────────────────────────────────────────────
+  // Bordas dos componentes: tudo cinza
+  ['hw-bomba','hw-rele','hw-vsol','hw-ms',
+   'hw-ard','hw-bmp','hw-camara','hw-fonte'].forEach(id=>{
+    _hwBorder(id,'var(--text2)');
+  });
+  _hwBg('rele-contato','var(--line2)');
+
+  // Todos os badges apagados
+  ['sb-arduino','sb-bomba','sb-valvula','sb-rele','sb-bmp']
+    .forEach(id=>_sysBadge(id,''));
+
+  // Todos os fios desativados
+  ['wire-usb','wire-i2c','wire-ard-ms-ctrl','wire-5v-ard',
+   'wire-12v-ms','wire-12v-rele','wire-12v-sol',
+   'wire-ar-bomba-vreg','wire-ar-vreg-camara',
+   'wire-pwm','wire-digital','wire-ar-sol-camara']
+    .forEach(id=>_wireActive(id,false));
+
+  _heliceStop();
+  _emboloAnim(false);
   if(led) led.style.background='var(--line2)';
 
+  // ── NÍVEL 0: sem conexão com backend ───────────────────────────
+  if(!S.conectado){
+    _sysFase('SEM CONEXÃO','var(--red)');
+    return;
+  }
+
+  // ── NÍVEL 1: conectado mas agente offline ───────────────────────
+  // Só a fonte e o USB do PC aparecem (PC está conectado ao backend)
+  if(!S.agenteOk){
+    _hwBorder('hw-fonte','var(--violet)',true);
+    _wireActive('wire-12v-ms',true);
+    _wireActive('wire-12v-rele',true);
+    _sysFase('AGENTE OFFLINE','var(--amber)');
+    return;
+  }
+
+  // ── NÍVEL 2: agente online + Arduino conectado (idle) ───────────
+  // Fonte, USB, 5V lógica, I2C, Arduino, BMP ativos
+  _hwBorder('hw-fonte','var(--violet)',true);
+  _hwBorder('hw-ard','var(--green)',true);
+  _hwBorder('hw-bmp','var(--teal)',true);
+  _hwBorder('hw-camara','var(--teal)');
+  _wireActive('wire-12v-ms',true);
+  _wireActive('wire-12v-rele',true);
+  _wireActive('wire-usb',true);
+  _wireActive('wire-5v-ard',true);
+  _wireActive('wire-i2c',true);
+  _wireActive('wire-ard-ms-ctrl',true);
+  _sysBadge('sb-arduino','leitura');
+  _sysBadge('sb-bmp','leitura');
+  if(led) led.style.background='#2a9d5c';
+
+  // ── NÍVEL 3: fases de operação ──────────────────────────────────
   if(fase==='calibra'){
     _hwBorder('hw-bmp','var(--teal)',true);
-    _sysBadge('sb-bmp','leitura');
     _sysFase('CALIBRANDO','var(--amber)');
     if(led) led.style.background='var(--amber)';
 
@@ -298,8 +331,14 @@ function atualizarDiagrama(fase){
     _sysFase('CONCLUÍDO','var(--green)');
     if(led) led.style.background='var(--green)';
 
+  } else if(fase==='erro'){
+    _hwBorder('hw-ard','var(--red)',true);
+    _sysFase('ERRO','var(--red)');
+    if(led) led.style.background='var(--red)';
+
   } else {
-    _sysFase('AGUARDANDO','var(--text2)');
+    // idle — tudo conectado mas aguardando
+    _sysFase('AGUARDANDO','var(--teal)');
   }
 }
 

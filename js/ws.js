@@ -107,6 +107,7 @@ function setHW(modo){
   const el = document.getElementById('h-hw');
   if(el){ el.textContent = modo; el.className = 'v ' + (modo==='REAL' ? 'v-green' : 'v-amber'); }
   _atualizarBtnGo();
+  atualizarDiagrama(S.fase);  // atualiza diagrama quando agente conecta/desconecta
 }
 
 function setPref(p){
