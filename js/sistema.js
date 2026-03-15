@@ -33,17 +33,17 @@ function _renderSistemaHTML() {
         <path class="wire flow-air"    id="wire-ar-vreg-camara" d="M 560 115 L 740 115"/>
         <path class="wire flow-air"    id="wire-ar-sol-camara"  d="M 860 260 L 860 460" style="stroke:var(--red);stroke-dasharray:8 6;opacity:0.4;"/>
         <!-- Dados -->
-        <path class="wire flow-usb    active" id="wire-usb"         d="M 220 340 L 280 340"/>
-        <path class="wire flow-i2c    active" id="wire-i2c"         d="M 760 155 L 400 155 L 400 280"/>
-        <path class="wire flow-signal active" id="wire-ard-ms-ctrl" d="M 460 340 L 520 340" style="stroke:var(--text1);"/>
+        <path class="wire flow-usb" id="wire-usb"         d="M 220 340 L 280 340"/>
+        <path class="wire flow-i2c" id="wire-i2c"         d="M 760 155 L 400 155 L 400 280"/>
+        <path class="wire flow-signal" id="wire-ard-ms-ctrl" d="M 460 340 L 520 340" style="stroke:var(--text1);"/>
         <path class="wire flow-signal"        id="wire-digital"     d="M 320 400 L 320 430 L 400 430 L 400 460"/>
         <!-- PWM -->
         <path class="wire flow-pwm"           id="wire-pwm"         d="M 600 280 L 600 190 L 130 190 L 130 170"/>
         <!-- 5V lógica -->
-        <path class="wire flow-5v active"     id="wire-5v-ard"      d="M 370 400 L 370 430 L 600 430 L 600 400 M 370 430 L 370 460"/>
+        <path class="wire flow-5v" id="wire-5v-ard"      d="M 370 400 L 370 430 L 600 430 L 600 400 M 370 430 L 370 460"/>
         <!-- 12V força -->
-        <path class="wire flow-power active"  id="wire-12v-ms"      d="M 220 550 L 660 550 L 660 400"/>
-        <path class="wire flow-power active"  id="wire-12v-rele"    d="M 220 515 L 280 515"/>
+        <path class="wire flow-power" id="wire-12v-ms"      d="M 220 550 L 660 550 L 660 400"/>
+        <path class="wire flow-power" id="wire-12v-rele"    d="M 220 515 L 280 515"/>
         <path class="wire flow-power"         id="wire-12v-sol"     d="M 460 515 L 740 515" style="stroke:var(--violet);opacity:0.4;"/>
       </svg>
 
@@ -92,19 +92,19 @@ function _renderSistemaHTML() {
       </div>
 
       <!-- Câmara de pressão -->
-      <div class="hw-box" id="hw-camara" style="left:740px;top:60px;width:240px;height:200px;border-color:var(--teal);justify-content:flex-start;padding-top:24px;">
+      <div class="hw-box" id="hw-camara" style="left:740px;top:60px;width:240px;height:200px;border-color:var(--text2);justify-content:flex-start;padding-top:24px;">
         <div class="hw-title" style="color:var(--teal);font-size:13px;">CÂMARA DE PRESSÃO</div>
         <div style="width:190px;height:50px;border:1px dashed rgba(46,196,182,.4);border-radius:6px;display:flex;align-items:center;justify-content:center;margin:16px 0;">
           <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:rgba(46,196,182,.6);">AMBIENTE SIMULADO</span>
         </div>
-        <div class="hw-box" id="hw-bmp" style="position:absolute;bottom:16px;left:20px;padding:10px 14px;border-color:var(--teal);width:auto;border-radius:6px;box-shadow:none;">
+        <div class="hw-box" id="hw-bmp" style="position:absolute;bottom:16px;left:20px;padding:10px 14px;border-color:var(--text2);width:auto;border-radius:6px;box-shadow:none;">
           <div style="font-family:var(--mono);font-size:12px;color:var(--text0);font-weight:600;letter-spacing:.1em;">BMP180</div>
           <div class="hw-sub">Afixado na tampa</div>
         </div>
       </div>
 
       <!-- Arduino UNO -->
-      <div class="hw-box" id="hw-ard" style="left:280px;top:280px;width:180px;height:120px;border-color:var(--green);">
+      <div class="hw-box" id="hw-ard" style="left:280px;top:280px;width:180px;height:120px;border-color:var(--text2);">
         <div class="hw-title" style="color:var(--green);font-size:12px;">ARDUINO UNO</div>
         <div style="display:flex;gap:12px;align-items:center;margin:10px 0;">
           <div style="width:40px;height:30px;background:var(--bg0);border:1px solid var(--line2);border-radius:4px;display:flex;align-items:center;justify-content:center;">
@@ -112,7 +112,7 @@ function _renderSistemaHTML() {
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;">
             <div style="display:flex;gap:6px;">
-              <div id="ard-led-pwr" style="width:8px;height:8px;border-radius:50%;background:#2a9d5c;box-shadow:0 0 6px #2a9d5c;"></div>
+              <div id="ard-led-pwr" style="width:8px;height:8px;border-radius:50%;background:var(--line2);box-shadow:none;"></div>
               <div id="ard-led-13"  style="width:8px;height:8px;border-radius:50%;background:var(--line2);"></div>
             </div>
             <div style="width:45px;height:5px;background:var(--line2);border-radius:2px;"></div>
@@ -123,7 +123,7 @@ function _renderSistemaHTML() {
       </div>
 
       <!-- Motor Shield -->
-      <div class="hw-box" id="hw-ms" style="left:520px;top:280px;width:160px;height:120px;border-color:var(--amber);">
+      <div class="hw-box" id="hw-ms" style="left:520px;top:280px;width:160px;height:120px;border-color:var(--text2);">
         <div class="hw-title" style="color:var(--amber);font-size:12px;">MOTOR SHIELD</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">
           <div style="background:var(--bg0);border:1px solid var(--line2);border-radius:4px;height:26px;display:flex;align-items:center;justify-content:center;">
@@ -137,7 +137,7 @@ function _renderSistemaHTML() {
       </div>
 
       <!-- Fonte 12V -->
-      <div class="hw-box" id="hw-fonte" style="left:40px;top:460px;width:180px;height:110px;border-color:var(--violet);">
+      <div class="hw-box" id="hw-fonte" style="left:40px;top:460px;width:180px;height:110px;border-color:var(--text2);">
         <div class="hw-title" style="color:var(--violet);">FONTE CHAVEADA</div>
         <div style="font-family:var(--mono);font-size:38px;font-weight:600;color:var(--violet);line-height:1;margin:8px 0;">12V</div>
         <div class="hw-sub" style="color:var(--text1);">Potência e GND Comum</div>
@@ -263,6 +263,8 @@ function atualizarDiagrama(fase){
   _heliceStop();
   _emboloAnim(false);
   if(led) led.style.background='var(--line2)';
+  const ledPwrR = document.getElementById('ard-led-pwr');
+  if(ledPwrR){ ledPwrR.style.background='var(--line2)'; ledPwrR.style.boxShadow='none'; }
 
   // ── NÍVEL 0: sem conexão com backend ───────────────────────────
   if(!S.conectado){
@@ -295,6 +297,8 @@ function atualizarDiagrama(fase){
   _sysBadge('sb-arduino','leitura');
   _sysBadge('sb-bmp','leitura');
   if(led) led.style.background='#2a9d5c';
+  const ledPwr = document.getElementById('ard-led-pwr');
+  if(ledPwr){ ledPwr.style.background='#2a9d5c'; ledPwr.style.boxShadow='0 0 6px #2a9d5c'; }
 
   // ── NÍVEL 3: fases de operação ──────────────────────────────────
   if(fase==='calibra'){
