@@ -216,12 +216,12 @@ function onTelem(m){
   document.getElementById('alt-fill').style.width = pct+'%';
   updAltimeter(alt);
 
-  // Gauges
-  document.getElementById('g-alt').textContent   = Math.round(alt)+' m';
-  document.getElementById('gf-alt').style.width  = pct+'%';
-  document.getElementById('g-amax').textContent  = Math.round(S.altMax)+' m';
-  document.getElementById('gf-amax').style.width = Math.min(S.altMax/S.apAlvo*100,100)+'%';
-  document.getElementById('g-pres').textContent  = pres.toFixed(1)+' hPa';
+  // Gauges (opcionais — podem não existir no layout atual)
+  const gAlt   = document.getElementById('g-alt');   if(gAlt)   gAlt.textContent   = Math.round(alt)+' m';
+  const gfAlt  = document.getElementById('gf-alt');  if(gfAlt)  gfAlt.style.width  = pct+'%';
+  const gAmax  = document.getElementById('g-amax');  if(gAmax)  gAmax.textContent  = Math.round(S.altMax)+' m';
+  const gfAmax = document.getElementById('gf-amax'); if(gfAmax) gfAmax.style.width = Math.min(S.altMax/S.apAlvo*100,100)+'%';
+  const gPres  = document.getElementById('g-pres');  if(gPres)  gPres.textContent  = pres.toFixed(1)+' hPa';
 
   // Altitude no diagrama
   const sysAlt = document.getElementById('sys-alt-txt');

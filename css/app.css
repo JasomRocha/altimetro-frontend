@@ -83,10 +83,10 @@ html, body {
 .tab:hover { color: var(--text1); background: rgba(255,255,255,0.02); }
 .tab.active { color: var(--teal); border-bottom-color: var(--teal); background: linear-gradient(to top, var(--teal-d), transparent); }
 .tab-pane { display: none; flex-direction: column; overflow: hidden; }
-.tab-pane.active { display: flex; flex: 1; min-height: 0; overflow: hidden; background: var(--bg0); }
+.tab-pane.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; background: var(--bg0); }
 
 /* ── LAYOUT DESKTOP ─────────────────────────────────────────── */
-#app { height: calc(100vh - 104px); display: grid; grid-template-columns: 300px 1fr 260px; gap: 1px; background: var(--line); }
+#app { height: calc(100vh - 104px); display: grid; grid-template-columns: 300px 1fr 260px; gap: 1px; background: var(--line); flex-shrink: 0; }
 .panel { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; }
 #app > .panel:first-child { overflow-y: auto; }
 .sec { padding: 18px 20px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
@@ -256,7 +256,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 .ll.data { color: var(--text1); }
 
 /* ── HISTÓRICO ───────────────────────────────────────────────── */
-.hist-layout { display: grid; grid-template-columns: 300px 1fr; flex: 1; width: 100%; min-height: 0; overflow: hidden; gap: 1px; background: var(--line); }
+.hist-layout { display: grid; grid-template-columns: 300px 1fr; flex: 1; min-height: 0; overflow: hidden; gap: 1px; background: var(--line); }
 .hist-list { background: var(--bg1); display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
 .hist-scroll { flex: 1; overflow-y: auto; min-height: 0; }
 .hist-item { padding: 14px 20px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background .2s; }
