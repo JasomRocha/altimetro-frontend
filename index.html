@@ -10,7 +10,7 @@
 <body>
 
 <div id="login-overlay" style="position:fixed;inset:0;z-index:9000;background:#0a0e14;display:flex;align-items:center;justify-content:center;">
-  <div style="background:#0f1520;border:1px solid #1e2e42;border-radius:6px;padding:36px 40px;width:340px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+  <div style="background:#0f1520;border:1px solid #1e2e42;border-radius:6px;padding:36px 40px;width:340px;box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.14em;color:#2ec4b6;margin-bottom:4px;">BANCO DE TESTE · ALTÍMETROS</div>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:#3a5470;margin-bottom:28px;">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div>
     <div id="login-erro" style="display:none;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.4);border-radius:3px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e63946;margin-bottom:14px;"></div>
@@ -250,7 +250,8 @@
     </div>
 
   </div>
-</div><div class="tab-pane" id="pane-historico">
+</div>
+<div class="tab-pane" id="pane-historico">
   <div class="hist-layout">
     <div class="hist-list">
       <div class="sec" style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
@@ -268,140 +269,236 @@
 </div>
 <div class="tab-pane" id="pane-sistema">
 
-  <div class="sys-status-bar">
-    <span class="sys-bar-label">STATUS DO HARDWARE</span>
+  <div style="padding:16px 24px; border-bottom:1px solid var(--line); background:var(--bg1); display:flex; gap:16px; flex-wrap:wrap; align-items:center; flex-shrink:0; z-index:10; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    <span style="font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:0.12em; color:var(--text2); margin-right:8px;">STATUS DO SISTEMA</span>
     <div class="sys-badge" id="sb-arduino"><span class="sys-dot"></span>ARDUINO UNO</div>
     <div class="sys-badge" id="sb-bomba"><span class="sys-dot"></span>BOMBA DC</div>
     <div class="sys-badge" id="sb-valvula"><span class="sys-dot"></span>SOLENOIDE</div>
     <div class="sys-badge" id="sb-bmp"><span class="sys-dot"></span>BMP180</div>
     <div class="sys-badge" id="sb-rele"><span class="sys-dot"></span>MÓDULO RELÉ</div>
 
-    <div class="sys-bar-right">
-      <div class="sys-info-box">
-        <div class="sys-info-label">ALTITUDE CÂMARA</div>
-        <div id="sys-alt-txt" class="sys-info-val" style="color:var(--teal);">0 <span style="font-size:12px;color:var(--text2);">m</span></div>
+    <div style="margin-left:auto; display:flex; gap:16px;">
+      <div style="background:var(--bg2); border:1px solid var(--line); border-radius:6px; padding:8px 16px; text-align:center;">
+        <div style="font-family:var(--mono); font-size:9px; letter-spacing:0.1em; color:var(--text2); margin-bottom:4px;">ALTITUDE CÂMARA</div>
+        <div id="sys-alt-txt" style="font-family:var(--mono); font-size:24px; font-weight:600; color:var(--teal); line-height:1;">0 <span style="font-size:12px; color:var(--text2);">m</span></div>
       </div>
-      <div class="sys-info-box" style="min-width:200px;">
-        <div class="sys-info-label">FASE DE TESTE</div>
-        <div id="sys-fase-txt" class="sys-info-val" style="color:var(--text2); font-size:16px;">AGUARDANDO</div>
+      <div style="background:var(--bg2); border:1px solid var(--line); border-radius:6px; padding:8px 24px; text-align:center; min-width:200px;">
+        <div style="font-family:var(--mono); font-size:9px; letter-spacing:0.1em; color:var(--text2); margin-bottom:4px;">FASE DE TESTE</div>
+        <div id="sys-fase-txt" style="font-family:var(--mono); font-size:16px; font-weight:600; letter-spacing:0.1em; color:var(--text2); line-height:1.2;">AGUARDANDO</div>
       </div>
     </div>
   </div>
 
-  <div class="sys-diagram-area">
-    <div class="sys-canvas">
+  <div style="flex:1; position:relative; overflow:auto; background-color:var(--bg0); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 24px 24px; display:flex; align-items:center; justify-content:center; min-height: 640px;">
+
+    <style>
+      .hw-box {
+        position:absolute;
+        background:rgba(20, 28, 40, 0.9);
+        backdrop-filter: blur(8px);
+        border:1px solid var(--text2);
+        border-radius:8px; padding:16px;
+        transition:border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+        z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+      }
+      .hw-box:hover { transform: translateY(-2px); z-index:10; box-shadow: 0 12px 28px rgba(0,0,0,0.5); }
+      .hw-title { font-family:var(--mono); font-size:11px; letter-spacing:0.12em; font-weight:600; margin-bottom:8px; color:var(--text1); text-transform:uppercase; }
+      .hw-sub { font-family:var(--mono); font-size:10px; color:var(--text2); margin-top:6px; }
+
+      .wire { fill:none; stroke-width:3; stroke-linejoin:round; stroke-linecap:round; transition: stroke 0.3s, filter 0.3s, stroke-width 0.3s; }
+      .wire-label { position:absolute; transform:translate(-50%, -50%); background:var(--bg1); border:1px solid var(--line2); padding:4px 10px; border-radius:12px; font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:0.1em; color:var(--text2); z-index:3; transition: all 0.3s; }
+
+      @keyframes flowDash { to { stroke-dashoffset: -24; } }
+      .flow-air { stroke: var(--teal); stroke-dasharray: 8 6; opacity: 0.35; }
+      .flow-air.active { animation: flowDash 0.5s linear infinite; stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 6px var(--teal)); }
+      .flow-air.active + .wire-label { color: var(--teal); border-color: var(--teal); box-shadow: 0 0 10px rgba(46,196,182,0.3); }
+
+      .flow-pwm { stroke: var(--amber); stroke-dasharray: 6 6; opacity: 0.35; }
+      .flow-pwm.active { animation: flowDash 0.3s linear infinite; stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 6px var(--amber)); }
+      .flow-pwm.active + .wire-label { color: var(--amber); border-color: var(--amber); box-shadow: 0 0 10px rgba(244,162,97,0.3); }
+
+      .flow-signal { stroke: var(--red); stroke-dasharray: 10 6; opacity: 0.35; }
+      .flow-signal.active { stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 6px var(--red)); }
+      .flow-signal.active + .wire-label { color: var(--red); border-color: var(--red); box-shadow: 0 0 10px rgba(230,57,70,0.3); }
+
+      .flow-i2c { stroke: var(--teal); stroke-dasharray: 3 6; opacity: 0.5; }
+      .flow-i2c.active { animation: flowDash 1s linear infinite; opacity: 1; filter: drop-shadow(0 0 4px rgba(46,196,182,0.6)); }
+
+      .flow-power { stroke: var(--violet); opacity: 0.4; }
+      .flow-power.active { opacity: 1; filter: drop-shadow(0 0 8px var(--violet)); stroke-width: 3.5; }
+      .flow-power.active + .wire-label { color: var(--text0); border-color: var(--violet); background: rgba(123,108,246,0.15); }
+
+      .flow-5v { stroke: #e63946; stroke-dasharray: 4 4; opacity: 0.6; }
+      .flow-5v.active { opacity: 1; filter: drop-shadow(0 0 6px rgba(230,57,70,0.8)); }
+
+      .flow-usb { stroke: #7a9ab8; stroke-dasharray: 6 4; opacity: 0.6; }
+      .flow-usb.active { animation: flowDash 1s linear infinite; opacity: 1; filter: drop-shadow(0 0 6px rgba(122,154,184,0.6)); }
+    </style>
+
+    <div style="width: 1024px; height: 640px; position:relative; flex-shrink:0;">
 
       <svg style="position:absolute; inset:0; width:100%; height:100%; z-index:1;" viewBox="0 0 1024 640">
-        <path class="wire flow-air" id="wire-ar-bomba-vreg" d="M 240 115 L 400 115"/>
-        <path class="wire flow-air" id="wire-ar-vreg-camara" d="M 540 115 L 740 115"/>
-        <path class="wire flow-air" id="wire-ar-sol-camara" d="M 850 260 L 850 460" style="stroke:var(--red); stroke-dasharray:8 6; opacity:0.4;"/>
-        <path class="wire flow-pwm" id="wire-pwm" d="M 580 280 L 580 200 L 150 200 L 150 170"/>
-        <path class="wire flow-i2c" id="wire-i2c" d="M 740 220 L 400 220 L 400 280"/>
-        <path class="wire flow-signal" id="wire-digital" d="M 400 390 L 400 425 L 480 425 L 480 460"/>
-        <path class="wire flow-power" id="wire-12v-ard" d="M 240 500 L 340 500 L 340 390"/>
-        <path class="wire flow-power" id="wire-12v-rele" d="M 240 515 L 400 515"/>
-        <path class="wire flow-power" id="wire-12v-ms" d="M 240 530 L 580 530 L 580 390"/>
-        <path class="wire flow-power" id="wire-12v-sol" d="M 560 515 L 740 515" style="stroke:var(--violet); opacity:0.4;"/>
-        <path class="wire" style="stroke:var(--text2); stroke-dasharray:4 4; opacity:0.5;" d="M 320 335 L 20 335 L 20 580 L 960 580 L 960 560"/>
+
+        <path class="wire flow-air" id="wire-ar-bomba-vreg" d="M 220 115 L 420 115"/>
+        <path class="wire flow-air" id="wire-ar-vreg-camara" d="M 560 115 L 740 115"/>
+        <path class="wire flow-air" id="wire-ar-sol-camara" d="M 860 260 L 860 460" style="stroke:var(--red); stroke-dasharray:8 6; opacity:0.4;"/>
+
+        <path class="wire flow-usb active" id="wire-usb" d="M 220 340 L 280 340"/>
+        <path class="wire flow-i2c active" id="wire-i2c" d="M 740 220 L 460 220"/>
+        <path class="wire flow-signal active" id="wire-ard-ms-ctrl" d="M 460 340 L 520 340" style="stroke:var(--text1);"/>
+        <path class="wire flow-signal" id="wire-digital" d="M 370 400 L 370 460"/>
+
+        <path class="wire flow-pwm" id="wire-pwm" d="M 600 280 L 600 190 L 130 190 L 130 170"/>
+
+        <path class="wire flow-5v active" id="wire-5v-ard" d="M 430 400 L 430 430 L 580 430 L 580 400 M 430 430 L 320 430 L 320 460"/>
+
+        <path class="wire flow-power active" id="wire-12v-ms" d="M 220 530 L 660 530 L 660 400"/>
+        <path class="wire flow-power active" id="wire-12v-rele" d="M 220 500 L 280 500"/>
+        <path class="wire flow-power" id="wire-12v-sol" d="M 460 515 L 740 515" style="stroke:var(--violet); opacity:0.4;"/>
+
       </svg>
 
       <div class="wire-label" style="left: 320px; top: 115px;">AR (VÁCUO)</div>
-      <div class="wire-label" style="left: 640px; top: 115px;">AR (VÁCUO)</div>
-      <div class="wire-label" style="left: 850px; top: 360px; color:var(--red); border-color:var(--red);">ESCAPE (ATM)</div>
-      <div class="wire-label" style="left: 570px; top: 220px; color:var(--teal); border-color:var(--teal);">I2C (SDA/SCL)</div>
-      <div class="wire-label" style="left: 365px; top: 200px; color:var(--amber); border-color:var(--amber);">PWM (M1)</div>
-      <div class="wire-label" style="left: 440px; top: 425px; color:var(--red); border-color:var(--red);">PINO 2</div>
-      <div class="wire-label" style="left: 410px; top: 530px; color:var(--violet); border-color:var(--violet);">12V (FORÇA M1)</div>
-      <div class="wire-label" style="left: 290px; top: 500px; color:var(--violet); border-color:var(--violet);">5V LÓGICA</div>
-      <div class="wire-label" style="left: 320px; top: 515px; color:var(--violet); border-color:var(--violet);">12V</div>
-      <div class="wire-label" style="left: 650px; top: 515px; color:var(--violet); border-color:var(--violet);">12V CHAVEADO</div>
-      <div class="wire-label" style="left: 490px; top: 580px; border-color:var(--text2);">USB SERIAL / TELEMETRIA</div>
+      <div class="wire-label" style="left: 650px; top: 115px;">AR (VÁCUO)</div>
+      <div class="wire-label" style="left: 860px; top: 360px; color:var(--red); border-color:var(--red);">ESCAPE (ATM)</div>
 
-      <div class="hw-box" id="hw-bomba" style="left:60px; top:60px; width:180px; height:110px;">
+      <div class="wire-label" style="left: 250px; top: 340px; color:#7a9ab8; border-color:#7a9ab8;">USB (TELEMETRIA)</div>
+      <div class="wire-label" style="left: 600px; top: 220px; color:var(--teal); border-color:var(--teal);">I2C (SDA/SCL)</div>
+      <div class="wire-label" style="left: 490px; top: 340px; color:var(--text1); border-color:var(--text1);">CTRL MS</div>
+      <div class="wire-label" style="left: 370px; top: 430px; color:var(--red); border-color:var(--red);">PINO 2 (SINAL)</div>
+
+      <div class="wire-label" style="left: 365px; top: 190px; color:var(--amber); border-color:var(--amber);">PWM (M1)</div>
+
+      <div class="wire-label" style="left: 450px; top: 430px; color:#e63946; border-color:#e63946;">5V (LÓGICA)</div>
+      <div class="wire-label" style="left: 440px; top: 530px; color:var(--violet); border-color:var(--violet);">12V (FORÇA MS)</div>
+      <div class="wire-label" style="left: 250px; top: 500px; color:var(--violet); border-color:var(--violet);">12V</div>
+      <div class="wire-label" style="left: 600px; top: 515px; color:var(--violet); border-color:var(--violet);">12V CHAVEADO</div>
+
+      <div class="hw-box" id="hw-pc" style="left:40px; top:280px; width:180px; height:120px; border-color:#7a9ab8;">
+        <div class="hw-title" style="color:#7a9ab8; font-size:12px;">ESTAÇÃO DE CONTROLE</div>
+        <svg viewBox="0 0 24 24" style="width:40px; height:40px; fill:none; stroke:#7a9ab8; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; margin:6px 0;">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        <div class="hw-sub" style="color:var(--text1);">Script Python</div>
+      </div>
+
+      <div class="hw-box" id="hw-bomba" style="left:40px; top:60px; width:180px; height:110px;">
         <div class="hw-title">BOMBA DE VÁCUO</div>
         <svg viewBox="0 0 50 50" style="width:48px; height:48px; margin-bottom:4px;">
           <circle cx="25" cy="25" r="23" fill="var(--bg0)" stroke="var(--text2)" stroke-width="2"/>
-          <g id="helice" style="transform-origin:25px 25px;"><line x1="25" y1="8" x2="25" y2="25" stroke="var(--text1)" stroke-width="4" stroke-linecap="round"/><line x1="10" y1="33" x2="25" y2="25" stroke="var(--text1)" stroke-width="4" stroke-linecap="round"/><line x1="40" y1="33" x2="25" y2="25" stroke="var(--text1)" stroke-width="4" stroke-linecap="round"/></g>
+          <g id="helice" style="transform-origin:25px 25px;">
+            <line x1="25" y1="8" x2="25" y2="25" stroke="var(--text1)" stroke-width="4" stroke-linecap="round"/>
+            <line x1="10" y1="33" x2="25" y2="25" stroke="var(--text1)" stroke-width="4" stroke-linecap="round"/>
+            <line x1="40" y1="33" x2="25" y2="25" stroke="var(--text1)" stroke-width="4" stroke-linecap="round"/>
+          </g>
           <circle cx="25" cy="25" r="4" fill="var(--text1)" />
         </svg>
         <div class="hw-sub">Motor DC 12V</div>
       </div>
 
-      <div class="hw-box" style="left:400px; top:85px; width:140px; height:60px; padding:10px; border-radius:30px;">
+      <div class="hw-box" style="left:420px; top:85px; width:140px; height:60px; padding:10px; border-radius:30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
         <div class="hw-title" style="margin:0; font-size:11px;">VÁLV. AGULHA</div>
         <div class="hw-sub" style="margin-top:2px;">Restritor de Fluxo</div>
       </div>
 
-      <div class="hw-box" id="hw-camara" style="left:740px; top:60px; width:220px; height:200px; border-color:var(--teal); justify-content: flex-start; padding-top:24px;">
+      <div class="hw-box" id="hw-camara" style="left:740px; top:60px; width:240px; height:200px; border-color:var(--teal); justify-content: flex-start; padding-top:24px;">
         <div class="hw-title" style="color:var(--teal); font-size:13px;">CÂMARA DE PRESSÃO</div>
-        <div style="width:180px; height:50px; border:1px dashed rgba(46,196,182,.4); border-radius:6px; display:flex; align-items:center; justify-content:center; margin: 16px 0;">
+        <div style="width:190px; height:50px; border:1px dashed rgba(46,196,182,.4); border-radius:6px; display:flex; align-items:center; justify-content:center; margin: 16px 0;">
           <span style="font-family:var(--mono); font-size:10px; letter-spacing: 0.1em; color:rgba(46,196,182,.6);">AMBIENTE SIMULADO</span>
         </div>
-        <div class="hw-box" id="hw-bmp" style="position:absolute; bottom:16px; left:16px; padding:10px 14px; border-color:var(--teal); width:auto; border-radius:6px; box-shadow:none;">
+        <div class="hw-box" id="hw-bmp" style="position:absolute; bottom:16px; left:20px; padding:10px 14px; border-color:var(--teal); width:auto; border-radius:6px; box-shadow:none;">
           <div style="font-family:var(--mono); font-size:12px; color:var(--text0); font-weight:600; letter-spacing: 0.1em;">BMP180</div>
-          <div class="hw-sub">I2C (Tampa)</div>
+          <div class="hw-sub">Afixado na tampa</div>
         </div>
       </div>
 
-      <div class="hw-box" id="hw-ard" style="left:320px; top:280px; width:160px; height:110px; border-color:var(--green);">
+      <div class="hw-box" id="hw-ard" style="left:280px; top:280px; width:180px; height:120px; border-color:var(--green);">
         <div class="hw-title" style="color:var(--green); font-size:12px;">ARDUINO UNO</div>
         <div style="display:flex; gap:12px; align-items:center; margin:10px 0;">
-          <div style="width:40px; height:30px; background:var(--bg0); border:1px solid var(--line2); border-radius:4px; display:flex; align-items:center; justify-content:center;"><div style="width:20px; height:12px; background:var(--line2); border-radius:2px;"></div></div>
+          <div style="width:40px; height:30px; background:var(--bg0); border:1px solid var(--line2); border-radius:4px; display:flex; align-items:center; justify-content:center;">
+            <div style="width:20px; height:12px; background:var(--line2); border-radius:2px;"></div>
+          </div>
           <div style="display:flex; flex-direction:column; gap:6px;">
-            <div style="display:flex; gap:6px;"><div id="ard-led-pwr" style="width:8px; height:8px; border-radius:50%; background:#2a9d5c;"></div><div id="ard-led-13" style="width:8px; height:8px; border-radius:50%; background:var(--line2);"></div></div>
-            <div style="width:40px; height:5px; background:var(--line2); border-radius:2px;"></div>
+            <div style="display:flex; gap:6px;">
+              <div id="ard-led-pwr" style="width:8px; height:8px; border-radius:50%; background:#2a9d5c; box-shadow: 0 0 6px #2a9d5c;"></div>
+              <div id="ard-led-13"  style="width:8px; height:8px; border-radius:50%; background:var(--line2);"></div>
+            </div>
+            <div style="width:45px; height:5px; background:var(--line2); border-radius:2px;"></div>
+            <div style="width:25px; height:5px; background:var(--line2); border-radius:2px;"></div>
           </div>
         </div>
-        <div class="hw-sub">Cérebro Lógico</div>
+        <div class="hw-sub">Cérebro Lógico (ATmega328P)</div>
       </div>
 
-      <div class="hw-box" id="hw-ms" style="left:500px; top:280px; width:160px; height:110px; border-color:var(--amber);">
+      <div class="hw-box" id="hw-ms" style="left:520px; top:280px; width:160px; height:120px; border-color:var(--amber);">
         <div class="hw-title" style="color:var(--amber); font-size:12px;">MOTOR SHIELD</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0;">
-          <div style="background:var(--bg0); border:1px solid var(--line2); border-radius:4px; height:26px; display:flex; align-items:center; justify-content:center;"><span style="font-family:var(--mono); font-size:10px; font-weight:600; color:var(--amber);">M1</span></div>
-          <div style="background:var(--bg0); border:1px solid var(--line2); border-radius:4px; height:26px; display:flex; align-items:center; justify-content:center;"><span style="font-family:var(--mono); font-size:10px; color:var(--text2);">M2</span></div>
-        </div>
-        <div class="hw-sub">AFMotor V1</div>
-      </div>
-
-      <div class="hw-box" id="hw-fonte" style="left:60px; top:460px; width:180px; height:110px; border-color:var(--violet);">
-        <div class="hw-title" style="color:var(--violet);">FONTE BANCADA</div>
-        <div style="font-family:var(--mono); font-size:38px; font-weight:600; color:var(--violet); line-height:1; margin:8px 0;">12V</div>
-        <div class="hw-sub" style="color:var(--text1);">Terra Comum (GND)</div>
-      </div>
-
-      <div class="hw-box" id="hw-rele" style="left:400px; top:460px; width:160px; height:100px;">
-        <div class="hw-title" style="color:var(--red);">MÓDULO RELÉ</div>
-        <div style="display:flex; gap:12px; align-items:center; margin:10px 0;">
-          <div style="width:40px; height:26px; background:var(--bg0); border:1px solid var(--line2); border-radius:4px;"></div>
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <div style="width:28px; height:6px; background:var(--line2); border-radius:2px;"></div>
-            <div id="rele-contato" style="width:28px; height:6px; background:var(--line2); border-radius:2px; transition:background .3s;"></div>
+          <div style="background:var(--bg0); border:1px solid var(--line2); border-radius:4px; height:26px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:var(--mono); font-size:10px; font-weight:600; color:var(--amber);">M1</span>
+          </div>
+          <div style="background:var(--bg0); border:1px solid var(--line2); border-radius:4px; height:26px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:var(--mono); font-size:10px; color:var(--text2);">M2</span>
           </div>
         </div>
-        <div class="hw-sub">Active-Low (JQC3F)</div>
+        <div class="hw-sub">AFMotor (Encaixado)</div>
       </div>
 
-      <div class="hw-box" id="hw-vsol" style="left:740px; top:460px; width:220px; height:110px;">
+      <div class="hw-box" id="hw-fonte" style="left:40px; top:460px; width:180px; height:110px; border-color:var(--violet);">
+        <div class="hw-title" style="color:var(--violet);">FONTE CHAVEADA</div>
+        <div style="font-family:var(--mono); font-size:38px; font-weight:600; color:var(--violet); line-height:1; margin:8px 0;">12V</div>
+        <div class="hw-sub" style="color:var(--text1);">Potência e GND Comum</div>
+      </div>
+
+      <div class="hw-box" id="hw-rele" style="left:280px; top:460px; width:180px; height:110px;">
+        <div class="hw-title" style="color:var(--red);">MÓDULO RELÉ</div>
+        <div style="display:flex; gap:12px; align-items:center; margin:12px 0;">
+          <div style="width:44px; height:28px; background:var(--bg0); border:1px solid var(--line2); border-radius:4px;"></div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="width:30px; height:6px; background:var(--line2); border-radius:2px;"></div>
+            <div id="rele-contato" style="width:30px; height:6px; background:var(--line2); border-radius:2px; transition:background .3s;"></div>
+          </div>
+        </div>
+        <div class="hw-sub">Sinal Active-Low</div>
+      </div>
+
+      <div class="hw-box" id="hw-vsol" style="left:740px; top:460px; width:240px; height:110px;">
         <div class="hw-title" style="color:var(--red);">VÁLVULA SOLENOIDE</div>
         <div style="display:flex; gap:12px; align-items:center; margin:10px 0;">
-          <div style="width:60px; height:50px; background:var(--bg0); border:1px solid var(--line2); border-radius:6px; display:flex; flex-direction:column; justify-content:space-around; padding:6px;"><div style="height:3px; background:var(--line2); border-radius:2px;"></div><div style="height:3px; background:var(--line2); border-radius:2px;"></div><div style="height:3px; background:var(--line2); border-radius:2px;"></div></div>
-          <div id="vsol-embolo" style="width:32px; height:20px; background:var(--line2); border:1px solid var(--text2); border-radius:3px; transition:transform .3s, background .3s;"></div>
+          <div style="width:66px; height:54px; background:var(--bg0); border:1px solid var(--line2); border-radius:6px; display:flex; flex-direction:column; justify-content:space-around; padding:8px;">
+            <div style="height:3px; background:var(--line2); border-radius:2px;"></div>
+            <div style="height:3px; background:var(--line2); border-radius:2px;"></div>
+            <div style="height:3px; background:var(--line2); border-radius:2px;"></div>
+          </div>
+          <div id="vsol-embolo" style="width:36px; height:22px; background:var(--line2); border:1px solid var(--text2); border-radius:3px; transition:transform .3s, background .3s;"></div>
         </div>
-        <div class="hw-sub">Normalmente Fechada</div>
+        <div class="hw-sub">Normalmente Fechada (NF)</div>
       </div>
 
     </div>
   </div>
 
-  <div class="sys-legend">
-    <span style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--text1);">SINALIZAÇÃO</span>
-    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);"><span style="display:inline-block;width:24px;height:4px;background:var(--teal);border-radius:2px;"></span> Fluxo de Ar</span>
-    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);"><span style="display:inline-block;width:24px;height:3px;background:repeating-linear-gradient(to right,var(--amber) 0,var(--amber) 4px,transparent 4px,transparent 8px);"></span> Sinal PWM</span>
-    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);"><span style="display:inline-block;width:24px;height:3px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 5px,transparent 5px,transparent 9px);"></span> Digital (ON/OFF)</span>
-    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);"><span style="display:inline-block;width:24px;height:3px;background:var(--violet);opacity:.8;"></span> Energia 12V</span>
-    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);"><span style="display:inline-block;width:24px;height:3px;background:repeating-linear-gradient(to right,var(--teal) 0,var(--teal) 2px,transparent 2px,transparent 5px);opacity:.6;"></span> I2C (Dados)</span>
-    <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text2); letter-spacing: 0.1em;">UFPB · ENG. COMPUTAÇÃO · TCC 2026</span>
+  <div style="border-top:1px solid var(--line);background:var(--bg1);padding:14px 28px;display:flex;gap:24px;flex-wrap:wrap;flex-shrink:0;align-items:center;">
+    <span style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text1);">SINALIZAÇÃO DA PLANTA</span>
+
+    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);">
+      <span style="display:inline-block;width:24px;height:4px;background:var(--teal);border-radius:2px;"></span> Fluxo de Ar (Vácuo)
+    </span>
+    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);">
+      <span style="display:inline-block;width:24px;height:3px;background:repeating-linear-gradient(to right,var(--amber) 0,var(--amber) 4px,transparent 4px,transparent 8px);"></span> Sinal PWM
+    </span>
+    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);">
+      <span style="display:inline-block;width:24px;height:3px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 5px,transparent 5px,transparent 9px);"></span> Digital Lógico
+    </span>
+    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);">
+      <span style="display:inline-block;width:24px;height:3px;background:var(--violet);opacity:.8;"></span> Energia 12V
+    </span>
+    <span style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2);">
+      <span style="display:inline-block;width:24px;height:3px;background:repeating-linear-gradient(to right,#e63946 0,#e63946 4px,transparent 4px,transparent 8px);opacity:.8;"></span> Saída 5V Arduino
+    </span>
+
+    <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text2); letter-spacing: 0.1em;">TCC ENGENHARIA DE COMPUTAÇÃO 2026</span>
   </div>
 </div>
 <div id="toast"></div>
@@ -426,11 +523,15 @@
     if(typeof setApogeu === 'function') {
       setApogeu(700); setTSubida(20); setPotencia(50);
       document.getElementById('sl-ap').style.setProperty('--f',((700-100)/(2000-100)*100).toFixed(1)+'%');
-      drawRef();
-      atualizarDiagrama('idle');
-      addLog('Interface inicializada.','ok');
-      addLog('Conectando ao backend em produção...','warn');
-      connectWS();
+      if (typeof drawRef === 'function') drawRef();
+
+      // Chamamos as funções do módulo sistema.js
+      if (typeof atualizarDiagrama === 'function') atualizarDiagrama('idle');
+      if (typeof addLog === 'function') {
+        addLog('Interface inicializada.','ok');
+        addLog('Conectando ao backend em produção...','warn');
+      }
+      if (typeof connectWS === 'function') connectWS();
     }
   });
 </script>
