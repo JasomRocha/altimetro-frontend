@@ -113,7 +113,7 @@ function _renderSistemaHTML() {
           <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:rgba(46,196,182,.6);">AMBIENTE SIMULADO</span>
         </div>
         <div class="hw-box" id="hw-bmp" style="position:absolute;bottom:16px;left:20px;padding:10px 14px;border-color:var(--text2);width:auto;border-radius:6px;box-shadow:none;">
-        <div class="hw-tooltip down">
+        <div class="hw-tooltip left">
           <div class="hw-tt-title">SENSOR BMP180</div>
           <div class="hw-tt-body">Barômetro digital de alta precisão fixado na tampa da câmara. Mede pressão e temperatura, permitindo calcular a altitude equivalente.</div>
           <div class="hw-tt-ctrl"><span>Interface:</span> I2C (SDA/SCL) conectado ao Arduino. Leitura a cada ~50ms.</div>

@@ -385,6 +385,28 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   transform: translateX(-50%) translateY(0);
 }
 
+/* Tooltip que abre para a esquerda (ex: BMP180 dentro da câmara) */
+.hw-tooltip.left {
+  bottom: auto;
+  top: 50%;
+  left: auto;
+  right: calc(100% + 12px);
+  transform: translateX(4px) translateY(-50%);
+}
+.hw-tooltip.left::after {
+  top: 50%;
+  left: 100%;
+  bottom: auto;
+  transform: translateY(-50%);
+  border-top-color: transparent;
+  border-left-color: var(--line2);
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+}
+.hw-box:hover .hw-tooltip.left {
+  transform: translateX(0) translateY(-50%);
+}
+
 .hw-tt-title {
   font-family: var(--mono);
   font-size: 10px;
