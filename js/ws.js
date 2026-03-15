@@ -10,7 +10,7 @@ function connectWS(){
     S.ws.onopen  = () => { setConn(true);  addLog('Backend conectado.','ok'); };
     S.ws.onclose = () => { setConn(false); addLog('Desconectado — reconectando em 3s...','warn'); setTimeout(connectWS,3000); };
     S.ws.onerror = () => addLog('Erro WebSocket: '+WS_URL,'err');
-    S.ws.onmessage = e => { try{ handle(JSON.parse(e.data)); }catch{} };
+    S.ws.onmessage = e => { try{ handle(JSON.parse(e.data)); }catch(err){ console.error('[WS] erro no handle:', err); } };
   } catch { setTimeout(connectWS,3000); }
 }
 

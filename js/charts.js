@@ -3,10 +3,10 @@
 // ── ALTÍMETRO ANALÓGICO ──────────────────────────────────────────
 function updAltimeter(alt){
   const f=Math.min(Math.max(alt/(S.apAlvo*1.1),0),1);
-  document.getElementById('alt-arc').setAttribute('stroke-dasharray',
-    `${(f*220).toFixed(1)} ${(258-f*220).toFixed(1)}`);
-  document.getElementById('alt-needle').setAttribute('transform',
-    `rotate(${(-135+f*270).toFixed(1)} 58 58)`);
+  const arc    = document.getElementById('alt-arc');
+  const needle = document.getElementById('alt-needle');
+  if(arc)    arc.setAttribute('stroke-dasharray', `${(f*220).toFixed(1)} ${(258-f*220).toFixed(1)}`);
+  if(needle) needle.setAttribute('transform', `rotate(${(-135+f*270).toFixed(1)} 58 58)`);
 }
 
 // ── GRÁFICOS ─────────────────────────────────────────────────────
@@ -18,16 +18,19 @@ function ptXY(t,v,tMax,vMin,vMax){
 }
 
 function drawRef(){
+  const el = document.getElementById('ref-line');
+  if(!el) return;
   const ap=S.apAlvo, ts=S.tSubida, td=ts*(13/18);
   const tTot=(ts+td)*1.12, aMax=ap*1.12;
   const pts=[];
   for(let i=0;i<=24;i++){ const t=i/24*ts; pts.push(ptXY(t,ap*t/ts,tTot,0,aMax)); }
   for(let i=1;i<=24;i++){ const t=ts+i/24*td; pts.push(ptXY(t,ap*(1-i/24),tTot,0,aMax)); }
-  document.getElementById('ref-line').setAttribute('points',pts.join(' '));
+  el.setAttribute('points',pts.join(' '));
 }
 
 function updCharts(){
   if(!S.hT.length) return;
+  if(!document.getElementById('real-line')) return; // pane não carregou
   const tLast=S.hT[S.hT.length-1];
   const ap=S.apAlvo, ts=S.tSubida, td=ts*(13/18);
   const tMax=Math.max(tLast*1.05,(ts+td)*1.12);
