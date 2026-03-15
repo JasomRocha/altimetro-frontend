@@ -91,6 +91,70 @@ function updCharts(){
   }
 }
 
+
+// ── MODAL DE RESULTADO ────────────────────────────────────────────
+function _textoSugestao(err, errPct){
+  const p = Math.abs(errPct);
+  if(p <= 3)  return { titulo:'🎯 Subida representativa',     corpo:'Apogeu dentro da margem de ±3%. Configuração adequada — parabéns!',                                         cor:'var(--green)' };
+  if(err > 0 && p <= 15) return { titulo:'📈 Subida um pouco rápida', corpo:'Apogeu acima do alvo em '+p.toFixed(1)+'%. Sugestão: feche levemente a válvula reguladora.',          cor:'var(--amber)' };
+  if(err > 0)            return { titulo:'🚀 Subida muito rápida',    corpo:'Apogeu excedido em '+p.toFixed(1)+'%. Sugestão: feche mais a válvula reguladora de fluxo.',           cor:'var(--amber)' };
+  if(p <= 15)            return { titulo:'📉 Subida um pouco lenta',  corpo:'Apogeu abaixo do alvo em '+p.toFixed(1)+'%. Sugestão: abra levemente a válvula reguladora.',          cor:'var(--teal)'  };
+  return                          { titulo:'🐢 Subida muito lenta',   corpo:'Apogeu abaixo do alvo em '+p.toFixed(1)+'%. Sugestão: abra mais a válvula reguladora de fluxo.',     cor:'var(--teal)'  };
+}
+
+function mostrarModalResultado(m){
+  const err    = m.alt_max - m.alt_alvo;
+  const errPct = Math.abs(err) / m.alt_alvo * 100;
+  const sinal  = err >= 0 ? '+' : '';
+  const velMed = m.t_subida > 0 ? (m.alt_max / m.t_subida).toFixed(1) : '—';
+  const velArr = S.hV.filter((v,i) => S.hT[i] <= m.t_subida && v > 0);
+  const velMax = velArr.length ? Math.max(...velArr).toFixed(1) : '—';
+  const sug    = _textoSugestao(err, errPct);
+  const corErr = errPct<=3?'var(--green)':errPct<=7?'var(--green)':errPct<=15?'var(--amber)':'var(--red)';
+
+  const old = document.getElementById('modal-resultado');
+  if(old) old.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modal-resultado';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:var(--bg1);border:1px solid var(--line);border-radius:8px;width:100%;max-width:480px;font-family:var(--mono);overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6);">
+      <div style="padding:20px 24px 16px;border-bottom:1px solid var(--line);">
+        <div style="font-size:9px;letter-spacing:.12em;color:var(--text2);margin-bottom:6px;">RESULTADO DO ENSAIO</div>
+        <div style="font-size:48px;font-weight:600;color:${corErr};line-height:1;letter-spacing:-.02em;">${m.alt_max.toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div>
+        <div style="margin-top:8px;font-size:11px;font-weight:600;color:${corErr};">ERRO ${sinal}${err.toFixed(1)} m &nbsp;·&nbsp; ${errPct.toFixed(1)}%</div>
+      </div>
+      <div style="padding:16px 24px;border-bottom:1px solid var(--line);background:var(--bg2);">
+        <div style="font-size:13px;font-weight:600;color:${sug.cor};margin-bottom:6px;">${sug.titulo}</div>
+        <div style="font-size:11px;color:var(--text1);line-height:1.6;">${sug.corpo}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);">
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:8px;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;">ALVO</div><div style="font-size:16px;font-weight:600;color:var(--text0);">${m.alt_alvo} m</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:8px;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;">T. SUBIDA</div><div style="font-size:16px;font-weight:600;color:var(--text0);">${m.t_subida.toFixed(1)} s</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:8px;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;">VEL. MÉDIA</div><div style="font-size:16px;font-weight:600;color:var(--text0);">${velMed} m/s</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:8px;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;">VEL. MÁX.</div><div style="font-size:16px;font-weight:600;color:var(--text0);">${velMax} m/s</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:8px;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;">POTÊNCIA</div><div style="font-size:16px;font-weight:600;color:var(--amber);">${m.potencia_pct}%</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:8px;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;">PWM</div><div style="font-size:16px;font-weight:600;color:var(--text0);">${m.pwm}</div></div>
+      </div>
+      <div style="padding:16px 24px;display:flex;gap:10px;">
+        <button id="modal-btn-salvar" style="flex:1;padding:12px;background:transparent;border:1px solid var(--green);border-radius:3px;color:var(--green);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;cursor:pointer;">↑ SALVAR NO BANCO</button>
+        <button id="modal-btn-fechar" style="flex:1;padding:12px;background:transparent;border:1px solid var(--line2);border-radius:3px;color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;cursor:pointer;">DESCARTAR</button>
+      </div>
+    </div>`;
+
+  modal.querySelector('#modal-btn-salvar').addEventListener('click', () => {
+    salvarNoBanco(); modal.remove(); toast('Ensaio salvo no banco.','ok');
+  });
+  modal.querySelector('#modal-btn-fechar').addEventListener('click', () => {
+    modal.remove();
+    const bs=document.getElementById('btn-salvar'); if(bs) bs.style.display='none';
+    addLog('Ensaio descartado — não salvo no banco.','warn');
+  });
+  modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
 // ── RESULTADO FINAL ───────────────────────────────────────────────
 function onResult(m){
   m.t_subida_alvo=S.tSubida; S.lastResult=m;
@@ -140,8 +204,9 @@ function onResult(m){
     </div>`;
 
   document.getElementById('btn-csv').style.display='block';
-  document.getElementById('btn-salvar').style.display='block';
+    document.getElementById('btn-csv').style.display='block';
+  document.getElementById('btn-salvar').style.display='none';
   document.getElementById('salvo-badge').style.display='none';
   addLog(`Concluído: apogeu=${m.alt_max.toFixed(1)}m  erro=${sinal}${err.toFixed(1)}m (${errPct}%)`,'ok');
-  if(sug) addLog(err>0?'Sugestão: fechar válvula.':'Sugestão: abrir válvula.','warn');
+  mostrarModalResultado(m);
 }

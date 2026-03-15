@@ -14,6 +14,8 @@ const S = {
   pref:null, presMin:9999, presMax:0,
   lastResult:null, ws:null,
   nomeEnsaio:'', altimetro:'', obs:'',
+  conectado: false,   // WebSocket com backend OK
+  agenteOk:  false,   // Agente serial conectado ao backend
 };
 
 const CW=700, CH=80, PL=0, PR=0, PT=4, PB=4;

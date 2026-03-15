@@ -1,0 +1,22 @@
+<!-- components/pane-historico.html -->
+<div class="tab-pane" id="pane-historico">
+  <div class="hist-layout">
+
+    <!-- Lista lateral -->
+    <div class="hist-list">
+      <div class="sec" style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+        <div class="stitle" style="margin:0;">Ensaios Realizados</div>
+        <button class="btn-reload" onclick="histCarregar()">↻ Atualizar</button>
+      </div>
+      <div class="hist-scroll" id="hist-lista">
+        <div class="hist-loading">Carregando...</div>
+      </div>
+    </div>
+
+    <!-- Detalhe do ensaio selecionado -->
+    <div class="hist-detail" id="hist-detalhe">
+      <div class="hist-empty">← Selecione um ensaio</div>
+    </div>
+
+  </div>
+</div>

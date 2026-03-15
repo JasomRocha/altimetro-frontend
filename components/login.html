@@ -1,0 +1,39 @@
+<!-- components/login.html -->
+<div id="login-overlay" style="position:fixed;inset:0;z-index:9000;background:#0a0e14;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#0f1520;border:1px solid #1e2e42;border-radius:6px;padding:36px 40px;width:340px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.14em;color:#2ec4b6;margin-bottom:4px;">BANCO DE TESTE · ALTÍMETROS</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:#3a5470;margin-bottom:28px;">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div>
+
+    <div id="login-erro" style="display:none;background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.4);border-radius:3px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#e63946;margin-bottom:14px;"></div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Login</label>
+      <input id="login-input" type="text" placeholder="admin2"
+        style="width:100%;padding:10px 12px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Senha</label>
+      <input id="senha-input" type="password" placeholder="••••••"
+        style="width:100%;padding:10px 12px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;">
+    </div>
+
+    <button id="btn-login"
+      style="width:100%;padding:13px;background:#2ec4b6;border:none;border-radius:3px;color:#0a0e14;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;cursor:pointer;">
+      ENTRAR
+    </button>
+
+    <div style="margin-top:14px;text-align:center;">
+      <span id="toggle-cad" onclick="toggleCadastro()"
+        style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7a9ab8;cursor:pointer;border-bottom:1px solid #7a9ab8;">
+        Criar conta
+      </span>
+    </div>
+
+    <div id="cadastro-extra" style="display:none;margin-top:16px;border-top:1px solid #1e2e42;padding-top:16px;">
+      <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:#3a5470;text-transform:uppercase;display:block;margin-bottom:5px;">Nome completo</label>
+      <input id="nome-input" type="text" placeholder="Seu nome"
+        style="width:100%;padding:10px 12px;background:#141c28;border:1px solid #1e2e42;border-radius:3px;color:#d4e3f0;font-family:'IBM Plex Mono',monospace;font-size:12px;outline:none;">
+    </div>
+  </div>
+</div>

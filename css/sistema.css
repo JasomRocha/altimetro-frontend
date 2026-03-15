@@ -1,0 +1,198 @@
+/* ── css/sistema.css — Estilos exclusivos da aba Sistema ──────── */
+
+/* Status bar */
+.sys-status-bar {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg1);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.sys-status-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text2);
+  margin-right: 8px;
+}
+.sys-info-group {
+  margin-left: auto;
+  display: flex;
+  gap: 16px;
+}
+.sys-info-box {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 16px;
+  text-align: center;
+}
+.sys-info-box.wide { min-width: 200px; }
+.sys-info-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.sys-info-val {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+.sys-info-val.fase {
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+/* Área do diagrama */
+.sys-diagram-area {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  background-color: var(--bg0);
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sys-canvas {
+  width: 1024px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Caixas dos componentes */
+.hw-box {
+  position: absolute;
+  background: rgba(20,28,40,0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--text2);
+  border-radius: 8px;
+  padding: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.hw-box:hover {
+  transform: translateY(-2px);
+  z-index: 10;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+}
+.hw-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text1);
+  text-transform: uppercase;
+}
+.hw-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  margin-top: 6px;
+}
+
+/* Fios SVG */
+.wire {
+  fill: none;
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition: stroke 0.3s, filter 0.3s, stroke-width 0.3s;
+}
+.wire-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--bg1);
+  border: 1px solid var(--line2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text2);
+  z-index: 3;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+/* Animação de fluxo */
+@keyframes flowDash { to { stroke-dashoffset: -24; } }
+
+.flow-air    { stroke: var(--teal);   stroke-dasharray: 8 6;  opacity: 0.35; }
+.flow-pwm    { stroke: var(--amber);  stroke-dasharray: 6 6;  opacity: 0.35; }
+.flow-signal { stroke: var(--red);    stroke-dasharray: 10 6; opacity: 0.35; }
+.flow-i2c    { stroke: var(--teal);   stroke-dasharray: 3 6;  opacity: 0.5; }
+.flow-power  { stroke: var(--violet); opacity: 0.4; }
+.flow-5v     { stroke: #e63946;       stroke-dasharray: 4 4;  opacity: 0.6; }
+.flow-usb    { stroke: #7a9ab8;       stroke-dasharray: 6 4;  opacity: 0.6; }
+
+.flow-air.active    { animation: flowDash 0.5s linear infinite; stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 6px var(--teal)); }
+.flow-pwm.active    { animation: flowDash 0.3s linear infinite; stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 6px var(--amber)); }
+.flow-signal.active { stroke-width: 4; opacity: 1; filter: drop-shadow(0 0 6px var(--red)); }
+.flow-i2c.active    { animation: flowDash 1s linear infinite; opacity: 1; filter: drop-shadow(0 0 4px rgba(46,196,182,0.6)); }
+.flow-power.active  { opacity: 1; filter: drop-shadow(0 0 8px var(--violet)); stroke-width: 3.5; }
+.flow-5v.active     { opacity: 1; filter: drop-shadow(0 0 6px rgba(230,57,70,0.8)); }
+.flow-usb.active    { animation: flowDash 1s linear infinite; opacity: 1; filter: drop-shadow(0 0 6px rgba(122,154,184,0.6)); }
+
+/* Labels ativos mudam de cor junto com o fio */
+.flow-air.active    + .wire-label { color: var(--teal);   border-color: var(--teal);   box-shadow: 0 0 10px rgba(46,196,182,0.3); }
+.flow-pwm.active    + .wire-label { color: var(--amber);  border-color: var(--amber);  box-shadow: 0 0 10px rgba(244,162,97,0.3); }
+.flow-signal.active + .wire-label { color: var(--red);    border-color: var(--red);    box-shadow: 0 0 10px rgba(230,57,70,0.3); }
+.flow-power.active  + .wire-label { color: var(--text0);  border-color: var(--violet); background: rgba(123,108,246,0.15); }
+
+/* Legenda de sinalização */
+.sys-legend {
+  border-top: 1px solid var(--line);
+  background: var(--bg1);
+  padding: 14px 28px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  align-items: center;
+}
+.sys-legend-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: var(--text1);
+}
+.sys-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+}
+.sys-legend-line {
+  display: inline-block;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+}
+.sys-legend-credit {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  letter-spacing: 0.1em;
+}

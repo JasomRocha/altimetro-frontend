@@ -1,0 +1,220 @@
+<!-- components/pane-ensaio.html -->
+<div class="tab-pane active" id="pane-ensaio">
+  <div id="app">
+
+    <!-- Painel esquerdo: parâmetros + controle + resultado -->
+    <div class="panel">
+      <div class="sec">
+        <div class="stitle">Parâmetros do Ensaio</div>
+
+        <div class="field-block">
+          <label class="field-lbl" for="inp-nome">Nome do ensaio<span class="field-req">*</span></label>
+          <input class="field-input" id="inp-nome" type="text" placeholder="Ex: Homologação Altímetro #001" maxlength="100">
+        </div>
+        <div class="field-block">
+          <label class="field-lbl" for="inp-altimetro">Altímetro testado</label>
+          <input class="field-input" id="inp-altimetro" type="text" placeholder="Ex: EasyMini SN-0042" maxlength="80">
+        </div>
+        <div class="field-block">
+          <label class="field-lbl" for="inp-obs">Observações</label>
+          <input class="field-input" id="inp-obs" type="text" placeholder="Ex: temperatura 28°C" maxlength="200">
+        </div>
+
+        <div class="param-block">
+          <div class="param-head">
+            <span class="nm">APOGEU ALVO</span>
+            <span><span class="param-num" id="r-ap">700</span><span class="param-unit">m</span></span>
+          </div>
+          <input type="range" id="sl-ap" class="rc" min="100" max="2000" step="50" value="700" oninput="setApogeu(+this.value)">
+          <div class="range-marks"><span>100 m</span><span>1000 m</span><span>2000 m</span></div>
+        </div>
+
+        <div class="param-block">
+          <div class="param-head">
+            <span class="nm">TEMPO DE SUBIDA</span>
+            <span><span class="param-num g" id="r-ts">20</span><span class="param-unit">s</span></span>
+          </div>
+          <input type="range" id="sl-ts" class="rg" min="5" max="60" step="1" value="20" oninput="setTSubida(+this.value)">
+          <div class="range-marks"><span>5 s</span><span>30 s</span><span>60 s</span></div>
+        </div>
+
+        <div class="param-block" style="margin-bottom:0">
+          <div class="param-head">
+            <span class="nm">POTÊNCIA DA BOMBA</span>
+            <span><span class="param-num o" id="r-pot">50</span><span class="param-unit">%</span></span>
+          </div>
+          <input type="range" id="sl-pot" class="ra" min="0" max="100" step="5" value="50" oninput="setPotencia(+this.value)">
+          <div class="range-marks"><span>0%</span><span>50% nom.</span><span>100%</span></div>
+          <div class="pwm-row">
+            <span class="pwm-label">PWM</span>
+            <span class="pwm-val" id="r-pwm">200 · NOMINAL</span>
+          </div>
+        </div>
+
+        <div class="valve-note">
+          <div class="vn-hd">VÁLVULA FÍSICA — AJUSTE DE VELOCIDADE</div>
+          <div class="vn-row"><span class="vna">+ Aberta</span><span class="vne">subida mais rápida</span></div>
+          <div class="vn-row"><span class="vna">− Fechada</span><span class="vne">subida mais lenta</span></div>
+        </div>
+
+        <div class="ig">
+          <div class="ic"><div class="k">REF. FOGUETE</div><div class="v c" id="i-ref">700 m / 18 s</div></div>
+          <div class="ic"><div class="k">VEL. ESTIMADA</div><div class="v c" id="i-vel">35.0 m/s</div></div>
+          <div class="ic"><div class="k">DEAD ZONE</div><div class="v">PWM ≤ 150</div></div>
+          <div class="ic"><div class="k">PORTA</div><div class="v">/dev/ttyACM0</div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="stitle">Controle</div>
+        <button class="btn-go" id="btn-go" onclick="cmdIniciar()"><span>INICIAR ENSAIO</span></button>
+        <button class="btn-abort" onclick="cmdParar()">ABORTAR</button>
+        <div class="fbadge f-idle" id="fbadge"><div class="fdot"></div><span id="ftxt">AGUARDANDO</span></div>
+      </div>
+
+      <div class="sec grow">
+        <div class="stitle">Resultado do Ensaio</div>
+        <div class="result-area">
+          <div id="result-body">
+            <div class="r-row"><span class="rk">Nenhum ensaio realizado.</span><span></span></div>
+          </div>
+          <button class="btn-csv"    id="btn-csv"    onclick="exportCSV()">↓ EXPORTAR CSV</button>
+          <button class="btn-salvar" id="btn-salvar" onclick="salvarNoBanco()">↑ SALVAR NO BANCO</button>
+          <div class="salvo-badge"   id="salvo-badge">✓ SALVO NO BANCO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel central: altímetro + gráficos ao vivo -->
+    <div class="panel">
+      <div class="center-top">
+        <div class="altimeter-row">
+          <svg width="112" height="112" viewBox="0 0 116 116" style="flex-shrink:0">
+            <defs>
+              <filter id="gc"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="ga"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <circle cx="58" cy="58" r="56" fill="#0a0e14" stroke="#1e2e42" stroke-width="1.5"/>
+            <circle cx="58" cy="58" r="42" fill="none" stroke="#1e2e42" stroke-width="8" stroke-dasharray="220 38" stroke-dashoffset="38" transform="rotate(135 58 58)"/>
+            <circle cx="58" cy="58" r="42" fill="none" stroke="var(--teal)" stroke-width="3" stroke-dasharray="0 258" stroke-dashoffset="38" transform="rotate(135 58 58)" id="alt-arc" filter="url(#gc)" style="transition:stroke-dasharray .5s ease"/>
+            <line id="alt-needle" x1="58" y1="58" x2="58" y2="20" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" filter="url(#ga)" transform="rotate(-135 58 58)" style="transition:transform .5s ease"/>
+            <circle cx="58" cy="58" r="4" fill="var(--amber)" filter="url(#ga)"/>
+            <text x="58" y="73" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="6" fill="var(--text2)" letter-spacing="1">ALT · m</text>
+          </svg>
+          <div class="live-readings">
+            <div class="live-big"><span id="live-alt">0</span><span class="lu">m</span></div>
+            <div class="live-sub">
+              <div class="li"><div class="lik">PRESSÃO</div><div class="liv" id="live-pres">— hPa</div></div>
+              <div class="li"><div class="lik">TEMPO</div><div class="liv" id="live-t">0.0 s</div></div>
+              <div class="li"><div class="lik">VEL. INST.</div><div class="liv" id="live-vel">— m/s</div></div>
+              <div class="li"><div class="lik">APOGEU MÁX.</div><div class="liv" style="color:var(--amber)" id="live-amax">0 m</div></div>
+            </div>
+            <div class="alt-bar">
+              <div class="alt-bar-track"><div class="alt-bar-fill" id="alt-fill" style="width:0%"></div></div>
+              <div class="alt-bar-labels"><span>0 m</span><span id="bar-alvo">— m</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-area">
+        <!-- Gráfico Altitude -->
+        <div class="chart-block">
+          <div class="chart-block-hdr">
+            <span class="chart-block-title">Altitude</span>
+            <span class="chart-block-unit" style="color:var(--teal)">m</span>
+          </div>
+          <div class="chart-axes">
+            <div class="axis-y" id="ay-alt"><span id="ay-alt-max">—</span><span id="ay-alt-mid">—</span><span>0</span></div>
+            <div class="axis-x-wrap">
+              <svg class="chart-svg" id="svg-alt" viewBox="0 0 700 80" preserveAspectRatio="none">
+                <defs><linearGradient id="gr-alt" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(46,196,182,.25)"/>
+                  <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
+                </linearGradient></defs>
+                <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+                <polyline id="ref-line"  fill="none" stroke="var(--amber)" stroke-width="1" stroke-dasharray="4 3" opacity=".5" points=""/>
+                <polyline id="real-fill" fill="url(#gr-alt)" stroke="none" points=""/>
+                <polyline id="real-line" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
+                <g id="ap-rocket" transform="translate(-40,-40)" style="filter:drop-shadow(0 0 4px rgba(244,162,97,.6))">
+                  <path d="M0,-9 C3,-9 5,-6 5,-2 L5,4 L0,7 L-5,4 L-5,-2 C-5,-6 -3,-9 0,-9 Z" fill="#f4a261"/>
+                  <path d="M0,-9 L2.5,-5 L-2.5,-5 Z" fill="white" opacity=".75"/>
+                  <path d="M5,1 L8,6 L5,5 Z"  fill="#f4a261" opacity=".7"/>
+                  <path d="M-5,1 L-8,6 L-5,5 Z" fill="#f4a261" opacity=".7"/>
+                  <g id="rk-flame"><path d="M-2,7 Q0,13 2,7 Q0.5,10 0,12 Q-0.5,10 -2,7 Z" fill="#e63946">
+                    <animate attributeName="opacity" values="1;.3;1" dur=".28s" repeatCount="indefinite"/>
+                  </path></g>
+                </g>
+              </svg>
+              <div class="axis-x" id="ax-alt"><span>0s</span><span id="ax-alt-mid">—</span><span id="ax-alt-max">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico Velocidade -->
+        <div class="chart-block">
+          <div class="chart-block-hdr">
+            <span class="chart-block-title">Velocidade</span>
+            <span class="chart-block-unit" style="color:var(--green)">m/s</span>
+          </div>
+          <div class="chart-axes">
+            <div class="axis-y" id="ay-vel"><span id="ay-vel-max">—</span><span id="ay-vel-mid">—</span><span>0</span></div>
+            <div class="axis-x-wrap">
+              <svg class="chart-svg" id="svg-vel" viewBox="0 0 700 80" preserveAspectRatio="none">
+                <defs><linearGradient id="gr-vel" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(61,220,132,.2)"/>
+                  <stop offset="100%" stop-color="rgba(61,220,132,0)"/>
+                </linearGradient></defs>
+                <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+                <polyline id="vel-fill" fill="url(#gr-vel)" stroke="none" points=""/>
+                <polyline id="vel-line" fill="none" stroke="var(--green)" stroke-width="2" points=""/>
+              </svg>
+              <div class="axis-x" id="ax-vel"><span>0s</span><span id="ax-vel-mid">—</span><span id="ax-vel-max">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico Pressão -->
+        <div class="chart-block">
+          <div class="chart-block-hdr">
+            <span class="chart-block-title">Pressão</span>
+            <span class="chart-block-unit" style="color:var(--violet)">hPa</span>
+          </div>
+          <div class="chart-axes">
+            <div class="axis-y" id="ay-pres"><span id="ay-pres-max">—</span><span id="ay-pres-mid">—</span><span id="ay-pres-min">—</span></div>
+            <div class="axis-x-wrap">
+              <svg class="chart-svg" id="svg-pres" viewBox="0 0 700 80" preserveAspectRatio="none">
+                <defs><linearGradient id="gr-pres" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(123,108,246,.2)"/>
+                  <stop offset="100%" stop-color="rgba(123,108,246,0)"/>
+                </linearGradient></defs>
+                <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+                <polyline id="pres-fill" fill="url(#gr-pres)" stroke="none" points=""/>
+                <polyline id="pres-line" fill="none" stroke="var(--violet)" stroke-width="2" points=""/>
+              </svg>
+              <div class="axis-x" id="ax-pres"><span>0s</span><span id="ax-pres-mid">—</span><span id="ax-pres-max">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel direito: telemetria + log -->
+    <div class="panel">
+      <div class="sec">
+        <div class="stitle">Telemetria</div>
+        <div class="gauge-grid">
+          <div class="gcard"><div class="gk">ALT. ATUAL</div><div class="gv" style="color:var(--teal)" id="g-alt">0 m</div><div class="gb"><div class="gf" id="gf-alt" style="width:0%;background:var(--teal)"></div></div></div>
+          <div class="gcard"><div class="gk">ALT. MÁX.</div><div class="gv" style="color:var(--amber)" id="g-amax">0 m</div><div class="gb"><div class="gf" id="gf-amax" style="width:0%;background:var(--amber)"></div></div></div>
+          <div class="gcard"><div class="gk">PRESSÃO</div><div class="gv" id="g-pres" style="font-size:14px;color:var(--violet)">— hPa</div><div class="gb"><div class="gf" id="gf-pres" style="width:100%;background:var(--violet)"></div></div></div>
+          <div class="gcard"><div class="gk">POTÊNCIA</div><div class="gv" style="color:var(--amber)" id="g-pot">50%</div><div class="gb"><div class="gf" id="gf-pot" style="width:50%;background:var(--amber)"></div></div></div>
+        </div>
+      </div>
+      <div class="sec grow">
+        <div class="stitle">Log do Sistema</div>
+        <div class="log-scroll"><div id="log-body"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
