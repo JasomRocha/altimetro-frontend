@@ -504,6 +504,22 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 }
 .btn-reload:hover { border-color: var(--teal); color: var(--teal); }
 
+/* ── SISTEMA ────────────────────────────────────────────── */
+.sys-badge{display:flex;align-items:center;gap:7px;padding:5px 14px;border:1px solid var(--line2);border-radius:20px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text2);transition:all .3s;}
+.sys-dot{width:8px;height:8px;border-radius:50%;background:var(--s600);transition:all .3s;flex-shrink:0;}
+.sys-badge.ativo{border-color:rgba(244,162,97,.5);color:var(--amber);background:var(--amber-d);}
+.sys-badge.ativo .sys-dot{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1s ease-in-out infinite;}
+.sys-badge.leitura{border-color:rgba(46,196,182,.4);color:var(--teal);background:var(--teal-d);}
+.sys-badge.leitura .sys-dot{background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pulse 2s ease-in-out infinite;}
+.sys-badge.alerta{border-color:rgba(230,57,70,.4);color:var(--red);background:var(--red-d);}
+.sys-badge.alerta .sys-dot{background:var(--red);box-shadow:0 0 8px var(--red);animation:pulse .6s ease-in-out infinite;}
+/* ── CAMPOS TEXTO ──────────────────────────────────────── */
+.field-block{margin-bottom:13px;}
+.field-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px;}
+.field-input{width:100%;padding:8px 10px;background:var(--bg2);border:1px solid var(--line2);border-radius:3px;color:var(--text0);font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s;}
+.field-input:focus{border-color:var(--teal);}
+.field-input::placeholder{color:var(--text2);}
+.field-req{color:var(--red);margin-left:2px;}
 /* ── TOAST ───────────────────────────────────────────────────── */
 #toast {
   position: fixed; bottom: 20px; left: 50%;
@@ -594,6 +610,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 <div class="tab-bar">
   <div class="tab active" id="tab-ensaio"    onclick="setTab('ensaio')">Ensaio</div>
   <div class="tab"        id="tab-historico" onclick="setTab('historico')">Histórico</div>
+  <div class="nav-tab" id="tab-sistema" onclick="setTab('sistema')">Sistema</div>
 </div>
 
 <!-- ── PANE ENSAIO ── -->
@@ -604,7 +621,18 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
   <div class="panel">
     <div class="sec">
       <div class="stitle">Parâmetros do Ensaio</div>
-
+      <div class="field-block">
+        <label class="field-lbl" for="inp-nome">Nome do ensaio<span class="field-req">*</span></label>
+        <input class="field-input" id="inp-nome" type="text" placeholder="Ex: Homologação Altímetro #001" maxlength="100">
+      </div>
+      <div class="field-block">
+        <label class="field-lbl" for="inp-altimetro">Altímetro testado</label>
+        <input class="field-input" id="inp-altimetro" type="text" placeholder="Ex: EasyMini SN-0042" maxlength="80">
+      </div>
+      <div class="field-block">
+        <label class="field-lbl" for="inp-obs">Observações</label>
+        <input class="field-input" id="inp-obs" type="text" placeholder="Ex: temperatura 28°C" maxlength="200">
+      </div>
       <div class="param-block">
         <div class="param-head">
           <span class="nm">APOGEU ALVO</span>
@@ -849,6 +877,187 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 </div><!-- pane-ensaio -->
 
 <!-- ── PANE HISTÓRICO ── -->
+<div class="tab-pane" id="pane-sistema">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;gap:10px;overflow:auto;background:var(--bg0);">
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+    <div class="sys-badge" id="sb-bomba"><span class="sys-dot" id="sd-bomba"></span><span>BOMBA DC</span></div>
+    <div class="sys-badge" id="sb-valvula"><span class="sys-dot" id="sd-valvula"></span><span>VÁLVULA SOLENOIDE</span></div>
+    <div class="sys-badge" id="sb-bmp"><span class="sys-dot" id="sd-bmp"></span><span>BMP180</span></div>
+    <div class="sys-badge" id="sb-rele"><span class="sys-dot" id="sd-rele"></span><span>RELÉ</span></div>
+    <div class="sys-badge" id="sb-arduino"><span class="sys-dot" id="sd-arduino"></span><span>ARDUINO</span></div>
+  </div>
+
+  <svg id="hw-diagram" viewBox="0 0 820 460" xmlns="http://www.w3.org/2000/svg"
+       style="width:100%;max-width:880px;max-height:calc(100vh - 220px);">
+    <defs>
+      <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow2"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="820" height="460" fill="#0a0e14" rx="6"/>
+
+    <!-- Câmara (vidro, centro-esquerda) -->
+    <rect x="55" y="88" width="210" height="18" rx="4" fill="#1a2535" stroke="#2ec4b6" stroke-width="1.5"/>
+    <rect id="camara-body" x="55" y="105" width="210" height="250" rx="10"
+          fill="rgba(46,196,182,.05)" stroke="#2ec4b6" stroke-width="1.5"/>
+    <rect x="55" y="353" width="210" height="14" rx="4" fill="#1a2535" stroke="#2ec4b6" stroke-width="1.5"/>
+    <rect x="60" y="105" width="6" height="245" rx="3" fill="rgba(255,255,255,.03)"/>
+    <text x="160" y="376" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#3a5470" letter-spacing="2">CÂMARA DE PRESSÃO</text>
+    <text x="160" y="388" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="#263648">(RECIPIENTE DE VIDRO)</text>
+
+    <!-- BMP180 na tampa (dentro da câmara) -->
+    <rect id="bmp-body" x="118" y="108" width="84" height="52" rx="4" fill="#141c28" stroke="#3a5470" stroke-width="1.5"/>
+    <rect id="bmp-chip" x="146" y="118" width="28" height="20" rx="2" fill="#1e2e42" stroke="#3a5470" stroke-width="1"/>
+    <text x="160" y="152" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#3a5470" letter-spacing="1">BMP180</text>
+    <!-- Pinos I2C -->
+    <line x1="146" y1="123" x2="136" y2="123" stroke="#3a5470" stroke-width="1"/>
+    <line x1="146" y1="129" x2="136" y2="129" stroke="#3a5470" stroke-width="1"/>
+    <line x1="174" y1="123" x2="184" y2="123" stroke="#3a5470" stroke-width="1"/>
+    <line x1="174" y1="129" x2="184" y2="129" stroke="#3a5470" stroke-width="1"/>
+
+    <!-- Fio I2C BMP → Arduino -->
+    <polyline id="wire-bmp" points="160,108 160,88 160,68 440,68 440,162"
+              fill="none" stroke="#3a5470" stroke-width="1.2" stroke-dasharray="3 2"/>
+    <text x="300" y="64" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#263648">I2C (SDA/SCL)</text>
+
+    <!-- Entrada de ar na tampa (mangueira) -->
+    <rect x="146" y="77" width="28" height="12" rx="2" fill="#1a2535" stroke="#2ec4b6" stroke-width="1.2"/>
+    <text x="160" y="73" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a5470">ENTRADA AR</text>
+
+    <!-- Mangueira câmara → válvula reguladora -->
+    <polyline id="pipe-in" points="160,77 160,52 318,52"
+              fill="none" stroke="#2ec4b6" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- Válvula reguladora manual -->
+    <rect id="vreg-body" x="318" y="36" width="52" height="32" rx="4" fill="#141c28" stroke="#3a5470" stroke-width="1.5"/>
+    <polygon points="344,43 334,58 354,58" fill="#2e3d50" stroke="#3a5470" stroke-width="1"/>
+    <line x1="344" y1="36" x2="344" y2="43" stroke="#3a5470" stroke-width="1.5"/>
+    <text x="344" y="82" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#3a5470">VÁLV. REG.</text>
+    <text x="344" y="91" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#263648">(MANUAL)</text>
+
+    <!-- Mangueira válvula reg → bomba -->
+    <polyline id="pipe-reg-bomba" points="370,52 468,52 468,162"
+              fill="none" stroke="#2ec4b6" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- BOMBA DC -->
+    <rect id="bomba-body" x="428" y="162" width="80" height="65" rx="8" fill="#141c28" stroke="#3a5470" stroke-width="1.8"/>
+    <circle id="bomba-motor" cx="468" cy="194" r="22" fill="#1a2535" stroke="#3a5470" stroke-width="1.2"/>
+    <circle cx="468" cy="194" r="5" fill="#2e3d50"/>
+    <g id="bomba-helice" style="transform-box:fill-box;transform-origin:center;">
+      <line x1="468" y1="180" x2="468" y2="194" stroke="#3a5470" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="456" y1="200" x2="468" y2="194" stroke="#3a5470" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="480" y1="200" x2="468" y2="194" stroke="#3a5470" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <text x="468" y="240" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#3a5470" letter-spacing="1.5">BOMBA DC</text>
+
+    <!-- Fio bomba → MotorShield (PWM) -->
+    <polyline id="wire-bomba-ms" points="508,194 570,194 570,268"
+              fill="none" stroke="#f4a261" stroke-width="1.8" stroke-dasharray="4 2"/>
+
+    <!-- MOTOR SHIELD -->
+    <rect id="ms-body" x="530" y="268" width="100" height="60" rx="4" fill="#141c28" stroke="#d97c1a" stroke-width="1.8"/>
+    <rect x="540" y="276" width="32" height="16" rx="2" fill="#1a2535" stroke="#263648" stroke-width="1"/>
+    <rect x="580" y="276" width="32" height="16" rx="2" fill="#1a2535" stroke="#263648" stroke-width="1"/>
+    <rect x="540" y="300" width="32" height="14" rx="2" fill="#1a2535" stroke="#263648" stroke-width="1"/>
+    <text x="580" y="344" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" fill="#d97c1a" letter-spacing="1">MOTORSHIELD</text>
+
+    <!-- Fio MotorShield → Arduino -->
+    <polyline id="wire-ms-ard" points="530,298 440,298 440,252"
+              fill="none" stroke="#d97c1a" stroke-width="1.8" stroke-dasharray="4 2"/>
+
+    <!-- ARDUINO UNO -->
+    <rect id="ard-body" x="380" y="162" width="110" height="90" rx="5" fill="#141c28" stroke="#2ec4b6" stroke-width="2"/>
+    <rect x="385" y="167" width="100" height="79" rx="3" fill="#0d1f2d"/>
+    <rect x="396" y="183" width="46" height="30" rx="2" fill="#1a2535" stroke="#263648" stroke-width="1"/>
+    <rect x="385" y="167" width="100" height="7" rx="2" fill="#1e2e42"/>
+    <rect x="385" y="198" width="13" height="20" rx="2" fill="#263648"/>
+    <rect x="385" y="222" width="20" height="13" rx="2" fill="#263648"/>
+    <circle id="ard-led-pwr" cx="478" cy="173" r="3" fill="#2a9d5c"/>
+    <circle id="ard-led-13" cx="470" cy="173" r="3" fill="#1a2535"/>
+    <text x="435" y="258" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#2ec4b6" letter-spacing="2">ARDUINO UNO</text>
+
+    <!-- Fio Arduino → Relé (sinal digital) -->
+    <polyline id="wire-ard-rele" points="435,162 435,132 308,132 308,178"
+              fill="none" stroke="#e63946" stroke-width="1.8" stroke-dasharray="4 2"/>
+
+    <!-- RELÉ -->
+    <rect id="rele-body" x="276" y="178" width="64" height="48" rx="4" fill="#141c28" stroke="#e63946" stroke-width="1.8"/>
+    <rect x="283" y="186" width="26" height="16" rx="2" fill="#1a2535" stroke="#3a5470" stroke-width="1"/>
+    <rect x="317" y="186" width="16" height="7" rx="1" fill="#263648"/>
+    <rect id="rele-contato" x="317" y="197" width="16" height="7" rx="1" fill="#263648"/>
+    <text x="308" y="240" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#e63946" letter-spacing="1.5">RELÉ</text>
+
+    <!-- Fio Relé → Válvula Solenoide (12V chaveado) -->
+    <polyline id="wire-rele-vsol" points="276,202 226,202 226,278"
+              fill="none" stroke="#e63946" stroke-width="1.8" stroke-dasharray="4 2"/>
+
+    <!-- VÁLVULA SOLENOIDE -->
+    <rect id="vsol-body" x="186" y="278" width="80" height="58" rx="6" fill="#141c28" stroke="#e63946" stroke-width="1.8"/>
+    <rect x="193" y="286" width="32" height="40" rx="3" fill="#1a2535" stroke="#263648" stroke-width="1"/>
+    <line x1="193" y1="293" x2="225" y2="293" stroke="#263648" stroke-width="1"/>
+    <line x1="193" y1="299" x2="225" y2="299" stroke="#263648" stroke-width="1"/>
+    <line x1="193" y1="305" x2="225" y2="305" stroke="#263648" stroke-width="1"/>
+    <line x1="193" y1="311" x2="225" y2="311" stroke="#263648" stroke-width="1"/>
+    <line x1="193" y1="317" x2="225" y2="317" stroke="#263648" stroke-width="1"/>
+    <rect id="vsol-embolo" x="229" y="291" width="30" height="22" rx="2" fill="#263648" stroke="#3a5470" stroke-width="1"/>
+    <text x="226" y="350" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" fill="#e63946" letter-spacing="1">SOLENOIDE</text>
+
+    <!-- Mangueira válvula solenoide → câmara (escape) -->
+    <polyline id="pipe-escape" points="226,278 226,248 160,248 160,355"
+              fill="none" stroke="#e63946" stroke-width="2.5" stroke-dasharray="5 3" opacity=".4"/>
+    <text x="195" y="244" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a5470">ESCAPE</text>
+
+    <!-- FONTE 12V -->
+    <rect id="fonte-body" x="630" y="268" width="80" height="60" rx="4" fill="#141c28" stroke="#7b6cf6" stroke-width="1.5"/>
+    <text x="655" y="298" font-family="'IBM Plex Mono',monospace" font-size="17" fill="#7b6cf6" font-weight="600">+</text>
+    <text x="681" y="299" font-family="'IBM Plex Mono',monospace" font-size="17" fill="#7b6cf6">−</text>
+    <text x="670" y="318" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" fill="#7b6cf6" letter-spacing="1">FONTE 12V</text>
+    <!-- Fio fonte → MotorShield -->
+    <polyline points="630,298 630,298 630,285" fill="none" stroke="#7b6cf6" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <polyline id="wire-fonte-ms" points="630,285 630,268 630,285 580,285"
+              fill="none" stroke="#7b6cf6" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <!-- Fio fonte → Relé (para válvula) -->
+    <polyline id="wire-fonte-rele" points="630,305 630,410 226,410 226,336"
+              fill="none" stroke="#7b6cf6" stroke-width="1.5" stroke-dasharray="3 2"/>
+
+    <!-- USB (Arduino ↔ PC) -->
+    <rect x="374" y="207" width="11" height="20" rx="2" fill="#263648" stroke="#3a5470" stroke-width="1"/>
+    <polyline points="374,212 340,212 340,430 700,430 700,380"
+              fill="none" stroke="#3a5470" stroke-width="1.2" stroke-dasharray="3 2"/>
+    <rect x="693" y="360" width="24" height="38" rx="3" fill="#141c28" stroke="#3a5470" stroke-width="1.2"/>
+    <text x="705" y="395" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="7" fill="#3a5470">PC/USB</text>
+
+    <!-- Display fase + altitude -->
+    <rect x="10" y="10" width="140" height="50" rx="4" fill="#0f1520" stroke="#1e2e42" stroke-width="1"/>
+    <text x="80" y="25" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#3a5470" letter-spacing="2">ALTITUDE</text>
+    <text id="sys-alt-txt" x="80" y="48" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="22" font-weight="600" fill="#2ec4b6">0 <tspan font-size="10" fill="#3a5470">m</tspan></text>
+
+    <rect x="660" y="10" width="148" height="50" rx="4" fill="#0f1520" stroke="#1e2e42" stroke-width="1"/>
+    <text x="734" y="25" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#3a5470" letter-spacing="2">FASE</text>
+    <text id="sys-fase-txt" x="734" y="48" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="600" fill="#3a5470" letter-spacing="2">AGUARDANDO</text>
+
+    <!-- Legenda -->
+    <g transform="translate(540,375)">
+      <text x="0" y="0" font-family="'IBM Plex Mono',monospace" font-size="8" fill="#3a5470" letter-spacing="1">LEGENDA</text>
+      <line x1="0" y1="10" x2="18" y2="10" stroke="#2ec4b6" stroke-width="3"/>
+      <text x="22" y="14" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="#3a5470">PRESSÃO / AR</text>
+      <line x1="0" y1="24" x2="18" y2="24" stroke="#f4a261" stroke-width="1.8" stroke-dasharray="4 2"/>
+      <text x="22" y="28" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="#3a5470">SINAL PWM</text>
+      <line x1="0" y1="38" x2="18" y2="38" stroke="#e63946" stroke-width="1.8" stroke-dasharray="4 2"/>
+      <text x="22" y="42" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="#3a5470">SINAL DIGITAL</text>
+      <line x1="0" y1="52" x2="18" y2="52" stroke="#7b6cf6" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="22" y="56" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="#3a5470">ALIMENTAÇÃO 12V</text>
+      <line x1="0" y1="66" x2="18" y2="66" stroke="#3a5470" stroke-width="1.2" stroke-dasharray="3 2"/>
+      <text x="22" y="70" font-family="'IBM Plex Mono',monospace" font-size="7.5" fill="#3a5470">DADOS I2C / USB</text>
+    </g>
+  </svg>
+
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text2);">
+    DIAGRAMA ESQUEMÁTICO · BANCO DE TESTE DE ALTÍMETROS · UFPB · ENG. COMPUTAÇÃO · TCC 2026
+  </div>
+</div>
+</div><!-- pane-sistema -->
+
 <div class="tab-pane" id="pane-historico">
   <div class="hist-layout">
     <div class="hist-list">
@@ -993,7 +1202,8 @@ function setFase(f){
 // ── TELEMETRIA ─────────────────────────────────────────────────
 function onTelem(m){
   const{t,alt,pres}=m;
-  const dt=t-S.tPrev, vel=dt>0.08?(alt-S.altPrev)/dt:0;
+  const dt=t-S.tPrev;
+  const vel=dt>0.05?(alt-S.altPrev)/dt:0;
   S.altPrev=alt; S.tPrev=t;
   S.alt=alt; S.pres=pres; S.t=t;
   if(alt>S.altMax) S.altMax=alt;
@@ -1229,6 +1439,15 @@ function addLog(msg,cls='data'){
 // ── COMANDOS ───────────────────────────────────────────────────
 function cmdIniciar(){
   if(!['idle','concluido','erro'].includes(S.fase)) return;
+  const nomeEnsaio=(document.getElementById('inp-nome')?.value||'').trim();
+  if(!nomeEnsaio){
+    const el=document.getElementById('inp-nome');
+    if(el){el.style.borderColor='var(--red)';el.focus();}
+    toast('Nome do ensaio é obrigatório.','er'); return;
+  }
+  S.nomeEnsaio=nomeEnsaio;
+  S.altimetro=(document.getElementById('inp-altimetro')?.value||'').trim();
+  S.obs=(document.getElementById('inp-obs')?.value||'').trim();
   S.hT=[];S.hA=[];S.hV=[];S.hP=[];S.altMax=0;S.alt=0;
   S.t=0;S.tPrev=0;S.altPrev=0;S.presMin=9999;S.presMax=0;S.lastResult=null;
   ['real-line','real-fill','vel-line','vel-fill','pres-line','pres-fill'].forEach(id=>{
@@ -1245,10 +1464,11 @@ function cmdIniciar(){
   document.getElementById('h-pref').className='v';
   updAltimeter(0);
   document.getElementById('alt-fill').style.width='0%';
+  const nEl=document.getElementById('inp-nome');if(nEl)nEl.style.borderColor='';
   drawRef();
   setFase('calibra');
   addLog('Ensaio iniciado  apogeu='+S.apAlvo+'m  t_sub='+S.tSubida+'s  pot='+S.potPct+'%  PWM='+S.pwm,'info');
-  wsSend({cmd:'iniciar',apogeu:S.apAlvo,dur:S.tSubida,potencia_pct:S.potPct,pwm:S.pwm});
+  wsSend({cmd:'iniciar',apogeu:S.apAlvo,dur:S.tSubida,potencia_pct:S.potPct,pwm:S.pwm,nome_ensaio:S.nomeEnsaio,altimetro:S.altimetro,obs:S.obs});
 }
 function cmdParar(){
   wsSend({cmd:'parar'});
@@ -1282,10 +1502,12 @@ function histRenderLista(){
   lista.innerHTML=_histVoos.map(v=>{
     const dt=new Date(v.data_inicio).toLocaleString('pt-BR');
     const sel=_histSel===v.id_voo?' sel':'';
+    const nome=v.nome_ensaio||`Ensaio #${v.id_voo}`;
     return `<div class="hist-item${sel}" onclick="histSelecionar(${v.id_voo})">
-      <div class="hi-date">${dt}</div>
+      <div class="hi-date" style="font-size:10.5px;font-weight:500;color:var(--text1);margin-bottom:1px;">${nome}</div>
+      <div class="hi-date">${dt}${v.altimetro?' · <span style="color:var(--teal)">'+v.altimetro+'</span>':''}</div>
       <div class="hi-alt">${v.alt_max.toFixed(1)}<span> m</span></div>
-      <div class="hi-meta">${v.t_total_s.toFixed(1)}s · ${v.n_pontos} pontos</div>
+      <div class="hi-meta">${v.t_total_s.toFixed(1)}s · ${v.n_pontos} pontos${v.erro_pct!=null?' · erro '+v.erro_pct.toFixed(1)+'%':''}</div>
     </div>`;
   }).join('');
 }
@@ -1309,7 +1531,9 @@ function histRenderDetalhe(voo){
   const presMax=prs.length?Math.max(...prs)*1.001:1015;
   const aMax=(voo.alt_max||0)*1.12||10;
   const tTot=voo.t_total_s||0;
-  document.getElementById('hist-detalhe').innerHTML=`<div class="hist-detail-hdr"><div><div class="hist-big">${(voo.alt_max||0).toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div><div class="hist-big-lbl">ENSAIO #${voo.id_voo} · ${dt}${voo.usuario?' · '+voo.usuario:''}</div></div></div><div class="hist-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px;"><div class="hstat-c"><div class="k">Alvo</div><div class="v">${(voo.apogeu_alvo||0).toFixed(0)} m</div></div><div class="hstat-c"><div class="k">Atingido</div><div class="v c">${(voo.alt_max||0).toFixed(1)} m</div></div><div class="hstat-c"><div class="k">Erro</div><div class="v">${voo.erro_m!=null?(voo.erro_m>=0?'+':'')+voo.erro_m.toFixed(1)+' m':'—'}</div></div><div class="hstat-c"><div class="k">Erro %</div><div class="v">${voo.erro_pct!=null?voo.erro_pct.toFixed(1)+'%':'—'}</div></div><div class="hstat-c"><div class="k">Subida</div><div class="v">${(voo.t_subida_s||0).toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Total</div><div class="v">${tTot.toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Vel. média</div><div class="v">${voo.vel_media_ms!=null?voo.vel_media_ms.toFixed(1)+' m/s':'—'}</div></div><div class="hstat-c"><div class="k">Vel. máx.</div><div class="v">${voo.vel_max_ms!=null?voo.vel_max_ms.toFixed(1)+' m/s':'—'}</div></div></div><div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;overflow-y:auto;"><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Altitude</span><span style="font-family:var(--mono);font-size:9px;color:var(--teal)">m</span></div><div class="chart-axes"><div class="axis-y"><span>${aMax.toFixed(0)}</span><span>${(aMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-alt" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(46,196,182,.25)"/><stop offset="100%" stop-color="rgba(46,196,182,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-a" fill="url(#hgr-a)" stroke="none" points=""/><polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Velocidade</span><span style="font-family:var(--mono);font-size:9px;color:var(--green)">m/s</span></div><div class="chart-axes"><div class="axis-y"><span>${velMax.toFixed(0)}</span><span>${(velMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-vel" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(61,220,132,.2)"/><stop offset="100%" stop-color="rgba(61,220,132,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-v" fill="url(#hgr-v)" stroke="none" points=""/><polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Pressão</span><span style="font-family:var(--mono);font-size:9px;color:var(--violet)">hPa</span></div><div class="chart-axes"><div class="axis-y"><span>${presMax.toFixed(0)}</span><span>${((presMax+presMin)/2).toFixed(0)}</span><span>${presMin.toFixed(0)}</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-pres" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(123,108,246,.2)"/><stop offset="100%" stop-color="rgba(123,108,246,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-p" fill="url(#hgr-p)" stroke="none" points=""/><polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div></div>`;
+  document.getElementById('hist-detalhe').innerHTML=`<div class="hist-detail-hdr"><div><div class="hist-big">${(voo.alt_max||0).toFixed(1)}<span style="font-size:18px;color:var(--text2);margin-left:6px;">m</span></div><div class="hist-big-lbl">${voo.altimetro?"ALT.: "+voo.altimetro+" · ":""}${dt}${voo.usuario?" · "+voo.usuario:""}</div>
+        ${voo.nome_ensaio?`<div style="font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text1);margin-bottom:3px;">${voo.nome_ensaio}</div>`:""}
+        ${voo.obs?`<div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:5px;padding:5px 9px;background:var(--bg2);border-radius:2px;border-left:2px solid var(--teal);">${voo.obs}</div>`:""}</div></div><div class="hist-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px;"><div class="hstat-c"><div class="k">Alvo</div><div class="v">${(voo.apogeu_alvo||0).toFixed(0)} m</div></div><div class="hstat-c"><div class="k">Atingido</div><div class="v c">${(voo.alt_max||0).toFixed(1)} m</div></div><div class="hstat-c"><div class="k">Erro</div><div class="v">${voo.erro_m!=null?(voo.erro_m>=0?'+':'')+voo.erro_m.toFixed(1)+' m':'—'}</div></div><div class="hstat-c"><div class="k">Erro %</div><div class="v">${voo.erro_pct!=null?voo.erro_pct.toFixed(1)+'%':'—'}</div></div><div class="hstat-c"><div class="k">Subida</div><div class="v">${(voo.t_subida_s||0).toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Total</div><div class="v">${tTot.toFixed(1)} s</div></div><div class="hstat-c"><div class="k">Vel. média</div><div class="v">${voo.vel_media_ms!=null?voo.vel_media_ms.toFixed(1)+' m/s':'—'}</div></div><div class="hstat-c"><div class="k">Vel. máx.</div><div class="v">${voo.vel_max_ms!=null?voo.vel_max_ms.toFixed(1)+' m/s':'—'}</div></div></div><div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;overflow-y:auto;"><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Altitude</span><span style="font-family:var(--mono);font-size:9px;color:var(--teal)">m</span></div><div class="chart-axes"><div class="axis-y"><span>${aMax.toFixed(0)}</span><span>${(aMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-alt" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(46,196,182,.25)"/><stop offset="100%" stop-color="rgba(46,196,182,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-a" fill="url(#hgr-a)" stroke="none" points=""/><polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Velocidade</span><span style="font-family:var(--mono);font-size:9px;color:var(--green)">m/s</span></div><div class="chart-axes"><div class="axis-y"><span>${velMax.toFixed(0)}</span><span>${(velMax/2).toFixed(0)}</span><span>0</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-vel" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(61,220,132,.2)"/><stop offset="100%" stop-color="rgba(61,220,132,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-v" fill="url(#hgr-v)" stroke="none" points=""/><polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div><div class="chart-block" style="min-height:90px;"><div class="chart-block-hdr"><span class="chart-block-title">Pressão</span><span style="font-family:var(--mono);font-size:9px;color:var(--violet)">hPa</span></div><div class="chart-axes"><div class="axis-y"><span>${presMax.toFixed(0)}</span><span>${((presMax+presMin)/2).toFixed(0)}</span><span>${presMin.toFixed(0)}</span></div><div class="axis-x-wrap"><svg class="chart-svg" id="hs-pres" viewBox="0 0 700 70" preserveAspectRatio="none"><defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(123,108,246,.2)"/><stop offset="100%" stop-color="rgba(123,108,246,0)"/></linearGradient></defs><line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/><polyline id="hf-p" fill="url(#hgr-p)" stroke="none" points=""/><polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2" points=""/></svg><div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div></div></div></div></div>`;
   _histDraw(pts, voo.alt_max||0, tTot);
 }
 
@@ -1421,6 +1645,125 @@ function fazerLogout(){
   }
 })();
 
+
+// ── ANIMAÇÃO DO HARDWARE ─────────────────────────────────
+function _sysStroke(id, cor, glow=false){
+  const el=document.getElementById(id); if(!el) return;
+  el.setAttribute('stroke', cor);
+  if(glow) el.setAttribute('filter','url(#glow2)');
+  else el.removeAttribute('filter');
+}
+function _sysFill(id, cor){
+  const el=document.getElementById(id); if(!el) return;
+  el.setAttribute('fill', cor);
+}
+function _sysBadge(id, estado){
+  const el=document.getElementById(id); if(!el) return;
+  el.className='sys-badge'+(estado?' '+estado:'');
+}
+function _sysFase(txt, cor){
+  const el=document.getElementById('sys-fase-txt');
+  if(el){el.textContent=txt; el.setAttribute('fill',cor);}
+}
+
+let _heliceTimer=null, _heliceAng=0;
+function _heliceStart(){
+  if(_heliceTimer) return;
+  _heliceTimer=setInterval(()=>{
+    _heliceAng=(_heliceAng+18)%360;
+    const g=document.getElementById('bomba-helice');
+    if(g) g.style.transform=`rotate(${_heliceAng}deg)`;
+  },55);
+}
+function _heliceStop(){
+  if(_heliceTimer){clearInterval(_heliceTimer);_heliceTimer=null;}
+  const g=document.getElementById('bomba-helice');
+  if(g) g.style.transform='';
+}
+function _emboloAnim(aberta){
+  const e=document.getElementById('vsol-embolo'); if(!e) return;
+  e.style.transition='transform .3s';
+  e.style.transform=aberta?'translateX(10px)':'';
+}
+
+function atualizarDiagrama(fase){
+  // Reset
+  _sysStroke('camara-body','#2ec4b6');
+  _sysStroke('bmp-body','#3a5470'); _sysStroke('bmp-chip','#3a5470');
+  _sysStroke('bomba-body','#3a5470'); _sysStroke('bomba-motor','#3a5470');
+  _sysStroke('ms-body','#3a5470');
+  _sysStroke('ard-body','#2ec4b6');
+  _sysStroke('rele-body','#3a5470'); _sysFill('rele-contato','#263648');
+  _sysStroke('vsol-body','#3a5470');
+  _sysStroke('pipe-in','#2ec4b6'); _sysStroke('pipe-reg-bomba','#2ec4b6');
+  _sysStroke('pipe-escape','rgba(230,57,70,.3)');
+  _sysBadge('sb-bomba',''); _sysBadge('sb-valvula','');
+  _sysBadge('sb-bmp',''); _sysBadge('sb-rele',''); _sysBadge('sb-arduino','leitura');
+  _heliceStop(); _emboloAnim(false);
+  const led13=document.getElementById('ard-led-13');
+  if(led13) led13.setAttribute('fill','#1a2535');
+
+  if(fase==='calibra'){
+    _sysStroke('bmp-chip','#2ec4b6',true); _sysStroke('bmp-body','#2ec4b6');
+    _sysStroke('ard-body','#2ec4b6',true);
+    _sysBadge('sb-bmp','leitura'); _sysBadge('sb-arduino','leitura');
+    _sysFase('CALIBRANDO','#f4a261');
+    if(led13) led13.setAttribute('fill','#f4a261');
+
+  } else if(fase==='subida'){
+    _sysStroke('bomba-body','#f4a261',true); _sysStroke('bomba-motor','#f4a261',true);
+    _sysStroke('ms-body','#d97c1a',true);
+    _sysStroke('bmp-chip','#2ec4b6',true);
+    _sysStroke('ard-body','#2ec4b6',true);
+    _sysStroke('pipe-in','#f4a261',true); _sysStroke('pipe-reg-bomba','#f4a261',true);
+    _sysBadge('sb-bomba','ativo'); _sysBadge('sb-bmp','leitura'); _sysBadge('sb-arduino','leitura');
+    _sysFase('SUBIDA','#3ddc84');
+    _heliceStart();
+    if(led13) led13.setAttribute('fill','#3ddc84');
+
+  } else if(fase==='descida'){
+    _sysStroke('rele-body','#e63946',true); _sysFill('rele-contato','#e63946');
+    _sysStroke('vsol-body','#e63946',true);
+    _sysStroke('bmp-chip','#2ec4b6',true);
+    _sysStroke('ard-body','#2ec4b6',true);
+    _sysStroke('pipe-escape','#e63946',true);
+    _sysBadge('sb-valvula','alerta'); _sysBadge('sb-rele','alerta');
+    _sysBadge('sb-bmp','leitura'); _sysBadge('sb-arduino','leitura');
+    _emboloAnim(true);
+    _sysFase('DESCIDA','#2ec4b6');
+    if(led13) led13.setAttribute('fill','#2ec4b6');
+
+  } else if(fase==='concluido'){
+    _sysStroke('ard-body','#3ddc84',true);
+    _sysBadge('sb-arduino','leitura');
+    _sysFase('CONCLUÍDO','#3ddc84');
+    if(led13) led13.setAttribute('fill','#3ddc84');
+
+  } else {
+    _sysFase('AGUARDANDO','#3a5470');
+  }
+}
+
+// Altitude no diagrama
+function _updSysAlt(alt){
+  const el=document.getElementById('sys-alt-txt');
+  if(el) el.innerHTML=`${Math.round(alt)} <tspan font-size="10" fill="#3a5470">m</tspan>`;
+}
+
+// Intercepta setFase e onTelem
+const _origSetFase=setFase;
+setFase=function(f){ _origSetFase(f); atualizarDiagrama(f); };
+const _origOnTelem=onTelem;
+onTelem=function(m){ _origOnTelem(m); _updSysAlt(m.alt||0); };
+
+// Inclui 'sistema' no setTab
+const _origSetTab=setTab;
+setTab=function(nome){
+  _origSetTab(nome);
+  // sistema não precisa de carregamento adicional
+};
+
+atualizarDiagrama('idle');
 connectWS();
 </script>
 </body>
