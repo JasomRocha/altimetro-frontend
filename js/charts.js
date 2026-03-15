@@ -44,7 +44,9 @@ function updCharts(){
   document.getElementById('real-line').setAttribute('points',ptsA.join(' '));
   document.getElementById('ay-alt-max').textContent=Math.round(aMax)+'m';
   document.getElementById('ay-alt-mid').textContent=Math.round(aMax/2)+'m';
-  document.getElementById('ax-alt-mid').textContent=(tMax/2).toFixed(0)+'s';
+  document.getElementById('ax-alt-q1' ).textContent=(tMax*0.25).toFixed(0)+'s';
+  document.getElementById('ax-alt-mid').textContent=(tMax*0.50).toFixed(0)+'s';
+  document.getElementById('ax-alt-q3' ).textContent=(tMax*0.75).toFixed(0)+'s';
   document.getElementById('ax-alt-max').textContent=tMax.toFixed(0)+'s';
 
   // Foguete animado
@@ -71,7 +73,9 @@ function updCharts(){
     document.getElementById('vel-line').setAttribute('points',ptsV.join(' '));
     document.getElementById('ay-vel-max').textContent=vMax.toFixed(0)+'m/s';
     document.getElementById('ay-vel-mid').textContent=(vMax/2).toFixed(0)+'m/s';
-    document.getElementById('ax-vel-mid').textContent=(tMax/2).toFixed(0)+'s';
+    document.getElementById('ax-vel-q1' ).textContent=(tMax*0.25).toFixed(0)+'s';
+    document.getElementById('ax-vel-mid').textContent=(tMax*0.50).toFixed(0)+'s';
+    document.getElementById('ax-vel-q3' ).textContent=(tMax*0.75).toFixed(0)+'s';
     document.getElementById('ax-vel-max').textContent=tMax.toFixed(0)+'s';
   }
 
@@ -86,7 +90,9 @@ function updCharts(){
     document.getElementById('ay-pres-max').textContent=pMax.toFixed(1);
     document.getElementById('ay-pres-mid').textContent=((pMax+pMin)/2).toFixed(1);
     document.getElementById('ay-pres-min').textContent=pMin.toFixed(1);
-    document.getElementById('ax-pres-mid').textContent=(tMax/2).toFixed(0)+'s';
+    document.getElementById('ax-pres-q1' ).textContent=(tMax*0.25).toFixed(0)+'s';
+    document.getElementById('ax-pres-mid').textContent=(tMax*0.50).toFixed(0)+'s';
+    document.getElementById('ax-pres-q3' ).textContent=(tMax*0.75).toFixed(0)+'s';
     document.getElementById('ax-pres-max').textContent=tMax.toFixed(0)+'s';
   }
 }

@@ -2,9 +2,9 @@
 <div class="tab-pane active" id="pane-ensaio">
   <div id="app">
 
-    <!-- Painel esquerdo: parâmetros + controle + resultado -->
+    <!-- ── Painel esquerdo: parâmetros + controle + resultado ── -->
     <div class="panel">
-      <div class="sec">
+      <div class="sec" style="overflow-y:auto;flex:1;min-height:0;">
         <div class="stitle">Parâmetros do Ensaio</div>
 
         <div class="field-block">
@@ -17,7 +17,7 @@
         </div>
         <div class="field-block">
           <label class="field-lbl" for="inp-obs">Observações</label>
-          <input class="field-input" id="inp-obs" type="text" placeholder="Ex: temperatura 28°C" maxlength="200">
+          <input class="field-input" id="inp-obs" type="text" placeholder="Ex: temperatura 28°C, pressão ambiente 1013 hPa" maxlength="200">
         </div>
 
         <div class="param-block">
@@ -50,22 +50,9 @@
             <span class="pwm-val" id="r-pwm">200 · NOMINAL</span>
           </div>
         </div>
-
-        <div class="valve-note">
-          <div class="vn-hd">VÁLVULA FÍSICA — AJUSTE DE VELOCIDADE</div>
-          <div class="vn-row"><span class="vna">+ Aberta</span><span class="vne">subida mais rápida</span></div>
-          <div class="vn-row"><span class="vna">− Fechada</span><span class="vne">subida mais lenta</span></div>
-        </div>
-
-        <div class="ig">
-          <div class="ic"><div class="k">REF. FOGUETE</div><div class="v c" id="i-ref">700 m / 18 s</div></div>
-          <div class="ic"><div class="k">VEL. ESTIMADA</div><div class="v c" id="i-vel">35.0 m/s</div></div>
-          <div class="ic"><div class="k">DEAD ZONE</div><div class="v">PWM ≤ 150</div></div>
-          <div class="ic"><div class="k">PORTA</div><div class="v">/dev/ttyACM0</div></div>
-        </div>
       </div>
 
-      <div class="sec">
+      <div class="sec" style="flex-shrink:0;">
         <div class="stitle">Controle</div>
         <button class="btn-go" id="btn-go" onclick="cmdIniciar()"><span>INICIAR ENSAIO</span></button>
         <button class="btn-abort" onclick="cmdParar()">ABORTAR</button>
@@ -85,7 +72,7 @@
       </div>
     </div>
 
-    <!-- Painel central: altímetro + gráficos ao vivo -->
+    <!-- ── Painel central: altímetro + gráficos ── -->
     <div class="panel">
       <div class="center-top">
         <div class="altimeter-row">
@@ -94,8 +81,8 @@
               <filter id="gc"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               <filter id="ga"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             </defs>
-            <circle cx="58" cy="58" r="56" fill="#0a0e14" stroke="#1e2e42" stroke-width="1.5"/>
-            <circle cx="58" cy="58" r="42" fill="none" stroke="#1e2e42" stroke-width="8" stroke-dasharray="220 38" stroke-dashoffset="38" transform="rotate(135 58 58)"/>
+            <circle cx="58" cy="58" r="56" fill="#000" stroke="#1e2e42" stroke-width="1.5"/>
+            <circle cx="58" cy="58" r="42" fill="none" stroke="#1a2535" stroke-width="8" stroke-dasharray="220 38" stroke-dashoffset="38" transform="rotate(135 58 58)"/>
             <circle cx="58" cy="58" r="42" fill="none" stroke="var(--teal)" stroke-width="3" stroke-dasharray="0 258" stroke-dashoffset="38" transform="rotate(135 58 58)" id="alt-arc" filter="url(#gc)" style="transition:stroke-dasharray .5s ease"/>
             <line id="alt-needle" x1="58" y1="58" x2="58" y2="20" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" filter="url(#ga)" transform="rotate(-135 58 58)" style="transition:transform .5s ease"/>
             <circle cx="58" cy="58" r="4" fill="var(--amber)" filter="url(#ga)"/>
@@ -118,100 +105,132 @@
       </div>
 
       <div class="charts-area">
-        <!-- Gráfico Altitude -->
+        <!-- Altitude -->
         <div class="chart-block">
           <div class="chart-block-hdr">
             <span class="chart-block-title">Altitude</span>
             <span class="chart-block-unit" style="color:var(--teal)">m</span>
           </div>
           <div class="chart-axes">
-            <div class="axis-y" id="ay-alt"><span id="ay-alt-max">—</span><span id="ay-alt-mid">—</span><span>0</span></div>
+            <div class="axis-y" id="ay-alt">
+              <span id="ay-alt-max">—</span>
+              <span id="ay-alt-mid">—</span>
+              <span>0</span>
+            </div>
             <div class="axis-x-wrap">
               <svg class="chart-svg" id="svg-alt" viewBox="0 0 700 80" preserveAspectRatio="none">
                 <defs><linearGradient id="gr-alt" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="rgba(46,196,182,.25)"/>
+                  <stop offset="0%" stop-color="rgba(46,196,182,.3)"/>
                   <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
                 </linearGradient></defs>
+                <!-- Grid horizontal -->
+                <line x1="0" y1="20" x2="700" y2="20" stroke="#1e2e42" stroke-width=".5"/>
                 <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
-                <polyline id="ref-line"  fill="none" stroke="var(--amber)" stroke-width="1" stroke-dasharray="4 3" opacity=".5" points=""/>
+                <line x1="0" y1="60" x2="700" y2="60" stroke="#1e2e42" stroke-width=".5"/>
+                <!-- Grid vertical -->
+                <line x1="175" y1="0" x2="175" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="350" y1="0" x2="350" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="525" y1="0" x2="525" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <polyline id="ref-line" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5 3" opacity=".7" points=""/>
                 <polyline id="real-fill" fill="url(#gr-alt)" stroke="none" points=""/>
-                <polyline id="real-line" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
+                <polyline id="real-line" fill="none" stroke="var(--teal)" stroke-width="2.5" points=""/>
                 <g id="ap-rocket" transform="translate(-40,-40)" style="filter:drop-shadow(0 0 4px rgba(244,162,97,.6))">
                   <path d="M0,-9 C3,-9 5,-6 5,-2 L5,4 L0,7 L-5,4 L-5,-2 C-5,-6 -3,-9 0,-9 Z" fill="#f4a261"/>
                   <path d="M0,-9 L2.5,-5 L-2.5,-5 Z" fill="white" opacity=".75"/>
-                  <path d="M5,1 L8,6 L5,5 Z"  fill="#f4a261" opacity=".7"/>
+                  <path d="M5,1 L8,6 L5,5 Z" fill="#f4a261" opacity=".7"/>
                   <path d="M-5,1 L-8,6 L-5,5 Z" fill="#f4a261" opacity=".7"/>
                   <g id="rk-flame"><path d="M-2,7 Q0,13 2,7 Q0.5,10 0,12 Q-0.5,10 -2,7 Z" fill="#e63946">
                     <animate attributeName="opacity" values="1;.3;1" dur=".28s" repeatCount="indefinite"/>
                   </path></g>
                 </g>
               </svg>
-              <div class="axis-x" id="ax-alt"><span>0s</span><span id="ax-alt-mid">—</span><span id="ax-alt-max">—</span></div>
+              <div class="axis-x" id="ax-alt">
+                <span>0 s</span><span id="ax-alt-q1">—</span>
+                <span id="ax-alt-mid">—</span><span id="ax-alt-q3">—</span>
+                <span id="ax-alt-max">—</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Gráfico Velocidade -->
+        <!-- Velocidade -->
         <div class="chart-block">
           <div class="chart-block-hdr">
             <span class="chart-block-title">Velocidade</span>
             <span class="chart-block-unit" style="color:var(--green)">m/s</span>
           </div>
           <div class="chart-axes">
-            <div class="axis-y" id="ay-vel"><span id="ay-vel-max">—</span><span id="ay-vel-mid">—</span><span>0</span></div>
+            <div class="axis-y" id="ay-vel">
+              <span id="ay-vel-max">—</span>
+              <span id="ay-vel-mid">—</span>
+              <span>0</span>
+            </div>
             <div class="axis-x-wrap">
               <svg class="chart-svg" id="svg-vel" viewBox="0 0 700 80" preserveAspectRatio="none">
                 <defs><linearGradient id="gr-vel" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="rgba(61,220,132,.2)"/>
+                  <stop offset="0%" stop-color="rgba(61,220,132,.25)"/>
                   <stop offset="100%" stop-color="rgba(61,220,132,0)"/>
                 </linearGradient></defs>
+                <line x1="0" y1="20" x2="700" y2="20" stroke="#1e2e42" stroke-width=".5"/>
                 <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+                <line x1="0" y1="60" x2="700" y2="60" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="175" y1="0" x2="175" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="350" y1="0" x2="350" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="525" y1="0" x2="525" y2="80" stroke="#1e2e42" stroke-width=".5"/>
                 <polyline id="vel-fill" fill="url(#gr-vel)" stroke="none" points=""/>
-                <polyline id="vel-line" fill="none" stroke="var(--green)" stroke-width="2" points=""/>
+                <polyline id="vel-line" fill="none" stroke="var(--green)" stroke-width="2.5" points=""/>
               </svg>
-              <div class="axis-x" id="ax-vel"><span>0s</span><span id="ax-vel-mid">—</span><span id="ax-vel-max">—</span></div>
+              <div class="axis-x" id="ax-vel">
+                <span>0 s</span><span id="ax-vel-q1">—</span>
+                <span id="ax-vel-mid">—</span><span id="ax-vel-q3">—</span>
+                <span id="ax-vel-max">—</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Gráfico Pressão -->
+        <!-- Pressão -->
         <div class="chart-block">
           <div class="chart-block-hdr">
             <span class="chart-block-title">Pressão</span>
             <span class="chart-block-unit" style="color:var(--violet)">hPa</span>
           </div>
           <div class="chart-axes">
-            <div class="axis-y" id="ay-pres"><span id="ay-pres-max">—</span><span id="ay-pres-mid">—</span><span id="ay-pres-min">—</span></div>
+            <div class="axis-y" id="ay-pres">
+              <span id="ay-pres-max">—</span>
+              <span id="ay-pres-mid">—</span>
+              <span id="ay-pres-min">—</span>
+            </div>
             <div class="axis-x-wrap">
               <svg class="chart-svg" id="svg-pres" viewBox="0 0 700 80" preserveAspectRatio="none">
                 <defs><linearGradient id="gr-pres" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="rgba(123,108,246,.2)"/>
+                  <stop offset="0%" stop-color="rgba(123,108,246,.25)"/>
                   <stop offset="100%" stop-color="rgba(123,108,246,0)"/>
                 </linearGradient></defs>
+                <line x1="0" y1="20" x2="700" y2="20" stroke="#1e2e42" stroke-width=".5"/>
                 <line x1="0" y1="40" x2="700" y2="40" stroke="#1e2e42" stroke-width="1"/>
+                <line x1="0" y1="60" x2="700" y2="60" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="175" y1="0" x2="175" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="350" y1="0" x2="350" y2="80" stroke="#1e2e42" stroke-width=".5"/>
+                <line x1="525" y1="0" x2="525" y2="80" stroke="#1e2e42" stroke-width=".5"/>
                 <polyline id="pres-fill" fill="url(#gr-pres)" stroke="none" points=""/>
-                <polyline id="pres-line" fill="none" stroke="var(--violet)" stroke-width="2" points=""/>
+                <polyline id="pres-line" fill="none" stroke="var(--violet)" stroke-width="2.5" points=""/>
               </svg>
-              <div class="axis-x" id="ax-pres"><span>0s</span><span id="ax-pres-mid">—</span><span id="ax-pres-max">—</span></div>
+              <div class="axis-x" id="ax-pres">
+                <span>0 s</span><span id="ax-pres-q1">—</span>
+                <span id="ax-pres-mid">—</span><span id="ax-pres-q3">—</span>
+                <span id="ax-pres-max">—</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Painel direito: telemetria + log -->
+    <!-- ── Painel direito: log de eventos ── -->
     <div class="panel">
-      <div class="sec">
-        <div class="stitle">Telemetria</div>
-        <div class="gauge-grid">
-          <div class="gcard"><div class="gk">ALT. ATUAL</div><div class="gv" style="color:var(--teal)" id="g-alt">0 m</div><div class="gb"><div class="gf" id="gf-alt" style="width:0%;background:var(--teal)"></div></div></div>
-          <div class="gcard"><div class="gk">ALT. MÁX.</div><div class="gv" style="color:var(--amber)" id="g-amax">0 m</div><div class="gb"><div class="gf" id="gf-amax" style="width:0%;background:var(--amber)"></div></div></div>
-          <div class="gcard"><div class="gk">PRESSÃO</div><div class="gv" id="g-pres" style="font-size:14px;color:var(--violet)">— hPa</div><div class="gb"><div class="gf" id="gf-pres" style="width:100%;background:var(--violet)"></div></div></div>
-          <div class="gcard"><div class="gk">POTÊNCIA</div><div class="gv" style="color:var(--amber)" id="g-pot">50%</div><div class="gb"><div class="gf" id="gf-pot" style="width:50%;background:var(--amber)"></div></div></div>
-        </div>
-      </div>
       <div class="sec grow">
-        <div class="stitle">Log do Sistema</div>
+        <div class="stitle">Log de Eventos</div>
         <div class="log-scroll"><div id="log-body"></div></div>
       </div>
     </div>

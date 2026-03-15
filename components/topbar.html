@@ -1,24 +1,62 @@
 <!-- components/topbar.html -->
 <div id="topbar">
+
+  <!-- Marca / identidade -->
   <div class="tb-brand">
-    <div class="title">BANCO DE TESTE · ALTÍMETROS</div>
-    <div class="sub">UFPB · ENG. COMPUTAÇÃO · TCC 2026</div>
+    <div class="tb-brand-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2 L12 8 M12 2 C10 2 8.5 4 8.5 6.5 L8.5 10 L15.5 10 L15.5 6.5 C15.5 4 14 2 12 2 Z"/>
+        <path d="M9 10 L9 16 M15 10 L15 16"/>
+        <path d="M7 16 L17 16 L17 20 L7 20 Z"/>
+        <line x1="9" y1="18" x2="15" y2="18"/>
+      </svg>
+    </div>
+    <div>
+      <div class="tb-brand-title">BANCO DE TESTE · ALTÍMETROS</div>
+      <div class="tb-brand-sub">UFPB · CI · ENG. COMPUTAÇÃO · TCC 2026</div>
+    </div>
   </div>
+
+  <!-- Stats ao vivo -->
   <div class="tb-stats">
-    <div class="tb-stat"><span class="k">ALTITUDE</span><span class="v v-teal" id="h-alt">0.0 m</span></div>
-    <div class="tb-stat"><span class="k">PRESSÃO</span><span class="v" id="h-pres">— hPa</span></div>
-    <div class="tb-stat"><span class="k">P. REF.</span><span class="v" id="h-pref">— hPa</span></div>
-    <div class="tb-stat"><span class="k">APOGEU MÁX.</span><span class="v v-amber" id="h-amax">0 m</span></div>
-    <div class="tb-stat"><span class="k">TEMPO</span><span class="v" id="h-t">0.0 s</span></div>
-    <div class="tb-stat"><span class="k">HARDWARE</span><span class="v" id="h-hw">—</span></div>
+    <div class="tb-stat">
+      <span class="tb-stat-k">ALTITUDE</span>
+      <span class="tb-stat-v v-teal" id="h-alt">—</span>
+    </div>
+    <div class="tb-stat">
+      <span class="tb-stat-k">PRESSÃO</span>
+      <span class="tb-stat-v" id="h-pres">— hPa</span>
+    </div>
+    <div class="tb-stat">
+      <span class="tb-stat-k">P. REF.</span>
+      <span class="tb-stat-v" id="h-pref">— hPa</span>
+    </div>
+    <div class="tb-stat">
+      <span class="tb-stat-k">APOGEU MÁX.</span>
+      <span class="tb-stat-v v-amber" id="h-amax">—</span>
+    </div>
+    <div class="tb-stat">
+      <span class="tb-stat-k">TEMPO</span>
+      <span class="tb-stat-v" id="h-t">—</span>
+    </div>
+    <div class="tb-stat">
+      <span class="tb-stat-k">HARDWARE</span>
+      <span class="tb-stat-v" id="h-hw">—</span>
+    </div>
   </div>
+
+  <!-- Status + relógio -->
   <div class="tb-right">
-    <span id="user-label" style="font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text1);"></span>
-    <button id="btn-logout"
+    <span id="user-label" class="tb-user"></span>
+    <button id="btn-logout" onclick="fazerLogout()"
       style="display:none;padding:4px 12px;background:transparent;border:1px solid var(--line2);border-radius:20px;color:var(--text2);font-family:var(--mono);font-size:10px;cursor:pointer;">
       Sair
     </button>
-    <div class="conn-badge" id="cbadge"><div class="conn-dot"></div><span id="ctxt">OFFLINE</span></div>
+    <div class="conn-badge" id="cbadge">
+      <div class="conn-dot"></div>
+      <span id="ctxt">OFFLINE</span>
+    </div>
     <div id="clock">--:--:--</div>
   </div>
+
 </div>

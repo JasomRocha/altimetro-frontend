@@ -85,15 +85,17 @@ function histRenderDetalhe(voo){
           <div class="axis-y"><span>${aMax.toFixed(0)}</span><span>${(aMax/2).toFixed(0)}</span><span>0</span></div>
           <div class="axis-x-wrap">
             <svg class="chart-svg" id="hs-alt" viewBox="0 0 700 70" preserveAspectRatio="none">
-              <defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(46,196,182,.25)"/>
-                <stop offset="100%" stop-color="rgba(46,196,182,0)"/>
-              </linearGradient></defs>
+              <defs><linearGradient id="hgr-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(46,196,182,.3)"/><stop offset="100%" stop-color="rgba(46,196,182,0)"/></linearGradient></defs>
+              <line x1="0" y1="17" x2="700" y2="17" stroke="#1e2e42" stroke-width=".5"/>
               <line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/>
+              <line x1="0" y1="53" x2="700" y2="53" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="175" y1="0" x2="175" y2="70" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="350" y1="0" x2="350" y2="70" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="525" y1="0" x2="525" y2="70" stroke="#1e2e42" stroke-width=".5"/>
               <polyline id="hf-a" fill="url(#hgr-a)" stroke="none" points=""/>
-              <polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2" points=""/>
+              <polyline id="hl-a" fill="none" stroke="var(--teal)" stroke-width="2.5" points=""/>
             </svg>
-            <div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
+            <div class="axis-x"><span>0s</span><span>${(tTot*0.25).toFixed(0)}s</span><span>${(tTot*0.5).toFixed(0)}s</span><span>${(tTot*0.75).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
           </div>
         </div>
       </div>
@@ -103,15 +105,17 @@ function histRenderDetalhe(voo){
           <div class="axis-y"><span>${velMax.toFixed(0)}</span><span>${(velMax/2).toFixed(0)}</span><span>0</span></div>
           <div class="axis-x-wrap">
             <svg class="chart-svg" id="hs-vel" viewBox="0 0 700 70" preserveAspectRatio="none">
-              <defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(61,220,132,.2)"/>
-                <stop offset="100%" stop-color="rgba(61,220,132,0)"/>
-              </linearGradient></defs>
+              <defs><linearGradient id="hgr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(61,220,132,.25)"/><stop offset="100%" stop-color="rgba(61,220,132,0)"/></linearGradient></defs>
+              <line x1="0" y1="17" x2="700" y2="17" stroke="#1e2e42" stroke-width=".5"/>
               <line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/>
+              <line x1="0" y1="53" x2="700" y2="53" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="175" y1="0" x2="175" y2="70" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="350" y1="0" x2="350" y2="70" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="525" y1="0" x2="525" y2="70" stroke="#1e2e42" stroke-width=".5"/>
               <polyline id="hf-v" fill="url(#hgr-v)" stroke="none" points=""/>
-              <polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2" points=""/>
+              <polyline id="hl-v" fill="none" stroke="var(--green)" stroke-width="2.5" points=""/>
             </svg>
-            <div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
+            <div class="axis-x"><span>0s</span><span>${(tTot*0.25).toFixed(0)}s</span><span>${(tTot*0.5).toFixed(0)}s</span><span>${(tTot*0.75).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
           </div>
         </div>
       </div>
@@ -121,15 +125,17 @@ function histRenderDetalhe(voo){
           <div class="axis-y"><span>${presMax.toFixed(0)}</span><span>${((presMax+presMin)/2).toFixed(0)}</span><span>${presMin.toFixed(0)}</span></div>
           <div class="axis-x-wrap">
             <svg class="chart-svg" id="hs-pres" viewBox="0 0 700 70" preserveAspectRatio="none">
-              <defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(123,108,246,.2)"/>
-                <stop offset="100%" stop-color="rgba(123,108,246,0)"/>
-              </linearGradient></defs>
+              <defs><linearGradient id="hgr-p" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(123,108,246,.25)"/><stop offset="100%" stop-color="rgba(123,108,246,0)"/></linearGradient></defs>
+              <line x1="0" y1="17" x2="700" y2="17" stroke="#1e2e42" stroke-width=".5"/>
               <line x1="0" y1="35" x2="700" y2="35" stroke="#1e2e42" stroke-width="1"/>
+              <line x1="0" y1="53" x2="700" y2="53" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="175" y1="0" x2="175" y2="70" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="350" y1="0" x2="350" y2="70" stroke="#1e2e42" stroke-width=".5"/>
+              <line x1="525" y1="0" x2="525" y2="70" stroke="#1e2e42" stroke-width=".5"/>
               <polyline id="hf-p" fill="url(#hgr-p)" stroke="none" points=""/>
-              <polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2" points=""/>
+              <polyline id="hl-p" fill="none" stroke="var(--violet)" stroke-width="2.5" points=""/>
             </svg>
-            <div class="axis-x"><span>0s</span><span>${(tTot/2).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
+            <div class="axis-x"><span>0s</span><span>${(tTot*0.25).toFixed(0)}s</span><span>${(tTot*0.5).toFixed(0)}s</span><span>${(tTot*0.75).toFixed(0)}s</span><span>${tTot.toFixed(0)}s</span></div>
           </div>
         </div>
       </div>
