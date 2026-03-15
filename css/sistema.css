@@ -1,165 +1,89 @@
-/* ==========================================================================
- *  sistema.css — ESTILOS EXCLUSIVOS DA ABA SISTEMA E DIAGRAMA DE HARDWARE
- *  (Herda as variáveis do :root no app.css)
- *  ========================================================================== */
-
-/* ── STATUS BAR DO DIAGRAMA ─────────────────────────────────── */
+/* ── STATUS BAR ─────────────────────────────────────────────── */
 .sys-status-bar {
-  padding: 12px 24px;
-  background: rgba(10, 10, 12, 0.6);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line-base);
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-  z-index: 10;
+  padding: 16px 24px; background: rgba(10, 10, 12, 0.7);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line); display: flex; gap: 16px;
+  flex-wrap: wrap; align-items: center; flex-shrink: 0;
+  position: relative; z-index: 10;
 }
-.sys-info-box {
-  background: var(--bg-surface);
-  border: 1px solid var(--line-strong);
-  border-radius: 6px;
-  padding: 6px 16px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.sys-info-label {
-  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 4px; display: block;
-}
-.sys-info-val {
-  font-family: var(--mono); font-size: 20px; font-weight: 600; line-height: 1.3; color: var(--text-title);
-}
+.sys-status-label, .sys-bar-label { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .12em; color: var(--text2); margin-right: 8px; text-transform: uppercase; }
+.sys-info-group, .sys-bar-right { margin-left: auto; display: flex; gap: 16px; }
+.sys-info-box { background: var(--bg2); border: 1px solid var(--line2); border-radius: 8px; padding: 8px 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform .2s; }
+.sys-info-box:hover { transform: translateY(-2px); border-color: var(--teal); }
+.sys-info-box.wide { min-width: 200px; }
+.sys-info-label { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--text2); margin-bottom: 6px; display: block; }
+.sys-info-val { font-family: var(--mono); font-size: 24px; font-weight: 600; line-height: 1; color: var(--text0); }
+.sys-info-val.fase { font-size: 16px; letter-spacing: .1em; line-height: 1.2; color: var(--teal); }
 
-/* ── ÁREA DO DIAGRAMA (GRID) ────────────────────────────────── */
+/* ── ÁREA DO DIAGRAMA ───────────────────────────────────────── */
 .sys-diagram-area {
-  flex: 1;
-  position: relative;
-  overflow: auto;
-  background-color: var(--bg-app);
-  /* Grid de pontos moderno estilo Vercel */
-  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 1; position: relative; overflow: auto; background-color: var(--bg0);
+  background-image: radial-gradient(var(--line2) 1px, transparent 1px);
+  background-size: 32px 32px; display: flex; align-items: center; justify-content: center;
 }
-.sys-canvas {
-  width: 1024px;
-  height: 600px; /* Altura padrão para segurar os componentes absolutos */
-  position: relative;
-  flex-shrink: 0;
-}
+.sys-canvas { width: 1024px; height: 600px; position: relative; flex-shrink: 0; }
 
-/* ── CAIXAS DE HARDWARE (NODES) ─────────────────────────────── */
+/* ── CAIXAS DE HARDWARE ─────────────────────────────────────── */
 .hw-box {
-  position: absolute;
-  background: rgba(15, 15, 18, 0.75); /* Fundo escuro levemente transparente */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--line-strong);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  z-index: 2;
-  transition: var(--transition-bounce);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  position: absolute; background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line2); border-radius: 12px; padding: 18px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .hw-box:hover {
-  transform: translateY(-4px) scale(1.02);
-  z-index: 10;
-  border-color: var(--teal);
-  box-shadow: 0 16px 48px rgba(0, 240, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: translateY(-4px) scale(1.02); z-index: 10;
+  border-color: var(--teal); box-shadow: 0 16px 40px var(--teal-d), inset 0 1px 0 rgba(255,255,255,0.1);
 }
-.hw-title {
-  font-family: var(--sans); font-size: 11px; letter-spacing: 0.15em;
-  font-weight: 700; color: var(--text-title); text-transform: uppercase;
-}
-.hw-sub {
-  font-family: var(--mono); font-size: 9px; color: var(--text-muted); margin-top: 6px;
-}
+.hw-title { font-family: var(--sans); font-size: 11px; letter-spacing: .15em; font-weight: 700; margin-bottom: 8px; color: var(--text0); text-transform: uppercase; }
+.hw-sub { font-family: var(--mono); font-size: 9px; color: var(--text2); margin-top: 6px; }
 
-/* ── FIOS E CONEXÕES (SVG) ──────────────────────────────────── */
-.wire {
-  fill: none;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: var(--transition-smooth);
-}
+/* ── FIOS E FLUXOS SVG ──────────────────────────────────────── */
+.wire { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; transition: all 0.3s; }
 .wire-label {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: var(--bg-panel);
-  border: 1px solid var(--line-strong);
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  z-index: 3;
+  position: absolute; transform: translate(-50%, -50%);
+  background: var(--bg1); border: 1px solid var(--line2);
+  padding: 6px 14px; border-radius: 16px; font-family: var(--mono);
+  font-size: 9px; font-weight: 600; letter-spacing: .1em; color: var(--text2);
+  z-index: 3; transition: all 0.3s; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-/* Animações de Fluxo de Dados (Linhas brilhantes) */
 @keyframes flowDash { to { stroke-dashoffset: -24; } }
 
 .flow-air    { stroke: var(--teal);   stroke-dasharray: 6 6; opacity: 0.2; }
 .flow-pwm    { stroke: var(--amber);  stroke-dasharray: 4 6; opacity: 0.2; }
 .flow-signal { stroke: var(--red);    stroke-dasharray: 8 6; opacity: 0.2; }
 .flow-i2c    { stroke: var(--teal);   stroke-dasharray: 2 4; opacity: 0.3; }
-.flow-power  { stroke: var(--violet); stroke-dasharray: 10 0; opacity: 0.3; }
+.flow-power  { stroke: var(--violet); opacity: 0.3; stroke-dasharray: 10 0; }
 .flow-5v     { stroke: #ff3355;       stroke-dasharray: 4 4; opacity: 0.3; }
 .flow-usb    { stroke: #8b8b93;       stroke-dasharray: 6 4; opacity: 0.3; }
 
-/* Estados Ativos com Neon Glows */
+/* Animações e Neon */
 .flow-air.active    { animation: flowDash 0.6s linear infinite; stroke-width: 3.5; opacity: 1; filter: drop-shadow(0 0 6px var(--teal)); }
 .flow-pwm.active    { animation: flowDash 0.4s linear infinite; stroke-width: 3.5; opacity: 1; filter: drop-shadow(0 0 6px var(--amber)); }
 .flow-signal.active { stroke-width: 3.5; opacity: 1; filter: drop-shadow(0 0 6px var(--red)); }
 .flow-i2c.active    { animation: flowDash 1s linear infinite; stroke-width: 3; opacity: 1; filter: drop-shadow(0 0 4px var(--teal)); }
 .flow-power.active  { opacity: 1; filter: drop-shadow(0 0 8px var(--violet)); stroke-width: 3.5; }
-.flow-5v.active     { opacity: 1; filter: drop-shadow(0 0 6px var(--red)); }
+.flow-5v.active     { opacity: 1; filter: drop-shadow(0 0 6px var(--red)); stroke-width: 3; }
 .flow-usb.active    { animation: flowDash 1s linear infinite; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.4)); }
 
-/* Wire Labels mudando de cor quando ativas */
-.flow-air.active + .wire-label    { color: var(--teal); border-color: var(--teal); box-shadow: 0 0 12px var(--teal-d); }
-.flow-pwm.active + .wire-label    { color: var(--amber); border-color: var(--amber); box-shadow: 0 0 12px var(--amber-d); }
-.flow-signal.active + .wire-label { color: var(--red); border-color: var(--red); box-shadow: 0 0 12px var(--red-d); }
-.flow-power.active + .wire-label  { color: var(--text-title); border-color: var(--violet); background: rgba(157, 78, 221, 0.15); }
+.flow-air.active + .wire-label    { color: var(--teal); border-color: var(--teal); box-shadow: 0 0 16px var(--teal-d); }
+.flow-pwm.active + .wire-label    { color: var(--amber); border-color: var(--amber); box-shadow: 0 0 16px var(--amber-d); }
+.flow-signal.active + .wire-label { color: var(--red); border-color: var(--red); box-shadow: 0 0 16px var(--red-d); }
+.flow-power.active + .wire-label  { color: var(--text0); border-color: var(--violet); background: rgba(157, 78, 221, 0.2); }
 
-/* ── LEGENDA INFERIOR ───────────────────────────────────────── */
+/* ── LEGENDA ────────────────────────────────────────────────── */
 .sys-legend {
-  border-top: 1px solid var(--line-base);
-  background: rgba(10,10,12,0.8);
-  backdrop-filter: blur(10px);
-  padding: 14px 28px;
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  align-items: center;
-  z-index: 10;
+  border-top: 1px solid var(--line); background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(12px); padding: 16px 28px; display: flex; gap: 24px;
+  flex-wrap: wrap; flex-shrink: 0; align-items: center; position: relative; z-index: 10;
 }
-.sys-legend-title { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: var(--text-title); }
-.sys-legend-item { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; color: var(--text-muted); }
-.sys-legend-line { display: inline-block; width: 24px; height: 3px; border-radius: 2px; }
+.sys-legend-title { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: .15em; color: var(--text0); text-transform: uppercase; }
+.sys-legend-item { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 10px; color: var(--text2); }
+.sys-legend-line { display: inline-block; width: 28px; height: 3px; border-radius: 2px; }
+.sys-legend-credit { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.1em; }
 
-/* ── RESPONSIVIDADE DO DIAGRAMA ─────────────────────────────── */
-@media (max-width: 1200px) {
-  /* Escala o diagrama para telas menores mantendo a posição absoluta perfeita */
-  .sys-canvas { transform: scale(0.85); transform-origin: center; }
-}
-
-@media (max-width: 768px) {
-  .sys-canvas { width: 100%; height: 400px; transform: scale(0.6); }
-  .sys-status-bar { justify-content: center; }
-  .sys-legend { justify-content: center; }
-}
-
-@media (max-width: 480px) {
-  .sys-canvas { transform: scale(0.45); }
-}
+@media (max-width: 1200px) { .sys-canvas { transform: scale(0.85); transform-origin: center; } }
+@media (max-width: 768px) { .sys-canvas { width: 100%; height: 400px; transform: scale(0.6); } .sys-status-bar, .sys-legend { justify-content: center; } }
+@media (max-width: 480px) { .sys-canvas { transform: scale(0.45); } }
