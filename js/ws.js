@@ -96,6 +96,7 @@ function handle(m){
     if(!m.t_total)   m.t_total   = (m.t_subida||0) + (m.t_descida||0);
     if(!m.alt_alvo)  m.alt_alvo  = S.apAlvo;
     m.potencia_pct = S.potPct; m.pwm = S.pwm; m.pref = S.pref;
+    if(m.ensaio_id) S.ensaioId = m.ensaio_id;  // salva para confirmar/descartar
     onResult(m);
   }
   else if(m.tipo==='erro'){ addLog(m.msg||'Erro no servidor','err'); }
@@ -259,11 +260,20 @@ function cmdParar(){
   addLog('Sinal de abortar enviado.','err');
 }
 
-function salvarNoBanco(){
-  document.getElementById('btn-salvar').style.display = 'none';
-  document.getElementById('salvo-badge').style.display= 'block';
-  toast('Ensaio registrado no banco.','ok');
-  addLog('Ensaio confirmado no banco de dados.','ok');
+async function salvarNoBanco(){
+  const id = S.ensaioId;
+  if(!id){ toast('ID do ensaio não encontrado.','er'); return; }
+  try{
+    const r = await fetch(`${BACKEND}/voos/${id}/confirmar`, { method:'POST' });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    document.getElementById('btn-salvar').style.display = 'none';
+    document.getElementById('salvo-badge').style.display= 'block';
+    toast('Ensaio salvo no banco.','ok');
+    addLog(`Ensaio #${id} confirmado no banco.`,'ok');
+  } catch(e){
+    toast('Erro ao salvar: '+e.message,'er');
+    addLog('Erro ao confirmar ensaio: '+e.message,'err');
+  }
 }
 
 function exportCSV(){

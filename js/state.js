@@ -30,6 +30,7 @@ const S = {
   // Flags de conexão (controlam o btn-go)
   conectado: false,   // WebSocket com backend estabelecido
   agenteOk:  false,   // Agente serial conectado ao backend
+  ensaioId:  null,    // ID do último ensaio no banco (para confirmar/descartar)
 };
 
 const CW=700, CH=80, PL=0, PR=0, PT=4, PB=4;

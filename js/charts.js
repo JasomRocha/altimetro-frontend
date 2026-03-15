@@ -146,10 +146,22 @@ function mostrarModalResultado(m){
   modal.querySelector('#modal-btn-salvar').addEventListener('click', () => {
     salvarNoBanco(); modal.remove(); toast('Ensaio salvo no banco.','ok');
   });
-  modal.querySelector('#modal-btn-fechar').addEventListener('click', () => {
+  modal.querySelector('#modal-btn-fechar').addEventListener('click', async () => {
     modal.remove();
+    const id = S.ensaioId;
+    if(id){
+      try{
+        await fetch(`${BACKEND}/voos/${id}`, { method:'DELETE' });
+        addLog(`Ensaio #${id} descartado e removido do banco.`,'warn');
+        toast('Ensaio descartado.','ok');
+      } catch(e){
+        addLog('Erro ao descartar: '+e.message,'err');
+      }
+      S.ensaioId = null;
+    } else {
+      addLog('Ensaio descartado — não foi salvo.','warn');
+    }
     const bs=document.getElementById('btn-salvar'); if(bs) bs.style.display='none';
-    addLog('Ensaio descartado — não salvo no banco.','warn');
   });
   modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
   document.body.appendChild(modal);
